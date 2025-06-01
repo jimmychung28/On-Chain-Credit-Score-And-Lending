@@ -239,6 +239,146 @@ contract CreditLending is Ownable, ReentrancyGuard {
     }
 
     /**
+     * @dev Get remaining amount owed for a loan
+     */
+    function getRemainingOwed(uint256 loanId) public view returns (uint256) {
+        Loan memory loan = loans[loanId];
+        if (!loan.isActive || loan.isRepaid) {
+            return 0;
+        }
+        uint256 totalOwed = getTotalOwed(loanId);
+        return totalOwed > loan.amountRepaid ? totalOwed - loan.amountRepaid : 0;
+    }
+
+    /**
+     * @dev Get user's active loans with remaining balances
+     */
+    function getUserActiveLoans(address user) external view returns (
+        uint256[] memory loanIds,
+        uint256[] memory remainingBalances,
+        uint256[] memory dueDates,
+        uint256[] memory interestRates
+    ) {
+        uint256[] memory userLoans = borrowerLoans[user];
+        
+        // Count active loans first
+        uint256 activeCount = 0;
+        for (uint256 i = 0; i < userLoans.length; i++) {
+            if (loans[userLoans[i]].isActive && !loans[userLoans[i]].isRepaid) {
+                activeCount++;
+            }
+        }
+        
+        // Initialize arrays
+        loanIds = new uint256[](activeCount);
+        remainingBalances = new uint256[](activeCount);
+        dueDates = new uint256[](activeCount);
+        interestRates = new uint256[](activeCount);
+        
+        // Fill arrays with active loan data
+        uint256 index = 0;
+        for (uint256 i = 0; i < userLoans.length; i++) {
+            uint256 loanId = userLoans[i];
+            Loan memory loan = loans[loanId];
+            
+            if (loan.isActive && !loan.isRepaid) {
+                loanIds[index] = loanId;
+                remainingBalances[index] = getRemainingOwed(loanId);
+                dueDates[index] = loan.dueDate;
+                interestRates[index] = loan.interestRate;
+                index++;
+            }
+        }
+    }
+
+    /**
+     * @dev Get user's total outstanding debt
+     */
+    function getUserTotalDebt(address user) external view returns (
+        uint256 totalOutstanding,
+        uint256 activeLoanCount,
+        uint256 overdueLoanCount
+    ) {
+        uint256[] memory userLoans = borrowerLoans[user];
+        
+        for (uint256 i = 0; i < userLoans.length; i++) {
+            uint256 loanId = userLoans[i];
+            Loan memory loan = loans[loanId];
+            
+            if (loan.isActive && !loan.isRepaid) {
+                totalOutstanding += getRemainingOwed(loanId);
+                activeLoanCount++;
+                
+                if (block.timestamp > loan.dueDate) {
+                    overdueLoanCount++;
+                }
+            }
+        }
+    }
+
+    /**
+     * @dev Get detailed loan information including payment status
+     */
+    function getLoanDetails(uint256 loanId) external view returns (
+        address borrower,
+        uint256 originalAmount,
+        uint256 interestRate,
+        uint256 totalOwed,
+        uint256 remainingOwed,
+        uint256 amountPaid,
+        uint256 dueDate,
+        bool isActive,
+        bool isOverdue,
+        bool isRepaid
+    ) {
+        Loan memory loan = loans[loanId];
+        
+        borrower = loan.borrower;
+        originalAmount = loan.amount;
+        interestRate = loan.interestRate;
+        totalOwed = getTotalOwed(loanId);
+        remainingOwed = getRemainingOwed(loanId);
+        amountPaid = loan.amountRepaid;
+        dueDate = loan.dueDate;
+        isActive = loan.isActive;
+        isOverdue = loan.isActive && !loan.isRepaid && block.timestamp > loan.dueDate;
+        isRepaid = loan.isRepaid;
+    }
+
+    /**
+     * @dev Get loan payment history summary for a user
+     */
+    function getUserLoanSummary(address user) external view returns (
+        uint256 totalLoansCount,
+        uint256 activeLoansCount,
+        uint256 repaidLoansCount,
+        uint256 defaultedLoansCount,
+        uint256 totalAmountBorrowed,
+        uint256 totalAmountRepaid,
+        uint256 currentOutstandingDebt
+    ) {
+        uint256[] memory userLoans = borrowerLoans[user];
+        
+        for (uint256 i = 0; i < userLoans.length; i++) {
+            uint256 loanId = userLoans[i];
+            Loan memory loan = loans[loanId];
+            
+            totalLoansCount++;
+            totalAmountBorrowed += loan.amount;
+            totalAmountRepaid += loan.amountRepaid;
+            
+            if (loan.isActive && !loan.isRepaid) {
+                activeLoansCount++;
+                currentOutstandingDebt += getRemainingOwed(loanId);
+            } else if (loan.isRepaid) {
+                repaidLoansCount++;
+            } else if (!loan.isActive && !loan.isRepaid) {
+                defaultedLoansCount++;
+            }
+        }
+    }
+
+    /**
      * @dev Get loan details
      */
     function getLoan(uint256 loanId) external view returns (Loan memory) {

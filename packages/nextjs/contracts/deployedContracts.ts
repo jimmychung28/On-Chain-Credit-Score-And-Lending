@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      address: "0x8e264821AFa98DD104eEcfcfa7FD9f8D8B320adA",
       abi: [
         {
           inputs: [
@@ -478,6 +478,70 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
+          name: "getLoanDetails",
+          outputs: [
+            {
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "originalAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "interestRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalOwed",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "remainingOwed",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "amountPaid",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "dueDate",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isActive",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "isOverdue",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "isRepaid",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "getPoolInfo",
           outputs: [
@@ -518,11 +582,142 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
+          name: "getRemainingOwed",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
           name: "getTotalOwed",
           outputs: [
             {
               internalType: "uint256",
               name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserActiveLoans",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "loanIds",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "remainingBalances",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "dueDates",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "interestRates",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserLoanSummary",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalLoansCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "activeLoansCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "repaidLoansCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "defaultedLoansCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalAmountBorrowed",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalAmountRepaid",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "currentOutstandingDebt",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserTotalDebt",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalOutstanding",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "activeLoanCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "overdueLoanCount",
               type: "uint256",
             },
           ],

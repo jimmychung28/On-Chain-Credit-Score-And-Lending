@@ -32,6 +32,27 @@ const CreditScoringPage = () => {
     functionName: "getPoolInfo",
   });
 
+  // Read user's total debt
+  const { data: userDebt } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getUserTotalDebt",
+    args: [connectedAddress],
+  });
+
+  // Read user's active loans
+  const { data: activeLoans } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getUserActiveLoans",
+    args: [connectedAddress],
+  });
+
+  // Read user's loan summary
+  const { data: loanSummary } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getUserLoanSummary",
+    args: [connectedAddress],
+  });
+
   // Write contracts
   const { writeContractAsync: writeCreditScoring, isPending: isCreditScoringPending } =
     useScaffoldWriteContract("CreditScoring");
@@ -102,6 +123,23 @@ const CreditScoringPage = () => {
       }, 2000);
     } catch (error) {
       console.error("Pool deposit failed:", error);
+    }
+  };
+
+  const repayLoan = async (loanId: bigint, amount: string) => {
+    if (!amount) return;
+    try {
+      await writeCreditLending({
+        functionName: "repayLoan",
+        args: [loanId],
+        value: parseEther(amount),
+      });
+      setTimeout(() => {
+        refetchProfile();
+        refetchPool();
+      }, 2000);
+    } catch (error) {
+      console.error("Loan repayment failed:", error);
     }
   };
 
@@ -216,6 +254,100 @@ const CreditScoringPage = () => {
                 <div className="text-center">
                   <span className="loading loading-spinner loading-lg"></span>
                   <p>Loading credit profile...</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Outstanding Loans Card */}
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title">Outstanding Loans</h2>
+
+              {userDebt ? (
+                <div className="space-y-4">
+                  <div className="stats stats-vertical">
+                    <div className="stat">
+                      <div className="stat-title">Total Outstanding</div>
+                      <div className="stat-value text-2xl">{formatEther(userDebt[0] || 0n)} ETH</div>
+                      <div className="stat-desc">
+                        {userDebt[1]?.toString() || "0"} active loans
+                        {Number(userDebt[2]) > 0 && (
+                          <span className="text-red-500 ml-2">({userDebt[2]?.toString()} overdue)</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {activeLoans && Array.isArray(activeLoans[0]) && activeLoans[0].length > 0 ? (
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">Active Loans:</h3>
+                      {(activeLoans[0] as readonly bigint[]).map((loanId: bigint, index: number) => {
+                        const remainingBalance = (activeLoans[1] as readonly bigint[])?.[index] || 0n;
+                        const dueDate = (activeLoans[2] as readonly bigint[])?.[index] || 0n;
+                        const interestRate = (activeLoans[3] as readonly bigint[])?.[index] || 0n;
+                        const isOverdue = Number(dueDate) * 1000 < Date.now();
+
+                        return (
+                          <div key={loanId.toString()} className="border p-3 rounded-lg">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <span className="font-medium">Loan #{loanId.toString()}</span>
+                                <div className="text-sm text-gray-600">{Number(interestRate) / 100}% APR</div>
+                              </div>
+                              <div className="text-right">
+                                <div className={`font-semibold ${isOverdue ? "text-red-600" : "text-blue-600"}`}>
+                                  {formatEther(remainingBalance)} ETH
+                                </div>
+                                <div className={`text-xs ${isOverdue ? "text-red-500" : "text-gray-500"}`}>
+                                  Due: {new Date(Number(dueDate) * 1000).toLocaleDateString()}
+                                  {isOverdue && " (OVERDUE)"}
+                                </div>
+                                <button
+                                  className="btn btn-xs btn-primary mt-1"
+                                  onClick={() => repayLoan(loanId, formatEther(remainingBalance))}
+                                  disabled={isCreditLendingPending}
+                                >
+                                  {isCreditLendingPending ? "Paying..." : "Repay Full"}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500">No outstanding loans</div>
+                  )}
+
+                  {loanSummary && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h3 className="font-semibold mb-2">Loan History</h3>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="font-medium">Total Borrowed:</span>
+                          <div>{formatEther(loanSummary[4] || 0n)} ETH</div>
+                        </div>
+                        <div>
+                          <span className="font-medium">Total Repaid:</span>
+                          <div>{formatEther(loanSummary[5] || 0n)} ETH</div>
+                        </div>
+                        <div>
+                          <span className="font-medium">Completed Loans:</span>
+                          <div className="text-green-600">{loanSummary[2]?.toString() || "0"}</div>
+                        </div>
+                        <div>
+                          <span className="font-medium">Defaulted Loans:</span>
+                          <div className="text-red-600">{loanSummary[3]?.toString() || "0"}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center">
+                  <span className="loading loading-spinner loading-lg"></span>
+                  <p>Loading loan information...</p>
                 </div>
               )}
             </div>
