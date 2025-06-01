@@ -230,12 +230,14 @@ contract CreditLending is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Calculate total amount owed including interest
+     * @dev Calculate total amount owed including time-based interest
      */
     function getTotalOwed(uint256 loanId) public view returns (uint256) {
         Loan memory loan = loans[loanId];
-        uint256 interest = loan.amount*(loan.interestRate)/(10000);
-        return loan.amount+(interest);
+        uint256 timeElapsed = block.timestamp - loan.startTime;
+        uint256 dailyRate = loan.interestRate / 365; // Annual rate to daily
+        uint256 timeBasedInterest = loan.amount * dailyRate * timeElapsed / (1 days) / 10000;
+        return loan.amount + timeBasedInterest;
     }
 
     /**
