@@ -422,27 +422,188 @@ const CreditScoringPage = () => {
             <div className="grid md:grid-cols-2 gap-6">
               {/* Credit Factors */}
               <div className="bg-base-100 rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold mb-4">Credit Score Factors</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>Repayment History</span>
-                    <span className="font-semibold">30%</span>
+                <h3 className="text-xl font-bold mb-4">Your Credit Score Breakdown</h3>
+                <div className="space-y-6">
+                  {/* Repayment History - 30% */}
+                  <div className="border-l-4 border-primary pl-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold">Repayment History</span>
+                      <span className="text-sm text-base-content/70">30% weight</span>
+                    </div>
+                    <div className="text-sm text-base-content/80 mb-2">
+                      {creditProfile ? (
+                        <>
+                          <div>Total Loans: {Number(creditProfile.loanCount)}</div>
+                          <div className="text-green-600">Repaid: {Number(creditProfile.repaidLoans)}</div>
+                          <div className="text-red-600">Defaulted: {Number(creditProfile.defaultedLoans)}</div>
+                          <div className="mt-1">
+                            Success Rate:{" "}
+                            {Number(creditProfile.loanCount) > 0
+                              ? `${((Number(creditProfile.repaidLoans) / Number(creditProfile.loanCount)) * 100).toFixed(1)}%`
+                              : "No loan history"}
+                          </div>
+                        </>
+                      ) : (
+                        <div>Loading...</div>
+                      )}
+                    </div>
+                    <div className="w-full bg-base-300 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full ${
+                          creditProfile && Number(creditProfile.loanCount) > 0
+                            ? Number(creditProfile.defaultedLoans) === 0
+                              ? "bg-green-500"
+                              : Number(creditProfile.repaidLoans) > Number(creditProfile.defaultedLoans)
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                            : "bg-gray-300"
+                        }`}
+                        style={{
+                          width:
+                            creditProfile && Number(creditProfile.loanCount) > 0
+                              ? `${(Number(creditProfile.repaidLoans) / Number(creditProfile.loanCount)) * 100}%`
+                              : "0%",
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Transaction Volume</span>
-                    <span className="font-semibold">25%</span>
+
+                  {/* Transaction Volume - 25% */}
+                  <div className="border-l-4 border-secondary pl-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold">Transaction Volume</span>
+                      <span className="text-sm text-base-content/70">25% weight</span>
+                    </div>
+                    <div className="text-sm text-base-content/80 mb-2">
+                      {creditProfile ? (
+                        <>
+                          <div>Total Volume: {formatEther(creditProfile.totalVolume)} ETH</div>
+                          <div>Average Transaction: {formatEther(creditProfile.avgTransactionValue)} ETH</div>
+                        </>
+                      ) : (
+                        <div>Loading...</div>
+                      )}
+                    </div>
+                    <div className="w-full bg-base-300 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-secondary"
+                        style={{
+                          width: creditProfile
+                            ? `${Math.min(100, (Number(formatEther(creditProfile.totalVolume)) / 100) * 100)}%`
+                            : "0%",
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Activity Frequency</span>
-                    <span className="font-semibold">20%</span>
+
+                  {/* Activity Frequency - 20% */}
+                  <div className="border-l-4 border-accent pl-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold">Activity Frequency</span>
+                      <span className="text-sm text-base-content/70">20% weight</span>
+                    </div>
+                    <div className="text-sm text-base-content/80 mb-2">
+                      {creditProfile ? (
+                        <>
+                          <div>Total Transactions: {Number(creditProfile.transactionCount)}</div>
+                          <div>
+                            Account Activity: {Number(creditProfile.transactionCount) > 0 ? "Active" : "Inactive"}
+                          </div>
+                        </>
+                      ) : (
+                        <div>Loading...</div>
+                      )}
+                    </div>
+                    <div className="w-full bg-base-300 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-accent"
+                        style={{
+                          width: creditProfile
+                            ? `${Math.min(100, (Number(creditProfile.transactionCount) / 50) * 100)}%`
+                            : "0%",
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Account Age</span>
-                    <span className="font-semibold">15%</span>
+
+                  {/* Account Age - 15% */}
+                  <div className="border-l-4 border-info pl-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold">Account Age</span>
+                      <span className="text-sm text-base-content/70">15% weight</span>
+                    </div>
+                    <div className="text-sm text-base-content/80 mb-2">
+                      {creditProfile ? (
+                        <>
+                          <div>Account Age: {Number(creditProfile.accountAge)} blocks</div>
+                          <div>
+                            Established: {Number(creditProfile.accountAge) > 1000 ? "Well established" : "New account"}
+                          </div>
+                        </>
+                      ) : (
+                        <div>Loading...</div>
+                      )}
+                    </div>
+                    <div className="w-full bg-base-300 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-info"
+                        style={{
+                          width: creditProfile
+                            ? `${Math.min(100, (Number(creditProfile.accountAge) / 10000) * 100)}%`
+                            : "0%",
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Staking Amount</span>
-                    <span className="font-semibold">10%</span>
+
+                  {/* Staking Amount - 10% */}
+                  <div className="border-l-4 border-warning pl-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold">Staking Amount</span>
+                      <span className="text-sm text-base-content/70">10% weight</span>
+                    </div>
+                    <div className="text-sm text-base-content/80 mb-2">
+                      <div>Staked Amount: {stakingBalance ? formatEther(stakingBalance) : "0"} ETH</div>
+                      <div>
+                        Stake Level:{" "}
+                        {stakingBalance && Number(formatEther(stakingBalance)) > 0
+                          ? Number(formatEther(stakingBalance)) >= 1
+                            ? "High"
+                            : Number(formatEther(stakingBalance)) >= 0.1
+                              ? "Medium"
+                              : "Low"
+                          : "None"}
+                      </div>
+                    </div>
+                    <div className="w-full bg-base-300 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-warning"
+                        style={{
+                          width: stakingBalance
+                            ? `${Math.min(100, (Number(formatEther(stakingBalance)) / 10) * 100)}%`
+                            : "0%",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Score Calculation Summary */}
+                <div className="mt-6 p-4 bg-base-200 rounded-xl">
+                  <h4 className="font-semibold mb-2">Score Calculation</h4>
+                  <div className="text-sm space-y-1">
+                    <div className="flex justify-between">
+                      <span>Base Score:</span>
+                      <span>300</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Performance Bonus:</span>
+                      <span>+{creditScore - 300}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold border-t pt-1">
+                      <span>Total Score:</span>
+                      <span className={getCreditScoreColor(creditScore)}>{creditScore}</span>
+                    </div>
                   </div>
                 </div>
               </div>
