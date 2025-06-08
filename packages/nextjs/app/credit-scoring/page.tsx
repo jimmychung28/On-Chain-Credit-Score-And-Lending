@@ -220,7 +220,11 @@ const CreditScoringPage = () => {
     if (score >= 650) return "8%";
     if (score >= 600) return "11%";
     if (score >= 500) return "15%";
-    return "20%";
+    if (score >= 450) return "20%";
+    if (score >= 400) return "30%";
+    if (score >= 350) return "50%";
+    if (score >= 320) return "70%";
+    return "100%"; // For credit scores 300-319
   };
 
   if (!connectedAddress) {
@@ -629,8 +633,28 @@ const CreditScoringPage = () => {
                     <span className="font-semibold text-orange-700">11%</span>
                   </div>
                   <div className="flex justify-between items-center p-2 rounded-lg bg-red-50">
-                    <span className="text-red-700">400-599 (Very Poor)</span>
-                    <span className="font-semibold text-red-700">15-20%</span>
+                    <span className="text-red-700">500-599 (Very Poor)</span>
+                    <span className="font-semibold text-red-700">15%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-100">
+                    <span className="text-red-800">450-499 (Bad)</span>
+                    <span className="font-semibold text-red-800">20%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-200">
+                    <span className="text-red-900">400-449 (Terrible)</span>
+                    <span className="font-semibold text-red-900">30%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-300">
+                    <span className="text-red-950">350-399 (High Risk)</span>
+                    <span className="font-semibold text-red-950">50%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-400">
+                    <span className="text-white">320-349 (Extreme Risk)</span>
+                    <span className="font-semibold text-white">70%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-600">
+                    <span className="text-white">300-319 (Maximum Risk)</span>
+                    <span className="font-semibold text-white">100%</span>
                   </div>
                 </div>
               </div>
@@ -646,12 +670,29 @@ const CreditScoringPage = () => {
                   Request Loan
                 </h3>
 
-                {creditScore < 400 ? (
-                  <div className="alert alert-error">
+                {creditScore < 350 ? (
+                  <div className="alert alert-warning">
                     <ExclamationTriangleIcon className="h-5 w-5" />
-                    <span>Credit score too low. Minimum 400 required.</span>
+                    <div>
+                      <div className="font-semibold">Very High Risk Lending</div>
+                      <div className="text-sm">
+                        Credit score {creditScore}: {getInterestRate(creditScore)} interest rate applies
+                      </div>
+                    </div>
                   </div>
-                ) : (
+                ) : creditScore < 400 ? (
+                  <div className="alert alert-warning">
+                    <ExclamationTriangleIcon className="h-5 w-5" />
+                    <div>
+                      <div className="font-semibold">High Risk Lending</div>
+                      <div className="text-sm">
+                        Credit score {creditScore}: {getInterestRate(creditScore)} interest rate applies
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {
                   <div className="space-y-4">
                     <div className="form-control">
                       <label className="label">
@@ -704,7 +745,7 @@ const CreditScoringPage = () => {
                       {isCreditLendingPending ? "Processing..." : "Request Loan"}
                     </button>
                   </div>
-                )}
+                }
               </div>
 
               {/* Active Loans */}

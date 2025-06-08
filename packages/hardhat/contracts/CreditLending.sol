@@ -45,8 +45,8 @@ contract CreditLending is Ownable, ReentrancyGuard {
     
     // Lending parameters
     uint256 public constant MAX_LOAN_AMOUNT = 100 ether;
-    uint256 public constant MIN_CREDIT_SCORE = 400;
-    uint256 public constant MAX_INTEREST_RATE = 2000; // 20%
+    uint256 public constant MIN_CREDIT_SCORE = 300; // Allow anyone with minimum possible credit score
+    uint256 public constant MAX_INTEREST_RATE = 10000; // 100% for extremely risky borrowers
     uint256 public constant MIN_INTEREST_RATE = 300;  // 3%
     uint256 public constant LOAN_DURATION = 30 days;
     uint256 public constant ORIGINATION_FEE = 50; // 0.5%
@@ -218,15 +218,19 @@ contract CreditLending is Ownable, ReentrancyGuard {
      */
     function _calculateInterestRate(uint256 creditScore) internal pure returns (uint256) {
         // Better credit score = lower interest rate
-        // Score range: 300-850, Interest range: 3%-20%
+        // Score range: 300-850, Interest range: 3%-100%
         
         if (creditScore >= 750) return MIN_INTEREST_RATE;           // 3% for excellent credit
         if (creditScore >= 700) return MIN_INTEREST_RATE+(200);  // 5% for good credit
         if (creditScore >= 650) return MIN_INTEREST_RATE+(500);  // 8% for fair credit
         if (creditScore >= 600) return MIN_INTEREST_RATE+(800);  // 11% for poor credit
         if (creditScore >= 500) return MIN_INTEREST_RATE+(1200); // 15% for bad credit
+        if (creditScore >= 450) return MIN_INTEREST_RATE+(1700); // 20% for very bad credit
+        if (creditScore >= 400) return MIN_INTEREST_RATE+(2700); // 30% for terrible credit
+        if (creditScore >= 350) return MIN_INTEREST_RATE+(4700); // 50% for extremely poor credit
+        if (creditScore >= 320) return MIN_INTEREST_RATE+(6700); // 70% for disaster credit
         
-        return MAX_INTEREST_RATE; // 20% for very poor credit
+        return MAX_INTEREST_RATE; // 100% for the worst possible credit (300-319)
     }
 
     /**
