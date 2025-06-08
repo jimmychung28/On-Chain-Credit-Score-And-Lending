@@ -302,7 +302,7 @@ const CreditScoringPage = () => {
     );
   }
 
-  const creditScore = creditProfile ? Number(creditProfile.score) : 0;
+  const creditScore = creditProfile && creditProfile.score ? Number(creditProfile.score) : 0;
   const scorePercentage = ((creditScore - 300) / 550) * 100;
 
   return (
@@ -369,7 +369,7 @@ const CreditScoringPage = () => {
                   <div>
                     <div className="text-sm text-base-content/70">Total Debt</div>
                     <div className="text-xl font-bold">
-                      {userDebt ? `${formatEther(userDebt[0] || 0n)} ETH` : "0 ETH"}
+                      {userDebt && userDebt[0] ? `${formatEther(userDebt[0])} ETH` : "0 ETH"}
                     </div>
                   </div>
                 </div>
@@ -553,24 +553,38 @@ const CreditScoringPage = () => {
                   Active Loans
                 </h3>
 
-                {activeLoans && activeLoans.length > 0 ? (
+                {activeLoans && Array.isArray(activeLoans) && activeLoans.length > 0 ? (
                   <div className="space-y-3">
-                    {activeLoans.map((loan: any, index: number) => (
-                      <div key={index} className="bg-base-200 p-4 rounded-xl">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <div className="font-semibold">{formatEther(loan.amount)} ETH</div>
-                            <div className="text-sm text-base-content/70">
-                              Due: {new Date(Number(loan.dueDate) * 1000).toLocaleDateString()}
+                    {activeLoans.map((loan: any, index: number) => {
+                      // Handle both object and array formats
+                      const loanAmount = loan?.amount || loan?.[0] || 0n;
+                      const dueDate = loan?.dueDate || loan?.[1] || 0n;
+                      const interestRate = loan?.interestRate || loan?.[2] || 0n;
+                      const totalDue = loan?.totalDue || loan?.[3] || loanAmount;
+
+                      if (!loanAmount || loanAmount === 0n) return null;
+
+                      return (
+                        <div key={index} className="bg-base-200 p-4 rounded-xl">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <div className="font-semibold">{formatEther(loanAmount)} ETH</div>
+                              <div className="text-sm text-base-content/70">
+                                Due:{" "}
+                                {dueDate && dueDate !== 0n
+                                  ? new Date(Number(dueDate) * 1000).toLocaleDateString()
+                                  : "N/A"}
+                              </div>
                             </div>
+                            <div className="badge badge-warning">Active</div>
                           </div>
-                          <div className="badge badge-warning">Active</div>
+                          <div className="text-sm">
+                            Interest: {interestRate ? `${Number(interestRate) / 100}%` : "N/A"} | Total Due:{" "}
+                            {formatEther(totalDue)} ETH
+                          </div>
                         </div>
-                        <div className="text-sm">
-                          Interest: {loan.interestRate}% | Total Due: {formatEther(loan.totalDue)} ETH
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8 text-base-content/70">
@@ -651,21 +665,21 @@ const CreditScoringPage = () => {
                   <div className="stat">
                     <div className="stat-title">Total Pool Size</div>
                     <div className="stat-value text-info">
-                      {poolInfo ? `${formatEther(poolInfo[0] || 0n)} ETH` : "0 ETH"}
+                      {poolInfo && poolInfo[0] ? `${formatEther(poolInfo[0])} ETH` : "0 ETH"}
                     </div>
                   </div>
 
                   <div className="stat">
                     <div className="stat-title">Available to Lend</div>
                     <div className="stat-value text-success">
-                      {poolInfo ? `${formatEther(poolInfo[1] || 0n)} ETH` : "0 ETH"}
+                      {poolInfo && poolInfo[1] ? `${formatEther(poolInfo[1])} ETH` : "0 ETH"}
                     </div>
                   </div>
 
                   <div className="stat">
                     <div className="stat-title">Total Loans Outstanding</div>
                     <div className="stat-value text-warning">
-                      {poolInfo ? `${formatEther(poolInfo[2] || 0n)} ETH` : "0 ETH"}
+                      {poolInfo && poolInfo[2] ? `${formatEther(poolInfo[2])} ETH` : "0 ETH"}
                     </div>
                   </div>
                 </div>
