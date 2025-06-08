@@ -166,11 +166,11 @@ contract CreditScoring is Ownable, ReentrancyGuard {
         uint256 repaymentScore = _calculateRepaymentScore(profile.repaidLoans, profile.defaultedLoans);
         uint256 stakingScore = _calculateStakingScore(stakingBalances[user]);
 
-        uint256 weightedScore = volumeScore*(volumeWeight)
+        uint256 weightedScore = (volumeScore*(volumeWeight)
             +(frequencyScore*(frequencyWeight))
             +(ageScore*(ageWeight))
             +(repaymentScore*(repaymentWeight))
-            +(stakingScore*(stakingWeight))
+            +(stakingScore*(stakingWeight)))
             /(100);
 
         // Ensure score is within bounds
@@ -226,7 +226,7 @@ contract CreditScoring is Ownable, ReentrancyGuard {
      */
     function _calculateRepaymentScore(uint256 repaidLoans, uint256 defaultedLoans) internal pure returns (uint256) {
         uint256 totalLoans = repaidLoans+(defaultedLoans);
-        if (totalLoans == 0) return MAX_SCORE*(70)/(100); // Neutral score for no history
+        if (totalLoans == 0) return MIN_SCORE+(550*50/100); // Neutral 50% score for no history
         
         uint256 repaymentRate = repaidLoans*(100)/(totalLoans);
         return MIN_SCORE+((repaymentRate*(550)/(100)));
