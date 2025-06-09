@@ -423,20 +423,24 @@ const CreditScoringPage = () => {
   };
 
   // Check if user is registered
-  // TypeScript shows it as array but runtime shows it as object - cast it properly
+  // Handle both object and array returns from the contract
   const profileData = creditProfile as any;
 
   // Debug logging
   console.log("Debug - creditProfile:", creditProfile);
   console.log("Debug - profileData:", profileData);
   console.log("Debug - connectedAddress:", connectedAddress);
+  console.log("Debug - borrowerLoanIds:", borrowerLoanIds);
+  console.log("Debug - lenderInfo:", lenderInfo);
+  console.log("Debug - transparencyPremium:", transparencyPremium);
 
-  // More robust registration check for ZK contract tuple return
+  // More robust registration check - handle both object and array formats
   const isRegistered = !!(
     profileData &&
-    Array.isArray(profileData) &&
-    profileData.length >= 3 &&
-    profileData[2] === true // isActive field is at index 2
+    // Object format: { isActive: true, ... }
+    (profileData.isActive === true ||
+      // Array format: [score, lastUpdated, isActive, ...]
+      (Array.isArray(profileData) && profileData.length >= 3 && profileData[2] === true))
   );
 
   console.log("Debug - isRegistered:", isRegistered);
@@ -515,11 +519,23 @@ const CreditScoringPage = () => {
   }
 
   const creditScore = (() => {
-    if (profileData && Array.isArray(profileData) && profileData.length >= 1) {
-      const score = Number(profileData[0]);
+    if (profileData) {
+      let score = 0;
+      let isActive = false;
+
+      // Handle object format: { score: '750', isActive: true, ... }
+      if (profileData.score !== undefined) {
+        score = Number(profileData.score);
+        isActive = profileData.isActive === true;
+      }
+      // Handle array format: [score, lastUpdated, isActive, ...]
+      else if (Array.isArray(profileData) && profileData.length >= 1) {
+        score = Number(profileData[0]);
+        isActive = profileData.length >= 3 && profileData[2] === true;
+      }
+
       // If user is registered but has no score (score = 0), give them a starting score of 650
-      if (score === 0 && profileData[2] === true) {
-        // isActive = true
+      if (score === 0 && isActive) {
         return 650; // Fair starting score for new users
       }
       return score;
