@@ -321,4 +321,152 @@ contract CreditScoring is Ownable, ReentrancyGuard {
         require(index < userTransactions[user].length, "Transaction index out of bounds");
         return userTransactions[user][index];
     }
+
+    // ==================== TESTING FUNCTIONS ====================
+    
+    /**
+     * @dev Set test credit profile data (only owner) - FOR TESTING ONLY
+     */
+    function setTestCreditProfile(
+        address user,
+        uint256 totalVolume,
+        uint256 transactionCount,
+        uint256 accountAgeBlocks,
+        uint256 repaidLoans,
+        uint256 defaultedLoans
+    ) external onlyOwner {
+        require(creditProfiles[user].isActive, "User not registered");
+        
+        CreditProfile storage profile = creditProfiles[user];
+        profile.totalVolume = totalVolume;
+        profile.transactionCount = transactionCount;
+        profile.avgTransactionValue = transactionCount > 0 ? totalVolume / transactionCount : 0;
+        
+        // Set account age to an earlier block (current block - accountAgeBlocks)
+        // This ensures block.number - profile.accountAge = accountAgeBlocks
+        if (block.number >= accountAgeBlocks) {
+            profile.accountAge = block.number - accountAgeBlocks;
+        } else {
+            // If accountAgeBlocks is larger than current block, just set it to block 1
+            profile.accountAge = 1;
+        }
+        
+        profile.repaidLoans = repaidLoans;
+        profile.defaultedLoans = defaultedLoans;
+        profile.loanCount = repaidLoans + defaultedLoans;
+        
+        // Recalculate score with new data
+        _updateCreditScore(user);
+    }
+    
+    /**
+     * @dev Create test user with good credit profile (only owner) - FOR TESTING ONLY
+     */
+    function createTestUser(address user) external onlyOwner {
+        require(!creditProfiles[user].isActive, "User already registered");
+        
+        // Register user first
+        creditProfiles[user] = CreditProfile({
+            score: MIN_SCORE,
+            totalVolume: 0,
+            transactionCount: 0,
+            avgTransactionValue: 0,
+            accountAge: block.number,
+            lastUpdated: block.timestamp,
+            isActive: true,
+            loanCount: 0,
+            repaidLoans: 0,
+            defaultedLoans: 0
+        });
+        
+        // Set good test data for high credit score manually
+        CreditProfile storage profile = creditProfiles[user];
+        profile.totalVolume = 100 ether;
+        profile.transactionCount = 50;
+        profile.avgTransactionValue = profile.totalVolume / profile.transactionCount;
+        
+        // Set account age to simulate old account (current block - 1000)
+        if (block.number >= 1000) {
+            profile.accountAge = block.number - 1000;
+        } else {
+            profile.accountAge = 1;
+        }
+        
+        profile.repaidLoans = 5;
+        profile.defaultedLoans = 0;
+        profile.loanCount = 5;
+        
+        // Recalculate score with new data
+        _updateCreditScore(user);
+        
+        emit UserRegistered(user, block.timestamp);
+    }
+    
+    /**
+     * @dev Batch create test users with varying credit scores (only owner) - FOR TESTING ONLY
+     */
+    function createTestUsers() external onlyOwner {
+        address[5] memory testAddresses = [
+            0x2c827c3E27744B1D83df71000F6c3B7FC59Fa0A1, // Your address - Excellent credit
+            0x742D35CC6C6C8b5B2C8A4D15c9C3f47b4E5F1234, // Test address 1 - Good credit
+            0x8ba1f109551BD432803012645FAc136c22c87654, // Test address 2 - Fair credit
+            0x1234567890AbcdEF1234567890aBcdef12345678, // Test address 3 - Poor credit
+            0xABcdEFABcdEFabcdEfAbCdefabcdeFABcDEFabCD  // Test address 4 - Bad credit
+        ];
+        
+        // Create excellent credit user (750+ score)
+        if (!creditProfiles[testAddresses[0]].isActive) {
+            creditProfiles[testAddresses[0]] = CreditProfile({
+                score: MIN_SCORE, totalVolume: 200 ether, transactionCount: 80, avgTransactionValue: 0,
+                accountAge: block.number >= 1000 ? block.number - 1000 : 1, lastUpdated: block.timestamp, isActive: true,
+                loanCount: 10, repaidLoans: 10, defaultedLoans: 0
+            });
+            creditProfiles[testAddresses[0]].avgTransactionValue = creditProfiles[testAddresses[0]].totalVolume / creditProfiles[testAddresses[0]].transactionCount;
+            _updateCreditScore(testAddresses[0]);
+        }
+        
+        // Create good credit user (700-749 score)
+        if (!creditProfiles[testAddresses[1]].isActive) {
+            creditProfiles[testAddresses[1]] = CreditProfile({
+                score: MIN_SCORE, totalVolume: 50 ether, transactionCount: 40, avgTransactionValue: 0,
+                accountAge: block.number >= 2000 ? block.number - 2000 : 1, lastUpdated: block.timestamp, isActive: true,
+                loanCount: 9, repaidLoans: 8, defaultedLoans: 1
+            });
+            creditProfiles[testAddresses[1]].avgTransactionValue = creditProfiles[testAddresses[1]].totalVolume / creditProfiles[testAddresses[1]].transactionCount;
+            _updateCreditScore(testAddresses[1]);
+        }
+        
+        // Create fair credit user (650-699 score)
+        if (!creditProfiles[testAddresses[2]].isActive) {
+            creditProfiles[testAddresses[2]] = CreditProfile({
+                score: MIN_SCORE, totalVolume: 20 ether, transactionCount: 25, avgTransactionValue: 0,
+                accountAge: block.number >= 3000 ? block.number - 3000 : 1, lastUpdated: block.timestamp, isActive: true,
+                loanCount: 7, repaidLoans: 5, defaultedLoans: 2
+            });
+            creditProfiles[testAddresses[2]].avgTransactionValue = creditProfiles[testAddresses[2]].totalVolume / creditProfiles[testAddresses[2]].transactionCount;
+            _updateCreditScore(testAddresses[2]);
+        }
+        
+        // Create poor credit user (600-649 score)
+        if (!creditProfiles[testAddresses[3]].isActive) {
+            creditProfiles[testAddresses[3]] = CreditProfile({
+                score: MIN_SCORE, totalVolume: 5 ether, transactionCount: 15, avgTransactionValue: 0,
+                accountAge: block.number >= 4000 ? block.number - 4000 : 1, lastUpdated: block.timestamp, isActive: true,
+                loanCount: 6, repaidLoans: 3, defaultedLoans: 3
+            });
+            creditProfiles[testAddresses[3]].avgTransactionValue = creditProfiles[testAddresses[3]].totalVolume / creditProfiles[testAddresses[3]].transactionCount;
+            _updateCreditScore(testAddresses[3]);
+        }
+        
+        // Create bad credit user (500-599 score)
+        if (!creditProfiles[testAddresses[4]].isActive) {
+            creditProfiles[testAddresses[4]] = CreditProfile({
+                score: MIN_SCORE, totalVolume: 1 ether, transactionCount: 8, avgTransactionValue: 0,
+                accountAge: block.number >= 5000 ? block.number - 5000 : 1, lastUpdated: block.timestamp, isActive: true,
+                loanCount: 6, repaidLoans: 2, defaultedLoans: 4
+            });
+            creditProfiles[testAddresses[4]].avgTransactionValue = creditProfiles[testAddresses[4]].totalVolume / creditProfiles[testAddresses[4]].transactionCount;
+            _updateCreditScore(testAddresses[4]);
+        }
+    }
 } 

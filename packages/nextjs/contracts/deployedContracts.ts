@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+      address: "0x871ACbEabBaf8Bed65c22ba7132beCFaBf8c27B5",
       abi: [
         {
           inputs: [
@@ -985,7 +985,7 @@ const deployedContracts = {
       },
     },
     CreditScoring: {
-      address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+      address: "0x0aec7c174554AF8aEc3680BB58431F6618311510",
       abi: [
         {
           inputs: [],
@@ -1233,6 +1233,26 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "createTestUser",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "createTestUsers",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -1601,6 +1621,44 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "totalVolume",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "transactionCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "accountAgeBlocks",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "repaidLoans",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "defaultedLoans",
+              type: "uint256",
+            },
+          ],
+          name: "setTestCreditProfile",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "",
               type: "address",
             },
@@ -1767,7 +1825,7 @@ const deployedContracts = {
       },
     },
     YourContract: {
-      address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      address: "0x8e264821AFa98DD104eEcfcfa7FD9f8D8B320adA",
       abi: [
         {
           inputs: [

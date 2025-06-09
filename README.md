@@ -9,6 +9,16 @@
 
 ⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript on top of Scaffold-ETH 2.
 
+## 🚀 Quick Testing
+
+**Ready to test? Jump right in:**
+```bash
+yarn chain && yarn deploy && yarn start
+cd packages/hardhat
+npx hardhat run scripts/register-and-boost.ts --network localhost
+```
+Visit `http://localhost:3001/credit-scoring` to see your **573 credit score** with **15% interest rates**!
+
 ## 🌟 Features
 
 ### Credit Scoring System
@@ -139,7 +149,7 @@ yarn deploy
 yarn start
 ```
 
-6. Visit your app on: `http://localhost:3000`
+6. Visit your app on: `http://localhost:3001` (or `http://localhost:3000` if port 3000 is available)
 
 ## 📖 Usage Guide
 
@@ -208,10 +218,175 @@ uint256 public constant ORIGINATION_FEE = 50; // 0.5%
 
 ## 🧪 Testing
 
+### Smart Contract Tests
 Run the smart contract tests:
 ```bash
 yarn hardhat:test
 ```
+
+### Complete Testing Flow
+
+This section provides a step-by-step guide to test the OnChain Credit system locally with realistic credit scoring scenarios.
+
+#### Prerequisites
+
+1. **Start Local Blockchain**
+   ```bash
+   yarn chain
+   ```
+
+2. **Deploy Contracts**
+   ```bash
+   yarn deploy
+   ```
+
+3. **Start Frontend**
+   ```bash
+   yarn start
+   ```
+   The frontend will be available at `http://localhost:3001`
+
+4. **Configure MetaMask**
+   - Add Hardhat Network to MetaMask:
+     - **Network Name**: Hardhat
+     - **RPC URL**: `http://localhost:8545`
+     - **Chain ID**: `31337`
+     - **Currency Symbol**: ETH
+
+#### Testing Scripts
+
+We provide two testing scripts to simulate different user scenarios:
+
+##### Option 1: Manual Registration + Credit Boost
+```bash
+# 1. First register through the frontend at http://localhost:3001/credit-scoring
+# 2. Connect your wallet: 0x010C5E560D0e042B53Cedba9A7404E90F82D7592
+# 3. Click "Get Started" to register
+# 4. Then run the credit boost script:
+npx hardhat run scripts/setup-test-credit.ts --network localhost
+```
+
+**Expected Results:**
+- Credit Score: ~522
+- Interest Rate: 15%
+- Loan Capacity: 100 ETH
+
+##### Option 2: Automated Registration + Credit Boost
+```bash
+# Register and boost credit in one command:
+npx hardhat run scripts/register-and-boost.ts --network localhost
+```
+
+**Expected Results:**
+- Credit Score: ~573  
+- Interest Rate: 15%
+- Loan Capacity: 100 ETH
+
+#### Testing Scenarios
+
+##### Scenario 1: New User Journey
+1. **Initial State**: New user with no credit history
+   - Credit Score: 300 (minimum)
+   - Interest Rate: 100% (maximum)
+   - Loan Eligibility: Very limited
+
+2. **After Testing Script**: Experienced user with excellent history
+   - Credit Score: 522-573
+   - Interest Rate: 15%
+   - Transaction Volume: 100-200 ETH
+   - Perfect Repayment Record: 5-10 successful loans
+
+##### Scenario 2: Credit Score Progression
+Run the incremental credit building script multiple times:
+```bash
+npx hardhat run scripts/create-test-user.ts --network localhost
+```
+
+**Each run adds:**
+- 3 transactions (15 ETH volume)
+- 2 successful loan repayments
+- ~6-10 point credit score increase
+
+**Progression Example:**
+- Run 1: 300 → 443 (Interest: 100% → 30%)
+- Run 5: 443 → 503 (Interest: 30% → 15%)
+- Run 10: 503 → 573 (Interest: 15% → 15%)
+- Run 15: 573 → 622 (Interest: 15% → 11%)
+
+##### Scenario 3: Interest Rate Tiers
+Test different credit score ranges and their corresponding interest rates:
+
+| Credit Score Range | Interest Rate | How to Achieve |
+|-------------------|---------------|----------------|
+| 300-349 (Very Poor) | 100% | New user, no history |
+| 400-449 (Poor) | 30% | Run script 1-2 times |
+| 500-599 (Fair) | 15% | Run script 5-8 times |
+| 600-649 (Good) | 11% | Run script 10-15 times |
+| 650-699 (Very Good) | 8% | Run script 15-20 times |
+| 750+ (Excellent) | 3% | Theoretical maximum |
+
+#### Frontend Testing Features
+
+Once your credit score is boosted, test these features on the frontend:
+
+1. **Credit Profile Dashboard**
+   - View detailed credit score breakdown
+   - See transaction history and loan performance
+   - Monitor real-time score updates
+
+2. **Loan Request System**
+   - Request loans up to 100 ETH
+   - See your personalized interest rate
+   - Experience automatic eligibility checking
+
+3. **Staking Interface**
+   - Stake ETH to earn yield from lending pool
+   - Monitor pool statistics and APY
+   - Test stake/unstake functionality
+
+4. **Pool Management** (if you have ETH in the deployment account)
+   - Add funds to the lending pool
+   - Monitor pool performance
+   - Withdraw funds
+
+#### Key Testing Addresses
+
+- **Your Test Wallet**: `0x010C5E560D0e042B53Cedba9A7404E90F82D7592`
+- **Deployer Account**: `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` (has admin privileges)
+- **Frontend URL**: `http://localhost:3001/credit-scoring`
+
+#### Troubleshooting
+
+**Common Issues:**
+
+1. **"Wrong Network" Error**
+   - Ensure MetaMask is connected to Hardhat network (Chain ID: 31337)
+   - RPC URL should be `http://localhost:8545`
+
+2. **"User not registered" Error**
+   - Use `register-and-boost.ts` script for automatic registration
+   - Or register manually through the frontend first
+
+3. **Contracts Not Found**
+   - Ensure `yarn chain` is running
+   - Redeploy contracts with `yarn deploy`
+
+4. **Transaction Failures**
+   - Check that local blockchain is running
+   - Verify account has sufficient ETH
+
+#### Expected System State After Testing
+
+- **Lending Pool**: 10 ETH available for loans
+- **Your Credit Score**: 522-622 (depending on method)
+- **Transaction History**: 15-84 recorded transactions
+- **Loan History**: 5-56 successful repayments
+- **Interest Rate**: 11-15% (down from 100%)
+- **System Status**: Fully functional DeFi lending platform
+
+This testing framework demonstrates how behavioral credit scoring can transform DeFi lending by providing fair access based on on-chain activity rather than traditional financial history.
+
+📖 **For detailed testing scenarios and advanced testing workflows, see [TESTING.md](./TESTING.md)**
 
 ## 🛳 Deployment
 
