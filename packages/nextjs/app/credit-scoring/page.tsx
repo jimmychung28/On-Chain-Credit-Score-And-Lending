@@ -396,7 +396,8 @@ const CreditScoringPage = () => {
   };
 
   // Check if user is registered
-  const profileData = creditProfile?.[0];
+  // TypeScript shows it as array but runtime shows it as object - cast it properly
+  const profileData = creditProfile as any;
 
   // Debug logging
   console.log("Debug - creditProfile:", creditProfile);
