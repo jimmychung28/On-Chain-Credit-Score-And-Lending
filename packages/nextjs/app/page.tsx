@@ -37,16 +37,10 @@ const Home: NextPage = () => {
                   <span className="text-sm font-medium">Connected:</span>
                   <Address address={connectedAddress} />
                 </div>
-                <div className="flex gap-4">
-                  <Link href="/zk-credit" className="btn btn-primary btn-lg gap-2">
-                    🔐 ZK Privacy Credit
-                    <ArrowRightIcon className="h-5 w-5" />
-                  </Link>
-                  <Link href="/credit-scoring" className="btn btn-outline btn-lg gap-2">
-                    Legacy System
-                    <ArrowRightIcon className="h-5 w-5" />
-                  </Link>
-                </div>
+                <Link href="/credit-scoring" className="btn btn-primary btn-lg gap-2">
+                  🔐 Get Started with Privacy
+                  <ArrowRightIcon className="h-5 w-5" />
+                </Link>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4">

@@ -318,6 +318,7 @@ const CreditScoringPage = () => {
   // Privacy/Transparency functions
   const updateTransparencyLevel = async (level: number) => {
     try {
+      // Try ZK contract first, fallback to regular contract
       await writeZKCreditScoringAsync({
         functionName: "updateTransparencyLevel",
         args: [level],
@@ -338,6 +339,19 @@ const CreditScoringPage = () => {
     } catch (error: any) {
       console.error("Privacy switch error:", error);
       addToast("error", `Failed to switch to privacy: ${error.message}`);
+    }
+  };
+
+  // Auto-register user in ZK system if they're not already
+  const ensureZKRegistration = async () => {
+    try {
+      await writeZKCreditScoringAsync({
+        functionName: "registerUser",
+      });
+      addToast("success", "Successfully registered in privacy system!");
+    } catch (error: any) {
+      // User might already be registered, that's ok
+      console.log("ZK registration note:", error.message);
     }
   };
 
@@ -930,11 +944,14 @@ const CreditScoringPage = () => {
                     <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-green-600">✅</span>
-                        <span className="font-semibold text-green-700 text-sm">Active Controls</span>
+                        <span className="font-semibold text-green-700 text-sm">Privacy Controls Active</span>
                       </div>
                       <p className="text-xs text-green-600">
                         Click any privacy level above to update your transparency settings. Privacy is always free!
                       </p>
+                      <button className="btn btn-xs btn-info mt-2" onClick={ensureZKRegistration}>
+                        Enable Privacy Features
+                      </button>
                     </div>
                   </div>
                 </div>
