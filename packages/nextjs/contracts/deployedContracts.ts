@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0x193521C8934bCF3473453AF4321911E7A89E0E12",
+      address: "0x0a17FabeA4633ce714F1Fa4a2dcA62C3bAc4758d",
       abi: [
         {
           inputs: [
@@ -1101,7 +1101,7 @@ const deployedContracts = {
       },
     },
     CreditScoring: {
-      address: "0x71a0b8A2245A9770A4D887cE1E4eCc6C1d4FF28c",
+      address: "0x22a9B82A6c3D2BFB68F324B2e8367f346Dd6f32a",
       abi: [
         {
           inputs: [],
@@ -1941,7 +1941,7 @@ const deployedContracts = {
       },
     },
     DynamicTargetRateModel: {
-      address: "0xAe120F0df055428E45b264E7794A18c54a2a3fAF",
+      address: "0x7C8BaafA542c57fF9B2B90612bf8aB9E86e22C09",
       abi: [
         {
           inputs: [],
@@ -2544,8 +2544,1857 @@ const deployedContracts = {
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
     },
+    DynamicTargetRateModelWithOracles: {
+      address: "0xd9fEc8238711935D6c8d79Bef2B9546ef23FC046",
+      abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "creditScore",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "utilization",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "finalRate",
+              type: "uint256",
+            },
+          ],
+          name: "InterestRateCalculated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "volatilityMultiplier",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "liquidityPremium",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "riskPremium",
+              type: "uint256",
+            },
+          ],
+          name: "MarketConditionsAutoUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "volatilityMultiplier",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "liquidityPremium",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "riskPremium",
+              type: "uint256",
+            },
+          ],
+          name: "MarketConditionsUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "feedType",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "int256",
+              name: "price",
+              type: "int256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "OracleDataUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "baseRate",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "targetUtilization",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "slope1",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "slope2",
+              type: "uint256",
+            },
+          ],
+          name: "RateModelUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "volatility",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "priceCount",
+              type: "uint256",
+            },
+          ],
+          name: "VolatilityCalculated",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAX_VOLATILITY_MULTIPLIER",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MIN_VOLATILITY_MULTIPLIER",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "RATE_PRECISION",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "STALENESS_THRESHOLD",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "UTILIZATION_PRECISION",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "autoUpdateEnabled",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "creditScore",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "poolUtilization",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "loanAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "loanDuration",
+              type: "uint256",
+            },
+          ],
+          name: "calculateInterestRate",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "creditRiskTiers",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "minScore",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "maxScore",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "riskMultiplier",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "basePremium",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defiRateFeed",
+          outputs: [
+            {
+              internalType: "contract AggregatorV3Interface",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "emergencyDisableOracles",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ethUsdFeed",
+          outputs: [
+            {
+              internalType: "contract AggregatorV3Interface",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "creditScore",
+              type: "uint256",
+            },
+          ],
+          name: "getCreditRiskTier",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "minScore",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "maxScore",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "riskMultiplier",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "basePremium",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct DynamicTargetRateModel.CreditRiskTier",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "creditScore",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "utilization",
+              type: "uint256",
+            },
+          ],
+          name: "getCurrentRateComponents",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "baseUtilizationRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "creditAdjustedRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "marketAdjustedRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "finalRate",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "creditScore",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "utilization",
+              type: "uint256",
+            },
+          ],
+          name: "getCurrentRateComponentsWithOracles",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "baseUtilizationRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "creditAdjustedRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "marketAdjustedRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "finalRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "oracleVolatilityMultiplier",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "oracleLiquidityPremium",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "oracleRiskPremium",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getMarketConditions",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "volatilityMultiplier",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "liquidityPremium",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "riskPremium",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "lastUpdateTime",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct DynamicTargetRateModel.MarketConditions",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getModelParameters",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "baseRate",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "targetUtilization",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "slope1",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "slope2",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "maxRate",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct DynamicTargetRateModel.RateModel",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getOracleData",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "ethPrice",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "ethPriceTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "int256",
+              name: "volatilityData",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "volatilityTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "int256",
+              name: "liquidityData",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "liquidityTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "int256",
+              name: "defiRateData",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "defiRateTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "oraclesActive",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getOracleFeedAddresses",
+          outputs: [
+            {
+              internalType: "address",
+              name: "ethUsd",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "volatility",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "liquidity",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "defiRate",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getPerformanceStats",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalOriginated",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalDefaulted",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "defaultRate",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_ethUsdFeed",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_volatilityFeed",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_liquidityFeed",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_defiRateFeed",
+              type: "address",
+            },
+          ],
+          name: "initializeOracles",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "liquidityFeed",
+          outputs: [
+            {
+              internalType: "contract AggregatorV3Interface",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "marketConditions",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "volatilityMultiplier",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "liquidityPremium",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "riskPremium",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastUpdateTime",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "priceHistory",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "price",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "priceHistoryIndex",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "rateModel",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "baseRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "targetUtilization",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "slope1",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "slope2",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "maxRate",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bool",
+              name: "successful",
+              type: "bool",
+            },
+          ],
+          name: "recordLoanPerformance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bool",
+              name: "_enabled",
+              type: "bool",
+            },
+          ],
+          name: "setAutoUpdateEnabled",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bool",
+              name: "_useOracles",
+              type: "bool",
+            },
+          ],
+          name: "setUseOracles",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalDefaults",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalLoansOriginated",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_volatilityMultiplier",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_liquidityPremium",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_riskPremium",
+              type: "uint256",
+            },
+          ],
+          name: "updateMarketConditions",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "updateMarketConditionsFromOracles",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "updatePriceHistory",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_baseRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_targetUtilization",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_slope1",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_slope2",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_maxRate",
+              type: "uint256",
+            },
+          ],
+          name: "updateRateModel",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "useOracles",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "volatilityFeed",
+          outputs: [
+            {
+              internalType: "contract AggregatorV3Interface",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        RATE_PRECISION: "contracts/DynamicTargetRateModel.sol",
+        UTILIZATION_PRECISION: "contracts/DynamicTargetRateModel.sol",
+        calculateInterestRate: "contracts/DynamicTargetRateModel.sol",
+        creditRiskTiers: "contracts/DynamicTargetRateModel.sol",
+        getCreditRiskTier: "contracts/DynamicTargetRateModel.sol",
+        getCurrentRateComponents: "contracts/DynamicTargetRateModel.sol",
+        getMarketConditions: "contracts/DynamicTargetRateModel.sol",
+        getModelParameters: "contracts/DynamicTargetRateModel.sol",
+        getPerformanceStats: "contracts/DynamicTargetRateModel.sol",
+        marketConditions: "contracts/DynamicTargetRateModel.sol",
+        owner: "contracts/DynamicTargetRateModel.sol",
+        rateModel: "contracts/DynamicTargetRateModel.sol",
+        recordLoanPerformance: "contracts/DynamicTargetRateModel.sol",
+        renounceOwnership: "contracts/DynamicTargetRateModel.sol",
+        totalDefaults: "contracts/DynamicTargetRateModel.sol",
+        totalLoansOriginated: "contracts/DynamicTargetRateModel.sol",
+        transferOwnership: "contracts/DynamicTargetRateModel.sol",
+        updateMarketConditions: "contracts/DynamicTargetRateModel.sol",
+        updateRateModel: "contracts/DynamicTargetRateModel.sol",
+      },
+    },
+    MockDeFiRateFeed: {
+      address: "0x95775fD3Afb1F4072794CA4ddA27F2444BCf8Ac3",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "_description",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "int256",
+              name: "current",
+              type: "int256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roundId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+          ],
+          name: "AnswerUpdated",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "decimals",
+          outputs: [
+            {
+              internalType: "uint8",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "description",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "latestRoundData",
+          outputs: [
+            {
+              internalType: "uint80",
+              name: "roundId",
+              type: "uint80",
+            },
+            {
+              internalType: "int256",
+              name: "answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "startedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint80",
+              name: "answeredInRound",
+              type: "uint80",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newOwner",
+              type: "address",
+            },
+          ],
+          name: "setOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_basePrice",
+              type: "int256",
+            },
+            {
+              internalType: "int256",
+              name: "_volatilityPercent",
+              type: "int256",
+            },
+          ],
+          name: "simulatePriceMovement",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+          ],
+          name: "updateAnswer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "_timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "updateAnswerWithTimestamp",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "version",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    MockETHUSDFeed: {
+      address: "0x79E8AB29Ff79805025c9462a2f2F12e9A496f81d",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "_description",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "int256",
+              name: "current",
+              type: "int256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roundId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+          ],
+          name: "AnswerUpdated",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "decimals",
+          outputs: [
+            {
+              internalType: "uint8",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "description",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "latestRoundData",
+          outputs: [
+            {
+              internalType: "uint80",
+              name: "roundId",
+              type: "uint80",
+            },
+            {
+              internalType: "int256",
+              name: "answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "startedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint80",
+              name: "answeredInRound",
+              type: "uint80",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newOwner",
+              type: "address",
+            },
+          ],
+          name: "setOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_basePrice",
+              type: "int256",
+            },
+            {
+              internalType: "int256",
+              name: "_volatilityPercent",
+              type: "int256",
+            },
+          ],
+          name: "simulatePriceMovement",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+          ],
+          name: "updateAnswer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "_timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "updateAnswerWithTimestamp",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "version",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    MockLiquidityFeed: {
+      address: "0xeAd789bd8Ce8b9E94F5D0FCa99F8787c7e758817",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "_description",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "int256",
+              name: "current",
+              type: "int256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roundId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+          ],
+          name: "AnswerUpdated",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "decimals",
+          outputs: [
+            {
+              internalType: "uint8",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "description",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "latestRoundData",
+          outputs: [
+            {
+              internalType: "uint80",
+              name: "roundId",
+              type: "uint80",
+            },
+            {
+              internalType: "int256",
+              name: "answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "startedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint80",
+              name: "answeredInRound",
+              type: "uint80",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newOwner",
+              type: "address",
+            },
+          ],
+          name: "setOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_basePrice",
+              type: "int256",
+            },
+            {
+              internalType: "int256",
+              name: "_volatilityPercent",
+              type: "int256",
+            },
+          ],
+          name: "simulatePriceMovement",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+          ],
+          name: "updateAnswer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "_timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "updateAnswerWithTimestamp",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "version",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    MockVolatilityFeed: {
+      address: "0x0Dd99d9f56A14E9D53b2DdC62D9f0bAbe806647A",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "_description",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "int256",
+              name: "current",
+              type: "int256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roundId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+          ],
+          name: "AnswerUpdated",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "decimals",
+          outputs: [
+            {
+              internalType: "uint8",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "description",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "latestRoundData",
+          outputs: [
+            {
+              internalType: "uint80",
+              name: "roundId",
+              type: "uint80",
+            },
+            {
+              internalType: "int256",
+              name: "answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "startedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "updatedAt",
+              type: "uint256",
+            },
+            {
+              internalType: "uint80",
+              name: "answeredInRound",
+              type: "uint80",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newOwner",
+              type: "address",
+            },
+          ],
+          name: "setOwner",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_basePrice",
+              type: "int256",
+            },
+            {
+              internalType: "int256",
+              name: "_volatilityPercent",
+              type: "int256",
+            },
+          ],
+          name: "simulatePriceMovement",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+          ],
+          name: "updateAnswer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "_answer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "_timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "updateAnswerWithTimestamp",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "version",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
     YourContract: {
-      address: "0xb185E9f6531BA9877741022C92CE858cDCc5760E",
+      address: "0x547382C0D1b23f707918D3c83A77317B71Aa8470",
       abi: [
         {
           inputs: [

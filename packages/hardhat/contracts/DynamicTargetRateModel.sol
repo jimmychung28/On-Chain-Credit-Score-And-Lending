@@ -147,7 +147,7 @@ contract DynamicTargetRateModel is Ownable {
     /**
      * @dev Apply market condition adjustments
      */
-    function _applyMarketConditions(uint256 baseRate) internal view returns (uint256) {
+    function _applyMarketConditions(uint256 baseRate) internal view virtual returns (uint256) {
         uint256 adjustedRate = baseRate;
         
         // Apply volatility multiplier
