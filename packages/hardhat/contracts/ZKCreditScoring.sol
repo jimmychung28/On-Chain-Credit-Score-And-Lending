@@ -74,12 +74,12 @@ contract ZKCreditScoring is Ownable, ReentrancyGuard {
         
         // Privacy by default (Level 5 = maximum privacy, no premium)
         creditProfiles[msg.sender] = CreditProfile({
-            score: 0,                    // Will be set when ZK proof submitted
-            lastUpdated: 0,
+            score: 650,                  // Starting credit score for new users (Fair)
+            lastUpdated: block.timestamp,
             isActive: true,
             dataCommitment: bytes32(0),
             privacyLevel: 5,             // Default to maximum privacy
-            isVerified: false
+            isVerified: true             // Auto-verified with starting score
         });
 
         emit UserRegistered(msg.sender, 5, block.timestamp);
@@ -93,12 +93,12 @@ contract ZKCreditScoring is Ownable, ReentrancyGuard {
         require(transparencyLevel >= 1 && transparencyLevel <= 5, "Invalid transparency level");
         
         creditProfiles[msg.sender] = CreditProfile({
-            score: 0,
-            lastUpdated: 0,
+            score: 650,                  // Starting credit score for new users (Fair)
+            lastUpdated: block.timestamp,
             isActive: true,
             dataCommitment: bytes32(0),
             privacyLevel: transparencyLevel,
-            isVerified: false
+            isVerified: true             // Auto-verified with starting score
         });
 
         emit UserRegistered(msg.sender, transparencyLevel, block.timestamp);

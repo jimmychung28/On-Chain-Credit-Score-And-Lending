@@ -375,4 +375,18 @@ contract ZKCreditLending is Ownable, ReentrancyGuard {
         totalShares = pool.lenderShares[lender];
         sharePercentage = pool.totalFunds > 0 ? (totalShares * 10000) / pool.totalFunds : 0;
     }
+
+    /**
+     * @dev Get all loan IDs for a borrower
+     */
+    function getBorrowerLoans(address borrower) external view returns (uint256[] memory) {
+        return borrowerLoans[borrower];
+    }
+
+    /**
+     * @dev Get borrower loan count
+     */
+    function getBorrowerLoanCount(address borrower) external view returns (uint256) {
+        return borrowerLoans[borrower].length;
+    }
 } 

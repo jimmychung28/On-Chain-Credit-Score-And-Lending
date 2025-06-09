@@ -6,4395 +6,8 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    CreditLending: {
-      address: "0x8aAC5570d54306Bb395bf2385ad327b7b706016b",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_creditScoringContract",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_rateModel",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "FundsDeposited",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "FundsWithdrawn",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "totalInterest",
-              type: "uint256",
-            },
-          ],
-          name: "InterestDistributed",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-          ],
-          name: "LoanApproved",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "LoanDefaulted",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "LoanRepaid",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "LoanRequested",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "LOAN_DURATION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MAX_INTEREST_RATE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MAX_LOAN_AMOUNT",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_CREDIT_SCORE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_INTEREST_RATE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ORIGINATION_FEE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "borrowerLoans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "checkLoanEligibility",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "eligible",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "reason",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "creditScoringContract",
-          outputs: [
-            {
-              internalType: "contract CreditScoring",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "depositToPool",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "distributeInterest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "emergencyWithdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-          ],
-          name: "getBorrowerLoans",
-          outputs: [
-            {
-              internalType: "uint256[]",
-              name: "",
-              type: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getCurrentUtilization",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-          ],
-          name: "getLenderShare",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "getLoan",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "interestRate",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "duration",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "startTime",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "dueDate",
-                  type: "uint256",
-                },
-                {
-                  internalType: "bool",
-                  name: "isActive",
-                  type: "bool",
-                },
-                {
-                  internalType: "bool",
-                  name: "isRepaid",
-                  type: "bool",
-                },
-                {
-                  internalType: "uint256",
-                  name: "amountRepaid",
-                  type: "uint256",
-                },
-                {
-                  internalType: "address",
-                  name: "borrower",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "lender",
-                  type: "address",
-                },
-              ],
-              internalType: "struct CreditLending.Loan",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "getLoanDetails",
-          outputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "originalAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalOwed",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "remainingOwed",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "amountPaid",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dueDate",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "isOverdue",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "isRepaid",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getPoolInfo",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "availableFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalLoaned",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalInterestEarned",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lenderCount",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "getRateComponents",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "poolUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getRateModelStats",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalOriginated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalDefaulted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "getRemainingOwed",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "getTotalOwed",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getUserActiveLoans",
-          outputs: [
-            {
-              internalType: "uint256[]",
-              name: "loanIds",
-              type: "uint256[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "remainingBalances",
-              type: "uint256[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "dueDates",
-              type: "uint256[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "interestRates",
-              type: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getUserLoanSummary",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalLoansCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "activeLoansCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "repaidLoansCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultedLoansCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalAmountBorrowed",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalAmountRepaid",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "currentOutstandingDebt",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getUserTotalDebt",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalOutstanding",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "activeLoanCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "overdueLoanCount",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "lenderLoans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "loans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "duration",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "startTime",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dueDate",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "isRepaid",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "amountRepaid",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "markAsDefaulted",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "nextLoanId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pool",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "availableFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalLoaned",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalInterestEarned",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "rateModel",
-          outputs: [
-            {
-              internalType: "contract DynamicTargetRateModel",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "repayLoan",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "requestLoan",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "stakeETH",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "unstakeETH",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newContract",
-              type: "address",
-            },
-          ],
-          name: "updateCreditScoringContract",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newRateModel",
-              type: "address",
-            },
-          ],
-          name: "updateRateModel",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "withdrawFromPool",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        owner: "@openzeppelin/contracts/access/Ownable.sol",
-        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-      },
-    },
-    CreditScoring: {
-      address: "0x38628490c3043E5D0bbB26d5a0a62fC77342e9d5",
-      abi: [
-        {
-          inputs: [],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "newScore",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "CreditScoreUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "bool",
-              name: "repaid",
-              type: "bool",
-            },
-          ],
-          name: "LoanRecorded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "StakeDeposited",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "StakeWithdrawn",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volume",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "TransactionRecorded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "UserRegistered",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "MAX_SCORE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_SCORE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "SCORE_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "addr",
-              type: "address",
-            },
-          ],
-          name: "addVerifiedAddress",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ageWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "createTestUser",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "createTestUsers",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "creditProfiles",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "score",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalVolume",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "transactionCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "avgTransactionValue",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "accountAge",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastUpdated",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "loanCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "repaidLoans",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultedLoans",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "depositStake",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "frequencyWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getCreditProfile",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "score",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "totalVolume",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "transactionCount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "avgTransactionValue",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "accountAge",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "lastUpdated",
-                  type: "uint256",
-                },
-                {
-                  internalType: "bool",
-                  name: "isActive",
-                  type: "bool",
-                },
-                {
-                  internalType: "uint256",
-                  name: "loanCount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "repaidLoans",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "defaultedLoans",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct CreditScoring.CreditProfile",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getCreditScore",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "index",
-              type: "uint256",
-            },
-          ],
-          name: "getTransaction",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "volume",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "frequency",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "timestamp",
-                  type: "uint256",
-                },
-                {
-                  internalType: "address",
-                  name: "counterparty",
-                  type: "address",
-                },
-              ],
-              internalType: "struct CreditScoring.TransactionData",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "getTransactionHistoryLength",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "minScore",
-              type: "uint256",
-            },
-          ],
-          name: "isEligibleForLoan",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "repaid",
-              type: "bool",
-            },
-          ],
-          name: "recordLoan",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "volume",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "counterparty",
-              type: "address",
-            },
-          ],
-          name: "recordTransaction",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "registerUser",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "addr",
-              type: "address",
-            },
-          ],
-          name: "removeVerifiedAddress",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "repaymentWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "totalVolume",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "transactionCount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "accountAgeBlocks",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "repaidLoans",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultedLoans",
-              type: "uint256",
-            },
-          ],
-          name: "setTestCreditProfile",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "stakingBalances",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "stakingWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_volumeWeight",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_frequencyWeight",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_ageWeight",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_repaymentWeight",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_stakingWeight",
-              type: "uint256",
-            },
-          ],
-          name: "updateWeights",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "userTransactions",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "volume",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "frequency",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "counterparty",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "verifiedAddresses",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "volumeWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "withdrawStake",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        owner: "@openzeppelin/contracts/access/Ownable.sol",
-        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-      },
-    },
-    DynamicTargetRateModel: {
-      address: "0xa85EffB2658CFd81e0B1AaD4f2364CdBCd89F3a1",
-      abi: [
-        {
-          inputs: [],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          name: "InterestRateCalculated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "MarketConditionsUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-          ],
-          name: "RateModelUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "RATE_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "UTILIZATION_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "poolUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanDuration",
-              type: "uint256",
-            },
-          ],
-          name: "calculateInterestRate",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "creditRiskTiers",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "minScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "basePremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-          ],
-          name: "getCreditRiskTier",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "minScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "basePremium",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.CreditRiskTier",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-          ],
-          name: "getCurrentRateComponents",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getMarketConditions",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "volatilityMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "liquidityPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "lastUpdateTime",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.MarketConditions",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getModelParameters",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "baseRate",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "targetUtilization",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope1",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope2",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxRate",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.RateModel",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getPerformanceStats",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalOriginated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalDefaulted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "marketConditions",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastUpdateTime",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "rateModel",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "successful",
-              type: "bool",
-            },
-          ],
-          name: "recordLoanPerformance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalDefaults",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalLoansOriginated",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "updateMarketConditions",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_maxRate",
-              type: "uint256",
-            },
-          ],
-          name: "updateRateModel",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        owner: "@openzeppelin/contracts/access/Ownable.sol",
-        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-      },
-    },
-    DynamicTargetRateModelWithOracles: {
-      address: "0x26291175Fa0Ea3C8583fEdEB56805eA68289b105",
-      abi: [
-        {
-          inputs: [],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          name: "InterestRateCalculated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "MarketConditionsAutoUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "MarketConditionsUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "feedType",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "price",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "OracleDataUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-          ],
-          name: "RateModelUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatility",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "priceCount",
-              type: "uint256",
-            },
-          ],
-          name: "VolatilityCalculated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "MAX_VOLATILITY_MULTIPLIER",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_VOLATILITY_MULTIPLIER",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "RATE_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "STALENESS_THRESHOLD",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "UTILIZATION_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "autoUpdateEnabled",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "poolUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanDuration",
-              type: "uint256",
-            },
-          ],
-          name: "calculateInterestRate",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "creditRiskTiers",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "minScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "basePremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "defiRateFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "emergencyDisableOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ethUsdFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-          ],
-          name: "getCreditRiskTier",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "minScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "basePremium",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.CreditRiskTier",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-          ],
-          name: "getCurrentRateComponents",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-          ],
-          name: "getCurrentRateComponentsWithOracles",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleVolatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleLiquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleRiskPremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getMarketConditions",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "volatilityMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "liquidityPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "lastUpdateTime",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.MarketConditions",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getModelParameters",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "baseRate",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "targetUtilization",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope1",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope2",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxRate",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.RateModel",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getOracleData",
-          outputs: [
-            {
-              internalType: "int256",
-              name: "ethPrice",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "ethPriceTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "volatilityData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "volatilityTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "liquidityData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "liquidityTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "defiRateData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "defiRateTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "oraclesActive",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getOracleFeedAddresses",
-          outputs: [
-            {
-              internalType: "address",
-              name: "ethUsd",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "volatility",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "liquidity",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "defiRate",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getPerformanceStats",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalOriginated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalDefaulted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_ethUsdFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_volatilityFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_liquidityFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_defiRateFeed",
-              type: "address",
-            },
-          ],
-          name: "initializeOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "liquidityFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "marketConditions",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastUpdateTime",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "priceHistory",
-          outputs: [
-            {
-              internalType: "int256",
-              name: "price",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "priceHistoryIndex",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "rateModel",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "successful",
-              type: "bool",
-            },
-          ],
-          name: "recordLoanPerformance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "_enabled",
-              type: "bool",
-            },
-          ],
-          name: "setAutoUpdateEnabled",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "_useOracles",
-              type: "bool",
-            },
-          ],
-          name: "setUseOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalDefaults",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalLoansOriginated",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "updateMarketConditions",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "updateMarketConditionsFromOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "updatePriceHistory",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_maxRate",
-              type: "uint256",
-            },
-          ],
-          name: "updateRateModel",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "useOracles",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "volatilityFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        RATE_PRECISION: "contracts/DynamicTargetRateModel.sol",
-        UTILIZATION_PRECISION: "contracts/DynamicTargetRateModel.sol",
-        calculateInterestRate: "contracts/DynamicTargetRateModel.sol",
-        creditRiskTiers: "contracts/DynamicTargetRateModel.sol",
-        getCreditRiskTier: "contracts/DynamicTargetRateModel.sol",
-        getCurrentRateComponents: "contracts/DynamicTargetRateModel.sol",
-        getMarketConditions: "contracts/DynamicTargetRateModel.sol",
-        getModelParameters: "contracts/DynamicTargetRateModel.sol",
-        getPerformanceStats: "contracts/DynamicTargetRateModel.sol",
-        marketConditions: "contracts/DynamicTargetRateModel.sol",
-        owner: "contracts/DynamicTargetRateModel.sol",
-        rateModel: "contracts/DynamicTargetRateModel.sol",
-        recordLoanPerformance: "contracts/DynamicTargetRateModel.sol",
-        renounceOwnership: "contracts/DynamicTargetRateModel.sol",
-        totalDefaults: "contracts/DynamicTargetRateModel.sol",
-        totalLoansOriginated: "contracts/DynamicTargetRateModel.sol",
-        transferOwnership: "contracts/DynamicTargetRateModel.sol",
-        updateMarketConditions: "contracts/DynamicTargetRateModel.sol",
-        updateRateModel: "contracts/DynamicTargetRateModel.sol",
-      },
-    },
-    MockDeFiRateFeed: {
-      address: "0xA75E74a5109Ed8221070142D15cEBfFe9642F489",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    MockETHUSDFeed: {
-      address: "0x1757a98c1333B9dc8D408b194B2279b5AFDF70Cc",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    MockLiquidityFeed: {
-      address: "0xf201fFeA8447AB3d43c98Da3349e0749813C9009",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    MockVolatilityFeed: {
-      address: "0x6484EB0792c646A4827638Fc1B6F20461418eB00",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
     MockZKVerifier: {
-      address: "0x04f1A5b9BD82a5020C49975ceAd160E98d8B77Af",
+      address: "0x9DBb24B10502aD166c198Dbeb5AB54d2d13AfcFd",
       abi: [
         {
           anonymous: false,
@@ -4506,911 +119,8 @@ const deployedContracts = {
       ],
       inheritedFunctions: {},
     },
-    YourContract: {
-      address: "0x05bB67cB592C1753425192bF8f34b95ca8649f09",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_owner",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "greetingSetter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "newGreeting",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "bool",
-              name: "premium",
-              type: "bool",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "GreetingChange",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "greeting",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "premium",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_newGreeting",
-              type: "string",
-            },
-          ],
-          name: "setGreeting",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "userGreetingCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "withdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    ZKCreditLending: {
-      address: "0xbFD3c8A956AFB7a9754C951D03C9aDdA7EC5d638",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_zkCreditScoring",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_rateModel",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "FundsDeposited",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "FundsWithdrawn",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "totalInterest",
-              type: "uint256",
-            },
-          ],
-          name: "InterestDistributed",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "privacyDiscount",
-              type: "uint256",
-            },
-          ],
-          name: "LoanApproved",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "LoanDefaulted",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "LoanRepaid",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint8",
-              name: "privacyLevel",
-              type: "uint8",
-            },
-          ],
-          name: "LoanRequested",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint8",
-              name: "privacyLevel",
-              type: "uint8",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "premium",
-              type: "uint256",
-            },
-          ],
-          name: "TransparencyPremiumApplied",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "LOAN_DURATION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MAX_INTEREST_RATE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MAX_LOAN_AMOUNT",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_CREDIT_SCORE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_INTEREST_RATE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ORIGINATION_FEE",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "borrowerLoans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "checkLoanEligibility",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "eligible",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "maxAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "estimatedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint8",
-              name: "privacyLevel",
-              type: "uint8",
-            },
-            {
-              internalType: "uint256",
-              name: "transparencyPremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "depositToPool",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "lender",
-              type: "address",
-            },
-          ],
-          name: "getLenderInfo",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalShares",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "sharePercentage",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "getLoanDetails",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dueDate",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "isRepaid",
-              type: "bool",
-            },
-            {
-              internalType: "uint8",
-              name: "privacyLevel",
-              type: "uint8",
-            },
-            {
-              internalType: "uint256",
-              name: "transparencyPremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getPoolInfo",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "availableFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalLoaned",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalInterestEarned",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "handleDefault",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "lenderLoans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "loans",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "interestRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "duration",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "startTime",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dueDate",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "isRepaid",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "amountRepaid",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              internalType: "uint8",
-              name: "privacyLevel",
-              type: "uint8",
-            },
-            {
-              internalType: "uint256",
-              name: "transparencyPremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "nextLoanId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pool",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "availableFunds",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalLoaned",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalInterestEarned",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "rateModel",
-          outputs: [
-            {
-              internalType: "contract DynamicTargetRateModel",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "loanId",
-              type: "uint256",
-            },
-          ],
-          name: "repayLoan",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "requestLoan",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "stakeETH",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "unstakeETH",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "withdrawFromPool",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "zkCreditScoring",
-          outputs: [
-            {
-              internalType: "contract ZKCreditScoring",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        owner: "@openzeppelin/contracts/access/Ownable.sol",
-        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
-      },
-    },
     ZKCreditScoring: {
-      address: "0xde79380FBd39e08150adAA5C6c9dE3146f53029e",
+      address: "0xF8b299F87EBb62E0b625eAF440B73Cc6b7717dbd",
       abi: [
         {
           inputs: [
@@ -6151,6 +861,804 @@ const deployedContracts = {
           outputs: [
             {
               internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+      },
+    },
+    ZKCreditLending: {
+      address: "0xEb0fCBB68Ca7Ba175Dc1D3dABFD618e7a3F582F6",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_zkCreditScoring",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_rateModel",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lender",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "FundsDeposited",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lender",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "FundsWithdrawn",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "totalInterest",
+              type: "uint256",
+            },
+          ],
+          name: "InterestDistributed",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "interestRate",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "privacyDiscount",
+              type: "uint256",
+            },
+          ],
+          name: "LoanApproved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
+          name: "LoanDefaulted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "LoanRepaid",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint8",
+              name: "privacyLevel",
+              type: "uint8",
+            },
+          ],
+          name: "LoanRequested",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint8",
+              name: "privacyLevel",
+              type: "uint8",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "premium",
+              type: "uint256",
+            },
+          ],
+          name: "TransparencyPremiumApplied",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "LOAN_DURATION",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MAX_INTEREST_RATE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MAX_LOAN_AMOUNT",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MIN_CREDIT_SCORE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MIN_INTEREST_RATE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ORIGINATION_FEE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "borrowerLoans",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "checkLoanEligibility",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "eligible",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "maxAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "estimatedRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint8",
+              name: "privacyLevel",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "transparencyPremium",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "depositToPool",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+          ],
+          name: "getBorrowerLoanCount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+          ],
+          name: "getBorrowerLoans",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "lender",
+              type: "address",
+            },
+          ],
+          name: "getLenderInfo",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalShares",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "sharePercentage",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
+          name: "getLoanDetails",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "interestRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "dueDate",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isActive",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "isRepaid",
+              type: "bool",
+            },
+            {
+              internalType: "uint8",
+              name: "privacyLevel",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "transparencyPremium",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getPoolInfo",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalFunds",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "availableFunds",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalLoaned",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "utilization",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalInterestEarned",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
+          name: "handleDefault",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "lenderLoans",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "loans",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "interestRate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "duration",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "startTime",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "dueDate",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isActive",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "isRepaid",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "amountRepaid",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "borrower",
+              type: "address",
+            },
+            {
+              internalType: "uint8",
+              name: "privacyLevel",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "transparencyPremium",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "nextLoanId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pool",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalFunds",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "availableFunds",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalLoaned",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalInterestEarned",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "rateModel",
+          outputs: [
+            {
+              internalType: "contract DynamicTargetRateModel",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "loanId",
+              type: "uint256",
+            },
+          ],
+          name: "repayLoan",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "requestLoan",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "stakeETH",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "unstakeETH",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "withdrawFromPool",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "zkCreditScoring",
+          outputs: [
+            {
+              internalType: "contract ZKCreditScoring",
               name: "",
               type: "address",
             },
