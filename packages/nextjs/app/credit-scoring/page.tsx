@@ -217,6 +217,12 @@ const CreditScoringPage = () => {
     args: [connectedAddress],
   });
 
+  const { data: transparencyPremium } = useScaffoldReadContract({
+    contractName: "ZKCreditScoring",
+    functionName: "getTransparencyPremium",
+    args: [connectedAddress],
+  });
+
   // Contract write hooks - enhanced with privacy features
   const { writeContractAsync: writeCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "CreditScoring",
@@ -633,7 +639,7 @@ const CreditScoringPage = () => {
 
           {/* Tab Content */}
           {activeTab === "profile" && (
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
               {/* Credit Score Breakdown */}
               <div className="bg-base-100 rounded-2xl shadow-xl p-6">
                 <h3 className="text-xl font-bold mb-4">Credit Score Factors</h3>
@@ -772,6 +778,122 @@ const CreditScoringPage = () => {
                     Your credit score is based purely on behavior, not how much ETH you have. This ensures fair access
                     to credit for everyone.
                   </p>
+                </div>
+              </div>
+
+              {/* Privacy Settings */}
+              <div className="bg-base-100 rounded-2xl shadow-xl p-6 lg:col-span-1 md:col-span-2">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <span>🛡️</span> Privacy Settings
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-green-600">✅</span>
+                      <span className="font-semibold text-green-700">Current Status</span>
+                    </div>
+                    <div className="text-sm">
+                      <div>
+                        Privacy Level: <span className="font-bold">{profileData?.privacyLevel || 5}</span>
+                      </div>
+                      <div>
+                        Transparency Premium:{" "}
+                        <span className="font-bold">
+                          {transparencyPremium ? `${Number(transparencyPremium) / 100}%` : "0%"}
+                        </span>
+                      </div>
+                      <div className="text-green-600 mt-1">
+                        {(profileData?.privacyLevel || 5) === 5
+                          ? "✓ Maximum Privacy (Free)"
+                          : "⚠️ Paying transparency premium"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-semibold">Choose Your Privacy Level:</h4>
+
+                    {/* Privacy Level Options */}
+                    {[
+                      {
+                        level: 5,
+                        name: "Maximum Privacy",
+                        premium: "0%",
+                        description: "All data private (FREE)",
+                        color: "green",
+                      },
+                      {
+                        level: 4,
+                        name: "Minimal Public",
+                        premium: "0.5%",
+                        description: "Basic score visible",
+                        color: "blue",
+                      },
+                      {
+                        level: 3,
+                        name: "Partial Public",
+                        premium: "1.0%",
+                        description: "Score + volume visible",
+                        color: "yellow",
+                      },
+                      {
+                        level: 2,
+                        name: "Mostly Public",
+                        premium: "1.5%",
+                        description: "Most data visible",
+                        color: "orange",
+                      },
+                      { level: 1, name: "Fully Public", premium: "2.0%", description: "All data public", color: "red" },
+                    ].map(option => (
+                      <div
+                        key={option.level}
+                        className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                          (profileData?.privacyLevel || 5) === option.level
+                            ? `border-${option.color}-500 bg-${option.color}-50`
+                            : "border-base-300 hover:border-base-400"
+                        }`}
+                        // onClick={() => updateTransparencyLevel(option.level)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-semibold">
+                              Level {option.level}: {option.name}
+                            </div>
+                            <div className="text-xs text-base-content/70">{option.description}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className={`font-bold ${option.level === 5 ? "text-green-600" : "text-orange-600"}`}>
+                              {option.premium}
+                            </div>
+                            <div className="text-xs text-base-content/70">premium</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-blue-600">💡</span>
+                      <span className="font-semibold text-blue-700 text-sm">Economic Honesty</span>
+                    </div>
+                    <p className="text-xs text-blue-600">
+                      Privacy is FREE because it&apos;s cheaper to provide. You only pay premiums for expensive public
+                      processing.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-yellow-600">🚧</span>
+                      <span className="font-semibold text-yellow-700 text-sm">Feature Coming Soon</span>
+                    </div>
+                    <p className="text-xs text-yellow-600">
+                      Transparency choice controls are being deployed. Currently all users have maximum privacy by
+                      default.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
