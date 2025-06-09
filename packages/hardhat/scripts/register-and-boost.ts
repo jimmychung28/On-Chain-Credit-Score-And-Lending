@@ -6,7 +6,7 @@ async function main() {
   // Get the deployed CreditScoring contract
   const creditScoring = (await ethers.getContract("CreditScoring", deployer)) as any;
 
-  const testAddress = "0x010C5E560D0e042B53Cedba9A7404E90F82D7592";
+  const testAddress = "0x86e04523546Ca4b045C000a04a7a62394258C61E";
 
   console.log("Registering and boosting credit for:", testAddress);
   console.log("Deployer address:", deployer.address);
@@ -29,18 +29,22 @@ async function main() {
     }
 
     if (isRegistered) {
+      // Check current block number
+      const currentBlock = await ethers.provider.getBlockNumber();
+      console.log("Current block number:", currentBlock);
+      
       // Now use setTestCreditProfile to fine-tune the credit score
-      console.log("Fine-tuning credit profile with setTestCreditProfile...");
+      console.log("Maximizing credit profile for 750+ excellent credit...");
       const tx = await creditScoring.setTestCreditProfile(
         testAddress,
-        ethers.parseEther("200"), // 200 ETH total volume (excellent)
-        75, // 75 transactions (very active)
-        1000, // 1000 blocks old (established account)
-        10, // 10 repaid loans (perfect history)
-        0, // 0 defaulted loans
+        ethers.parseEther("2000"), // 2000 ETH total volume (maximum)
+        500, // 500 transactions (maximum activity)
+        Math.min(2500000, currentBlock), // Account age: either 1+ year or current block
+        100, // 100 repaid loans (perfect history)
+        0, // 0 defaulted loans (perfect record)
       );
       await tx.wait();
-      console.log("✅ Credit profile fine-tuned!");
+      console.log("✅ Credit profile maximized for excellent credit!");
     }
 
     // Get final profile

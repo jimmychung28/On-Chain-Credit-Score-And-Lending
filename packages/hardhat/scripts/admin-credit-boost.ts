@@ -6,7 +6,7 @@ async function main() {
   // Get the deployed CreditScoring contract
   const creditScoring = (await ethers.getContract("CreditScoring", deployer)) as any;
 
-  const testAddress = "0x010C5E560D0e042B53Cedba9A7404E90F82D7592";
+  const testAddress = "0x86e04523546Ca4b045C000a04a7a62394258C61E";
 
   console.log("Admin credit boost for:", testAddress);
   console.log("Deployer (admin) address:", deployer.address);

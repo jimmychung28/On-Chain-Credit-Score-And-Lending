@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 
+
 const Home: NextPage = () => {
   const { address: connectedAddress, isConnected } = useAccount();
 
@@ -37,10 +38,16 @@ const Home: NextPage = () => {
                   <span className="text-sm font-medium">Connected:</span>
                   <Address address={connectedAddress} />
                 </div>
-                <Link href="/credit-scoring" className="btn btn-primary btn-lg gap-2">
-                  Access Your Credit Profile
-                  <ArrowRightIcon className="h-5 w-5" />
-                </Link>
+                <div className="flex gap-4">
+                  <Link href="/zk-credit" className="btn btn-primary btn-lg gap-2">
+                    🔐 ZK Privacy Credit
+                    <ArrowRightIcon className="h-5 w-5" />
+                  </Link>
+                  <Link href="/credit-scoring" className="btn btn-outline btn-lg gap-2">
+                    Legacy System
+                    <ArrowRightIcon className="h-5 w-5" />
+                  </Link>
+                </div>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4">

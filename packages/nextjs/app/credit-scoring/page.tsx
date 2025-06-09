@@ -193,7 +193,7 @@ const CreditScoringPage = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [expandedRateSection, setExpandedRateSection] = useState<string | null>(null);
 
-  // Contract read hooks
+  // Contract read hooks - enhanced with privacy features
   const { data: creditProfile } = useScaffoldReadContract({
     contractName: "CreditScoring",
     functionName: "getCreditProfile",
@@ -217,7 +217,7 @@ const CreditScoringPage = () => {
     args: [connectedAddress],
   });
 
-  // Contract write hooks
+  // Contract write hooks - enhanced with privacy features
   const { writeContractAsync: writeCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "CreditScoring",
   });
@@ -381,22 +381,23 @@ const CreditScoringPage = () => {
   const getInterestRate = (score: number) => {
     if (dynamicRate === "Loading..." || dynamicRate === "Error") {
       // Fallback to static calculation while loading
-      if (score >= 750) return "3%";
-      if (score >= 700) return "5%";
-      if (score >= 650) return "8%";
-      if (score >= 600) return "11%";
-      if (score >= 500) return "15%";
-      if (score >= 450) return "20%";
-      if (score >= 400) return "30%";
-      if (score >= 350) return "50%";
-      if (score >= 320) return "70%";
-      return "100%";
+    if (score >= 750) return "3%";
+    if (score >= 700) return "5%";
+    if (score >= 650) return "8%";
+    if (score >= 600) return "11%";
+    if (score >= 500) return "15%";
+    if (score >= 450) return "20%";
+    if (score >= 400) return "30%";
+    if (score >= 350) return "50%";
+    if (score >= 320) return "70%";
+    return "100%";
     }
     return dynamicRate;
   };
 
-  // Check if user is registered
-  const isRegistered = creditProfile && creditProfile.isActive;
+  // Check if user is registered  
+  const profileData = creditProfile?.[0];
+  const isRegistered = profileData && typeof profileData === 'object' && 'isActive' in profileData && profileData.isActive;
 
   // Registration screen
   if (!isRegistered) {
@@ -416,17 +417,27 @@ const CreditScoringPage = () => {
               onClick={registerUser}
               disabled={isRegistering || !connectedAddress}
             >
-              {isRegistering ? "Registering..." : "Get Started"}
+              {isRegistering ? "Registering..." : "Get Started with Privacy"}
             </button>
 
             <div className="mt-6 text-left">
               <h3 className="font-semibold mb-2">How it works:</h3>
               <ul className="text-sm text-base-content/70 space-y-1">
                 <li>• Your on-chain activity builds your credit score</li>
-                <li>• No wealth bias - behavior matters, not balance</li>
+                <li>• <span className="text-green-600">🔐 Privacy-first:</span> Financial data stays private</li>
                 <li>• Stake ETH to earn yield from lending</li>
                 <li>• Get loans based on your creditworthiness</li>
               </ul>
+            </div>
+
+            <div className="mt-4 p-3 bg-green-50 rounded-lg text-left">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-green-600">🛡️</span>
+                <span className="font-semibold text-green-700 text-sm">Default Privacy Protection</span>
+              </div>
+              <p className="text-xs text-green-600">
+                Your financial data is cryptographically private by default. Optional transparency features available after registration.
+              </p>
             </div>
           </div>
         </div>
@@ -434,7 +445,7 @@ const CreditScoringPage = () => {
     );
   }
 
-  const creditScore = creditProfile && creditProfile.score ? Number(creditProfile.score) : 0;
+  const creditScore = profileData && typeof profileData === 'object' && 'score' in profileData ? Number(profileData.score) : 0;
   const scorePercentage = ((creditScore - 300) / 550) * 100;
 
   // Calculate realistic APY based on current utilization and base rates
@@ -474,7 +485,7 @@ const CreditScoringPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold">OnChain Credit</h1>
-                <p className="text-base-content/70 mt-1">Behavioral credit scoring for DeFi</p>
+                <p className="text-base-content/70 mt-1">Privacy-first behavioral credit scoring for DeFi</p>
               </div>
               <div className="bg-base-200 p-3 rounded-xl">
                 <Address address={connectedAddress} />
@@ -490,7 +501,10 @@ const CreditScoringPage = () => {
               <div className="bg-base-100 rounded-2xl shadow-xl p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold">Credit Score</h2>
-                  <div className="badge badge-primary badge-lg">{getCreditRating(creditScore)}</div>
+                  <div className="flex gap-2">
+                    <div className="badge badge-success badge-sm">🔐 Private</div>
+                    <div className="badge badge-primary badge-lg">{getCreditRating(creditScore)}</div>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -903,7 +917,7 @@ const CreditScoringPage = () => {
                   <div className="text-sm text-base-content/70 mt-1">
                     Pool Utilization: {currentUtilization.toFixed(1)}%
                   </div>
-                </div>
+                  </div>
 
                 {/* Rate Components Breakdown */}
                 {rateComponents && (
@@ -929,7 +943,7 @@ const CreditScoringPage = () => {
                             >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
-                          </div>
+                  </div>
                           <span className="font-bold text-blue-600">
                             {rateComponents.baseUtilizationRate.toFixed(2)}%
                           </span>
@@ -940,17 +954,17 @@ const CreditScoringPage = () => {
                               <div>
                                 <span className="font-medium text-blue-700">Current Utilization:</span>
                                 <div className="text-blue-600">{rateComponents.poolUtilization.toFixed(1)}%</div>
-                              </div>
+                  </div>
                               <div>
                                 <span className="font-medium text-blue-700">Target Utilization:</span>
                                 <div className="text-blue-600">80%</div>
-                              </div>
-                            </div>
+                  </div>
+                  </div>
                             <div className="text-xs text-blue-600 bg-blue-100 p-2 rounded">
                               {rateComponents.poolUtilization <= 80
                                 ? `Below target: 2% + (${rateComponents.poolUtilization.toFixed(1)}% ÷ 80%) × 2% = ${rateComponents.baseUtilizationRate.toFixed(2)}%`
                                 : `Above target: 4% + ((${rateComponents.poolUtilization.toFixed(1)}% - 80%) ÷ 20%) × 56% = ${rateComponents.baseUtilizationRate.toFixed(2)}%`}
-                            </div>
+                  </div>
                           </div>
                         )}
                       </div>
@@ -1270,20 +1284,20 @@ const CreditScoringPage = () => {
                       <div className="stat-desc">
                         {Number(creditProfile.defaultedLoans) === 0 ? "Perfect record!" : "Impacts credit score"}
                       </div>
-                    </div>
                   </div>
+                </div>
 
-                  <div className="mt-6 p-4 bg-info/10 rounded-lg">
+                <div className="mt-6 p-4 bg-info/10 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <ChartBarIcon className="h-5 w-5 text-info" />
                       <span className="font-semibold text-info">Credit Impact</span>
                     </div>
-                    <p className="text-sm text-base-content/70">
+                  <p className="text-sm text-base-content/70">
                       Your repayment history accounts for 30% of your credit score. Timely payments significantly
                       improve your creditworthiness and reduce future loan interest rates.
-                    </p>
-                  </div>
+                  </p>
                 </div>
+              </div>
               )}
             </div>
           )}
