@@ -9,4 +9,4 @@ const ZKCreditPage: NextPage = () => {
   );
 };
 
-export default ZKCreditPage; 
+export default ZKCreditPage;

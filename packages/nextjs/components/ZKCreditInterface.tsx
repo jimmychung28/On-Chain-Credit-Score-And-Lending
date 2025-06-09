@@ -6,11 +6,9 @@ export const ZKCreditInterface: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">ZK Credit System</h1>
-          <p className="text-xl text-base-content/70">
-            Privacy-preserving credit scoring with zero-knowledge proofs
-          </p>
+          <p className="text-xl text-base-content/70">Privacy-preserving credit scoring with zero-knowledge proofs</p>
         </div>
-        
+
         <div className="bg-base-100 rounded-2xl shadow-xl p-8">
           <div className="text-center">
             <div className="loading loading-spinner loading-lg text-primary mb-4"></div>
@@ -18,7 +16,7 @@ export const ZKCreditInterface: React.FC = () => {
             <p className="text-base-content/70 mb-6">
               The ZK Credit interface is currently under development. This will allow you to:
             </p>
-            
+
             <div className="grid md:grid-cols-2 gap-6 text-left">
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -30,7 +28,7 @@ export const ZKCreditInterface: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <span className="text-blue-500">⚡</span>
                   <div>
@@ -41,7 +39,7 @@ export const ZKCreditInterface: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <span className="text-purple-500">🌐</span>
@@ -52,7 +50,7 @@ export const ZKCreditInterface: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <span className="text-orange-500">🛡️</span>
                   <div>
@@ -64,7 +62,7 @@ export const ZKCreditInterface: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-8 p-4 bg-info/10 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-info">ℹ️</span>
@@ -79,4 +77,4 @@ export const ZKCreditInterface: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};
