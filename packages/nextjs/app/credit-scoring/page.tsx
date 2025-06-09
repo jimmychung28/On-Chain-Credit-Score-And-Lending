@@ -397,8 +397,45 @@ const CreditScoringPage = () => {
 
   // Check if user is registered
   const profileData = creditProfile?.[0];
-  const isRegistered =
-    profileData && typeof profileData === "object" && "isActive" in profileData && profileData.isActive;
+
+  // Debug logging
+  console.log("Debug - creditProfile:", creditProfile);
+  console.log("Debug - profileData:", profileData);
+  console.log("Debug - connectedAddress:", connectedAddress);
+
+  // More robust registration check
+  const isRegistered = !!(
+    profileData &&
+    typeof profileData === "object" &&
+    "isActive" in profileData &&
+    profileData.isActive === true
+  );
+
+  console.log("Debug - isRegistered:", isRegistered);
+
+  // Show loading state while data is being fetched
+  if (!connectedAddress) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg mb-4"></div>
+          <p>Please connect your wallet</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while profile data is being fetched
+  if (creditProfile === undefined) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg mb-4"></div>
+          <p>Loading your credit profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Registration screen
   if (!isRegistered) {
