@@ -310,6 +310,37 @@ const CreditScoringPage = () => {
     }
   };
 
+  // Add ZK Credit Scoring contract write hook
+  const { writeContractAsync: writeZKCreditScoringAsync } = useScaffoldWriteContract({
+    contractName: "ZKCreditScoring",
+  });
+
+  // Privacy/Transparency functions
+  const updateTransparencyLevel = async (level: number) => {
+    try {
+      await writeZKCreditScoringAsync({
+        functionName: "updateTransparencyLevel",
+        args: [level],
+      });
+      addToast("success", `Transparency level updated to ${level}`);
+    } catch (error: any) {
+      console.error("Transparency update error:", error);
+      addToast("error", `Failed to update transparency: ${error.message}`);
+    }
+  };
+
+  const switchToMaxPrivacy = async () => {
+    try {
+      await writeZKCreditScoringAsync({
+        functionName: "switchToMaxPrivacy",
+      });
+      addToast("success", "Switched to maximum privacy (free)!");
+    } catch (error: any) {
+      console.error("Privacy switch error:", error);
+      addToast("error", `Failed to switch to privacy: ${error.message}`);
+    }
+  };
+
   // Helper functions
   const getCreditScoreColor = (score: number) => {
     if (score >= 750) return "text-green-500";
@@ -853,12 +884,15 @@ const CreditScoringPage = () => {
                             ? `border-${option.color}-500 bg-${option.color}-50`
                             : "border-base-300 hover:border-base-400"
                         }`}
-                        // onClick={() => updateTransparencyLevel(option.level)}
+                        onClick={() => updateTransparencyLevel(option.level)}
                       >
                         <div className="flex justify-between items-center">
                           <div>
-                            <div className="font-semibold">
+                            <div className="font-semibold flex items-center gap-2">
                               Level {option.level}: {option.name}
+                              {(profileData?.privacyLevel || 5) === option.level && (
+                                <span className="text-green-600">✓ Current</span>
+                              )}
                             </div>
                             <div className="text-xs text-base-content/70">{option.description}</div>
                           </div>
@@ -884,15 +918,24 @@ const CreditScoringPage = () => {
                     </p>
                   </div>
 
-                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-yellow-600">🚧</span>
-                      <span className="font-semibold text-yellow-700 text-sm">Feature Coming Soon</span>
+                  <div className="mt-4 space-y-2">
+                    <button
+                      className="btn btn-success btn-sm w-full"
+                      onClick={switchToMaxPrivacy}
+                      disabled={!profileData || profileData.privacyLevel === 5}
+                    >
+                      🔒 Switch to Maximum Privacy (FREE)
+                    </button>
+
+                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-green-600">✅</span>
+                        <span className="font-semibold text-green-700 text-sm">Active Controls</span>
+                      </div>
+                      <p className="text-xs text-green-600">
+                        Click any privacy level above to update your transparency settings. Privacy is always free!
+                      </p>
                     </div>
-                    <p className="text-xs text-yellow-600">
-                      Transparency choice controls are being deployed. Currently all users have maximum privacy by
-                      default.
-                    </p>
                   </div>
                 </div>
               </div>
