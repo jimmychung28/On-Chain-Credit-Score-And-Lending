@@ -191,6 +191,7 @@ const CreditScoringPage = () => {
   const [loanAmount, setLoanAmount] = useState("");
   const [stakeAmount, setStakeAmount] = useState("");
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [expandedRateSection, setExpandedRateSection] = useState<string | null>(null);
 
   // Contract read hooks
   const { data: creditProfile } = useScaffoldReadContract({
@@ -216,10 +217,6 @@ const CreditScoringPage = () => {
     args: [connectedAddress],
   });
 
-  // Debug logging
-  console.log("Connected Address:", connectedAddress);
-  console.log("Borrower Loan IDs:", borrowerLoanIds);
-  console.log("Loan IDs Array Length:", borrowerLoanIds?.length);
   // Contract write hooks
   const { writeContractAsync: writeCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "CreditScoring",
@@ -439,10 +436,33 @@ const CreditScoringPage = () => {
 
   const creditScore = creditProfile && creditProfile.score ? Number(creditProfile.score) : 0;
   const scorePercentage = ((creditScore - 300) / 550) * 100;
-  const currentAPY =
-    poolInfo && poolInfo[0] && poolInfo[0] > 0
-      ? ((Number(poolInfo[3]) / Number(poolInfo[0])) * 100 * 365).toFixed(1)
-      : "0.0";
+
+  // Calculate realistic APY based on current utilization and base rates
+  const calculateCurrentAPY = () => {
+    if (!poolInfo || !poolInfo[0] || Number(poolInfo[0]) === 0) return "0.0";
+
+    const totalPool = Number(poolInfo[0]);
+    const currentlyLoaned = Number(poolInfo[2]);
+    const utilization = totalPool > 0 ? (currentlyLoaned / totalPool) * 100 : 0;
+
+    // Base rate calculation similar to the dynamic rate model
+    // Using a simplified version for APY display
+    let baseRate;
+    if (utilization <= 80) {
+      // Below target utilization: 2% + (utilization/80) * 2%
+      baseRate = 2 + (utilization / 80) * 2;
+    } else {
+      // Above target utilization: 4% + ((utilization-80)/20) * 56%
+      baseRate = 4 + ((utilization - 80) / 20) * 56;
+    }
+
+    // APY for lenders = base lending rate * utilization rate * 0.9 (90% to lenders, 10% protocol fee)
+    const lenderAPY = baseRate * (utilization / 100) * 0.9;
+
+    return Math.max(0, lenderAPY).toFixed(1);
+  };
+
+  const currentAPY = calculateCurrentAPY();
 
   return (
     <>
@@ -711,11 +731,34 @@ const CreditScoringPage = () => {
                     <div className="stat bg-base-200 rounded-lg">
                       <div className="stat-title">Current APY</div>
                       <div className="stat-value text-2xl">{currentAPY}%</div>
+                      <div className="stat-desc text-xs">
+                        {poolInfo && `${((Number(poolInfo[2]) / Number(poolInfo[0])) * 100).toFixed(1)}% utilization`}
+                      </div>
                     </div>
                     <div className="stat bg-base-200 rounded-lg">
                       <div className="stat-title">Your Staked</div>
                       <div className="stat-value text-2xl">{lenderShare ? formatEther(lenderShare) : "0"} ETH</div>
+                      <div className="stat-desc text-xs">
+                        {lenderShare && Number(formatEther(lenderShare)) > 0
+                          ? `~${((Number(formatEther(lenderShare)) * parseFloat(currentAPY)) / 100).toFixed(4)} ETH/year`
+                          : "No earnings yet"}
+                      </div>
                     </div>
+                  </div>
+
+                  {/* APY Explanation */}
+                  <div className="bg-info/10 rounded-lg p-3 mb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <ChartBarIcon className="h-4 w-4 text-info" />
+                      <span className="font-semibold text-info text-sm">Dynamic APY</span>
+                    </div>
+                    <p className="text-xs text-base-content/70">
+                      APY adjusts based on pool utilization and lending rates. Higher utilization = higher APY for
+                      stakers.
+                      {poolInfo &&
+                        Number(poolInfo[0]) > 0 &&
+                        ` Current rate: ${((Number(poolInfo[2]) / Number(poolInfo[0])) * 100).toFixed(1)}% of pool lent out.`}
+                    </p>
                   </div>
 
                   <div className="form-control mb-4">
@@ -740,7 +783,7 @@ const CreditScoringPage = () => {
                   </button>
                 </div>
 
-                {lenderShare && Number(formatEther(lenderShare)) > 0 && (
+                {lenderShare && Number(formatEther(lenderShare)) > 0 ? (
                   <div>
                     <div className="divider">Manage Stake</div>
                     <button
@@ -750,7 +793,7 @@ const CreditScoringPage = () => {
                       Unstake All ({formatEther(lenderShare)} ETH)
                     </button>
                   </div>
-                )}
+                ) : null}
               </div>
 
               {/* Pool Information */}
@@ -864,44 +907,300 @@ const CreditScoringPage = () => {
 
                 {/* Rate Components Breakdown */}
                 {rateComponents && (
-                  <div className="space-y-3 mb-4">
-                    <h4 className="font-semibold text-sm text-base-content/70">Rate Breakdown:</h4>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>Base Rate:</span>
-                        <span>{rateComponents.baseUtilizationRate.toFixed(2)}%</span>
+                  <div className="mb-6">
+                    <h4 className="font-bold text-base mb-4 flex items-center gap-2">
+                      <ChartBarIcon className="h-5 w-5 text-primary" />
+                      Rate Breakdown
+                    </h4>
+                    <div className="bg-base-200 rounded-lg p-4 space-y-3">
+                      {/* Base Rate (Utilization) */}
+                      <div className="border-b border-base-300">
+                        <button
+                          className="w-full flex justify-between items-center py-2 hover:bg-base-300/50 rounded px-2"
+                          onClick={() => setExpandedRateSection(expandedRateSection === "base" ? null : "base")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Base Rate (Utilization)</span>
+                            <svg
+                              className={`w-4 h-4 transition-transform ${expandedRateSection === "base" ? "rotate-180" : ""}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                          <span className="font-bold text-blue-600">
+                            {rateComponents.baseUtilizationRate.toFixed(2)}%
+                          </span>
+                        </button>
+                        {expandedRateSection === "base" && (
+                          <div className="pl-4 pb-3 pt-2 text-sm space-y-2 bg-blue-50/50 rounded-b-lg">
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <span className="font-medium text-blue-700">Current Utilization:</span>
+                                <div className="text-blue-600">{rateComponents.poolUtilization.toFixed(1)}%</div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-blue-700">Target Utilization:</span>
+                                <div className="text-blue-600">80%</div>
+                              </div>
+                            </div>
+                            <div className="text-xs text-blue-600 bg-blue-100 p-2 rounded">
+                              {rateComponents.poolUtilization <= 80
+                                ? `Below target: 2% + (${rateComponents.poolUtilization.toFixed(1)}% ÷ 80%) × 2% = ${rateComponents.baseUtilizationRate.toFixed(2)}%`
+                                : `Above target: 4% + ((${rateComponents.poolUtilization.toFixed(1)}% - 80%) ÷ 20%) × 56% = ${rateComponents.baseUtilizationRate.toFixed(2)}%`}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex justify-between">
-                        <span>Credit Adjusted:</span>
-                        <span>{rateComponents.creditAdjustedRate.toFixed(2)}%</span>
+
+                      {/* Credit Score Adjustment */}
+                      <div className="border-b border-base-300">
+                        <button
+                          className="w-full flex justify-between items-center py-2 hover:bg-base-300/50 rounded px-2"
+                          onClick={() => setExpandedRateSection(expandedRateSection === "credit" ? null : "credit")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Credit Score Adjustment</span>
+                            <div className="badge badge-sm badge-outline">{rateComponents.creditScore}</div>
+                            <svg
+                              className={`w-4 h-4 transition-transform ${expandedRateSection === "credit" ? "rotate-180" : ""}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                          <span className="font-bold text-green-600">
+                            {rateComponents.creditAdjustedRate.toFixed(2)}%
+                          </span>
+                        </button>
+                        {expandedRateSection === "credit" && (
+                          <div className="pl-4 pb-3 pt-2 text-sm space-y-2 bg-green-50/50 rounded-b-lg">
+                            <div className="grid grid-cols-3 gap-2">
+                              <div>
+                                <span className="font-medium text-green-700">Credit Tier:</span>
+                                <div className="text-green-600">
+                                  {rateComponents.creditScore >= 750
+                                    ? "Excellent"
+                                    : rateComponents.creditScore >= 700
+                                      ? "Very Good"
+                                      : rateComponents.creditScore >= 650
+                                        ? "Good"
+                                        : rateComponents.creditScore >= 600
+                                          ? "Fair"
+                                          : rateComponents.creditScore >= 500
+                                            ? "Poor"
+                                            : rateComponents.creditScore >= 450
+                                              ? "Bad"
+                                              : rateComponents.creditScore >= 400
+                                                ? "Very Bad"
+                                                : "Terrible"}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-green-700">Risk Multiplier:</span>
+                                <div className="text-green-600">
+                                  {rateComponents.creditScore >= 750
+                                    ? "0.8x"
+                                    : rateComponents.creditScore >= 700
+                                      ? "0.9x"
+                                      : rateComponents.creditScore >= 650
+                                        ? "1.0x"
+                                        : rateComponents.creditScore >= 600
+                                          ? "1.2x"
+                                          : rateComponents.creditScore >= 500
+                                            ? "1.5x"
+                                            : rateComponents.creditScore >= 450
+                                              ? "2.0x"
+                                              : rateComponents.creditScore >= 400
+                                                ? "3.0x"
+                                                : "5.0x"}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-green-700">Tier Premium:</span>
+                                <div className="text-green-600">
+                                  {rateComponents.creditScore >= 750
+                                    ? "0.0%"
+                                    : rateComponents.creditScore >= 700
+                                      ? "0.5%"
+                                      : rateComponents.creditScore >= 650
+                                        ? "1.0%"
+                                        : rateComponents.creditScore >= 600
+                                          ? "2.0%"
+                                          : rateComponents.creditScore >= 500
+                                            ? "4.0%"
+                                            : rateComponents.creditScore >= 450
+                                              ? "8.0%"
+                                              : rateComponents.creditScore >= 400
+                                                ? "15.0%"
+                                                : "30.0%"}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-xs text-green-600 bg-green-100 p-2 rounded">
+                              {`(${rateComponents.baseUtilizationRate.toFixed(2)}% × ${
+                                rateComponents.creditScore >= 750
+                                  ? "0.8"
+                                  : rateComponents.creditScore >= 700
+                                    ? "0.9"
+                                    : rateComponents.creditScore >= 650
+                                      ? "1.0"
+                                      : rateComponents.creditScore >= 600
+                                        ? "1.2"
+                                        : rateComponents.creditScore >= 500
+                                          ? "1.5"
+                                          : rateComponents.creditScore >= 450
+                                            ? "2.0"
+                                            : rateComponents.creditScore >= 400
+                                              ? "3.0"
+                                              : "5.0"
+                              }) + ${
+                                rateComponents.creditScore >= 750
+                                  ? "0.0"
+                                  : rateComponents.creditScore >= 700
+                                    ? "0.5"
+                                    : rateComponents.creditScore >= 650
+                                      ? "1.0"
+                                      : rateComponents.creditScore >= 600
+                                        ? "2.0"
+                                        : rateComponents.creditScore >= 500
+                                          ? "4.0"
+                                          : rateComponents.creditScore >= 450
+                                            ? "8.0"
+                                            : rateComponents.creditScore >= 400
+                                              ? "15.0"
+                                              : "30.0"
+                              }% premium = ${rateComponents.creditAdjustedRate.toFixed(2)}%`}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex justify-between">
-                        <span>Market Adjusted:</span>
-                        <span>{rateComponents.marketAdjustedRate.toFixed(2)}%</span>
+
+                      {/* Market Conditions */}
+                      <div className="border-b border-base-300">
+                        <button
+                          className="w-full flex justify-between items-center py-2 hover:bg-base-300/50 rounded px-2"
+                          onClick={() => setExpandedRateSection(expandedRateSection === "market" ? null : "market")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Market Conditions</span>
+                            <svg
+                              className={`w-4 h-4 transition-transform ${expandedRateSection === "market" ? "rotate-180" : ""}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                          <span className="font-bold text-orange-600">
+                            {rateComponents.marketAdjustedRate.toFixed(2)}%
+                          </span>
+                        </button>
+                        {expandedRateSection === "market" && (
+                          <div className="pl-4 pb-3 pt-2 text-sm space-y-2 bg-orange-50/50 rounded-b-lg">
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <span className="font-medium text-orange-700">Volatility Multiplier:</span>
+                                <div className="text-orange-600">1.0x (Normal)</div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-orange-700">Liquidity Premium:</span>
+                                <div className="text-orange-600">0.0%</div>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1 gap-2">
+                              <div>
+                                <span className="font-medium text-orange-700">Risk Premium:</span>
+                                <div className="text-orange-600">0.5%</div>
+                              </div>
+                            </div>
+                            <div className="text-xs text-orange-600 bg-orange-100 p-2 rounded">
+                              ({rateComponents.creditAdjustedRate.toFixed(2)}% × 1.0) + 0.0% + 0.5% ={" "}
+                              {rateComponents.marketAdjustedRate.toFixed(2)}%
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex justify-between font-semibold">
-                        <span>Final Rate:</span>
-                        <span>{rateComponents.finalRate.toFixed(2)}%</span>
+
+                      {/* Final Rate */}
+                      <div className="flex justify-between items-center py-3 bg-primary/10 rounded-lg px-3 mt-3">
+                        <span className="font-bold text-primary">Final Interest Rate</span>
+                        <span className="text-xl font-bold text-primary">{rateComponents.finalRate.toFixed(2)}%</span>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Utilization Impact */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="font-semibold text-sm text-base-content/70">Utilization Impact:</h4>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div className="text-center p-2 rounded bg-green-50">
-                      <div className="font-semibold text-green-700">Low (0-50%)</div>
-                      <div className="text-green-600">Lower Rates</div>
+                {/* Utilization Impact with Visual Indicator */}
+                <div className="mb-6">
+                  <h4 className="font-bold text-base mb-4 flex items-center gap-2">
+                    <ExclamationTriangleIcon className="h-5 w-5 text-warning" />
+                    Pool Utilization Impact
+                  </h4>
+
+                  {/* Current Utilization Bar */}
+                  <div className="mb-4 bg-base-200 rounded-lg p-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-sm">Current Pool Utilization</span>
+                      <span className="font-bold">{currentUtilization.toFixed(1)}%</span>
                     </div>
-                    <div className="text-center p-2 rounded bg-yellow-50">
-                      <div className="font-semibold text-yellow-700">Target (80%)</div>
-                      <div className="text-yellow-600">Optimal Rates</div>
+                    <div className="w-full bg-base-300 rounded-full h-3 relative">
+                      <div
+                        className="h-3 rounded-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 transition-all duration-500"
+                        style={{ width: `${Math.min(currentUtilization, 100)}%` }}
+                      ></div>
+                      {/* Target marker at 80% */}
+                      <div className="absolute top-0 left-[80%] w-0.5 h-3 bg-blue-600"></div>
+                      <div className="absolute -top-6 left-[80%] transform -translate-x-1/2">
+                        <span className="text-xs font-semibold text-blue-600">Target</span>
+                      </div>
                     </div>
-                    <div className="text-center p-2 rounded bg-red-50">
-                      <div className="font-semibold text-red-700">High (90%+)</div>
-                      <div className="text-red-600">Higher Rates</div>
+                    <div className="flex justify-between text-xs text-base-content/70 mt-1">
+                      <span>0%</span>
+                      <span>50%</span>
+                      <span className="text-blue-600 font-semibold">80%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+
+                  {/* Impact Zones */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div
+                      className={`p-4 rounded-lg border-2 ${currentUtilization <= 50 ? "border-green-400 bg-green-50" : "border-green-200 bg-green-50/50"}`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-green-700">Low Utilization</span>
+                        <span className="text-xs font-semibold text-green-600">0-50%</span>
+                      </div>
+                      <div className="text-sm text-green-700 mb-1">Lowest Interest Rates</div>
+                      <div className="text-xs text-green-600">Pool has plenty of liquidity</div>
+                    </div>
+
+                    <div
+                      className={`p-4 rounded-lg border-2 ${currentUtilization > 50 && currentUtilization <= 90 ? "border-yellow-400 bg-yellow-50" : "border-yellow-200 bg-yellow-50/50"}`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-yellow-700">Target Zone</span>
+                        <span className="text-xs font-semibold text-yellow-600">50-90%</span>
+                      </div>
+                      <div className="text-sm text-yellow-700 mb-1">Optimal Balance</div>
+                      <div className="text-xs text-yellow-600">Efficient capital utilization</div>
+                    </div>
+
+                    <div
+                      className={`p-4 rounded-lg border-2 ${currentUtilization > 90 ? "border-red-400 bg-red-50" : "border-red-200 bg-red-50/50"}`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-red-700">High Utilization</span>
+                        <span className="text-xs font-semibold text-red-600">90%+</span>
+                      </div>
+                      <div className="text-sm text-red-700 mb-1">Higher Interest Rates</div>
+                      <div className="text-xs text-red-600">Limited liquidity available</div>
                     </div>
                   </div>
                 </div>
