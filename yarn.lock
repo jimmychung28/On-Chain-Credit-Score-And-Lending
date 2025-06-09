@@ -6573,7 +6573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai@npm:~4.5.0":
+"chai@npm:^4.3.6, chai@npm:~4.5.0":
   version: 4.5.0
   resolution: "chai@npm:4.5.0"
   dependencies:
@@ -6752,6 +6752,21 @@ __metadata:
   bin:
     calcwit: calcwit.js
   checksum: 1e0118c90e2257f1f7a7100413040decb92d0e3e1fe461e92263ee258ed33ba0c85ee19d7456e37df20c4ae0d8a4d8c00466aba6e9558f3bf8fa3397abc5c509
+  languageName: node
+  linkType: hard
+
+"circom_tester@npm:^0.0.23":
+  version: 0.0.23
+  resolution: "circom_tester@npm:0.0.23"
+  dependencies:
+    chai: ^4.3.6
+    ffjavascript: ^0.3.1
+    fnv-plus: ^1.3.1
+    r1csfile: ^0.0.48
+    snarkjs: ^0.7.3
+    tmp-promise: ^3.0.3
+    util: ^0.12.5
+  checksum: aa97428e2786ac5ffa6a355d5640dca03efd32bca29e02f81521a14cff6174a87d5ddbb244b7311151c5b882f59aff5145d02bcff19d9838998fa3f056feb45b
   languageName: node
   linkType: hard
 
@@ -9262,6 +9277,13 @@ __metadata:
   dependencies:
     imul: ^1.0.0
   checksum: c465344d4f169eaf10d45c33949a1e7a633f09dba2ac7063ce8ae8be743df5979d708f7f24900163589f047f5194ac5fc2476177ce31175e8805adfa7b8fb7a4
+  languageName: node
+  linkType: hard
+
+"fnv-plus@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "fnv-plus@npm:1.3.1"
+  checksum: 4d3de8026d538ffab13dfa38ac0662b045b2ad0f920efa54f1ca65f59ad1a49b4d62482c5fcdc9cce0a18d9852df1db97c618937089d85678ce03f2e76b07e8b
   languageName: node
   linkType: hard
 
@@ -14238,7 +14260,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"r1csfile@npm:0.0.48":
+"r1csfile@npm:0.0.48, r1csfile@npm:^0.0.48":
   version: 0.0.48
   resolution: "r1csfile@npm:0.0.48"
   dependencies:
@@ -14895,6 +14917,7 @@ __metadata:
   resolution: "se-2@workspace:."
   dependencies:
     "@types/snarkjs": ^0
+    circom_tester: ^0.0.23
     circomlib: ^2.0.5
     ffjavascript: ^0.3.1
     husky: ~9.1.6
@@ -15285,7 +15308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snarkjs@npm:^0.7.5":
+"snarkjs@npm:^0.7.3, snarkjs@npm:^0.7.5":
   version: 0.7.5
   resolution: "snarkjs@npm:0.7.5"
   dependencies:
@@ -16062,12 +16085,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tmp-promise@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "tmp-promise@npm:3.0.3"
+  dependencies:
+    tmp: ^0.2.0
+  checksum: f854f5307dcee6455927ec3da9398f139897faf715c5c6dcee6d9471ae85136983ea06662eba2edf2533bdcb0fca66d16648e79e14381e30c7fb20be9c1aa62c
+  languageName: node
+  linkType: hard
+
 "tmp@npm:0.0.33, tmp@npm:^0.0.33":
   version: 0.0.33
   resolution: "tmp@npm:0.0.33"
   dependencies:
     os-tmpdir: ~1.0.2
   checksum: 902d7aceb74453ea02abbf58c203f4a8fc1cead89b60b31e354f74ed5b3fb09ea817f94fb310f884a5d16987dd9fa5a735412a7c2dd088dd3d415aa819ae3a28
+  languageName: node
+  linkType: hard
+
+"tmp@npm:^0.2.0":
+  version: 0.2.3
+  resolution: "tmp@npm:0.2.3"
+  checksum: 73b5c96b6e52da7e104d9d44afb5d106bb1e16d9fa7d00dbeb9e6522e61b571fbdb165c756c62164be9a3bbe192b9b268c236d370a2a0955c7689cd2ae377b95
   languageName: node
   linkType: hard
 
@@ -16939,7 +16978,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"util@npm:^0.12.4":
+"util@npm:^0.12.4, util@npm:^0.12.5":
   version: 0.12.5
   resolution: "util@npm:0.12.5"
   dependencies:

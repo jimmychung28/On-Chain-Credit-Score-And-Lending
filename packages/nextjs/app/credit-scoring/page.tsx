@@ -67,7 +67,7 @@ const SingleLoanDisplay = ({ loanId }: { loanId: any }) => {
   }
 
   // Calculate loan details with safe fallbacks - ZK contract returns array: [amount, interestRate, dueDate, isActive, isRepaid, privacyLevel, transparencyPremium]
-  const loanAmount = loanData && loanData[0] ? formatEther(loanData[0]) : "0";
+  const loanAmount = loanData && loanData[0] ? formatEther(BigInt(loanData[0])) : "0";
   const interestRateRaw = loanData && loanData[1] ? Number(loanData[1]) : 0;
   const interestRate = interestRateRaw / 100; // Convert from basis points
   const interest = (parseFloat(loanAmount) * interestRate) / 100;
