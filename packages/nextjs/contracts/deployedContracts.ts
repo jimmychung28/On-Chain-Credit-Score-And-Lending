@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+      address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
       abi: [
         {
           inputs: [
@@ -919,6 +919,13 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "stakeETH",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
@@ -927,6 +934,19 @@ const deployedContracts = {
             },
           ],
           name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "unstakeETH",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -965,7 +985,7 @@ const deployedContracts = {
       },
     },
     CreditScoring: {
-      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
       abi: [
         {
           inputs: [],
@@ -1747,7 +1767,7 @@ const deployedContracts = {
       },
     },
     YourContract: {
-      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
       abi: [
         {
           inputs: [

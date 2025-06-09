@@ -41,12 +41,12 @@ contract CreditScoring is Ownable, ReentrancyGuard {
     uint256 public constant MIN_SCORE = 300;
     uint256 public constant SCORE_PRECISION = 100;
     
-    // Weights for different factors (sum should equal 100)
-    uint256 public volumeWeight = 25;       // 25%
-    uint256 public frequencyWeight = 20;    // 20%
-    uint256 public ageWeight = 15;          // 15%
-    uint256 public repaymentWeight = 30;    // 30%
-    uint256 public stakingWeight = 10;      // 10%
+    // Weights for different factors (sum should equal 100) - BEHAVIORAL ONLY
+    uint256 public volumeWeight = 30;       // 30% - Transaction activity
+    uint256 public frequencyWeight = 25;    // 25% - Platform engagement
+    uint256 public ageWeight = 20;          // 20% - Account stability
+    uint256 public repaymentWeight = 25;    // 25% - Payment history
+    uint256 public stakingWeight = 0;       // 0% - REMOVED for uncollateralized focus
 
     // Events
     event CreditScoreUpdated(address indexed user, uint256 newScore, uint256 timestamp);
@@ -127,7 +127,8 @@ contract CreditScoring is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Deposit ETH as stake to improve credit score
+     * @dev Deposit ETH as stake (ONLY for yield, not for credit scoring)
+     * This function is kept for backward compatibility but staking no longer affects credit score
      */
     function depositStake() external payable {
         require(msg.value > 0, "Must deposit some ETH");
@@ -136,11 +137,12 @@ contract CreditScoring is Ownable, ReentrancyGuard {
         stakingBalances[msg.sender] = stakingBalances[msg.sender]+(msg.value);
         emit StakeDeposited(msg.sender, msg.value);
         
-        _updateCreditScore(msg.sender);
+        // NOTE: No longer updates credit score - staking is purely for yield now
+        // _updateCreditScore(msg.sender);
     }
 
     /**
-     * @dev Withdraw staked ETH
+     * @dev Withdraw staked ETH (no longer affects credit score)
      */
     function withdrawStake(uint256 amount) external nonReentrant {
         require(stakingBalances[msg.sender] >= amount, "Insufficient stake balance");
@@ -151,7 +153,8 @@ contract CreditScoring is Ownable, ReentrancyGuard {
         require(success, "Transfer failed");
         
         emit StakeWithdrawn(msg.sender, amount);
-        _updateCreditScore(msg.sender);
+        // NOTE: No longer updates credit score - staking is purely for yield now
+        // _updateCreditScore(msg.sender);
     }
 
     /**
@@ -166,11 +169,11 @@ contract CreditScoring is Ownable, ReentrancyGuard {
         uint256 repaymentScore = _calculateRepaymentScore(profile.repaidLoans, profile.defaultedLoans);
         uint256 stakingScore = _calculateStakingScore(stakingBalances[user]);
 
+        // Calculate weighted score without staking component
         uint256 weightedScore = (volumeScore*(volumeWeight)
             +(frequencyScore*(frequencyWeight))
             +(ageScore*(ageWeight))
-            +(repaymentScore*(repaymentWeight))
-            +(stakingScore*(stakingWeight)))
+            +(repaymentScore*(repaymentWeight)))
             /(100);
 
         // Ensure score is within bounds

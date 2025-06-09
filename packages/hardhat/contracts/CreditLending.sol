@@ -70,7 +70,24 @@ contract CreditLending is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Deposit funds to the lending pool
+     * @dev Stake ETH to earn yield (same as depositing to pool)
+     */
+    function stakeETH() external payable {
+        require(msg.value > 0, "Must deposit some ETH");
+        
+        if (pool.lenderShares[msg.sender] == 0) {
+            pool.lenders.push(msg.sender);
+        }
+        
+        pool.lenderShares[msg.sender] = pool.lenderShares[msg.sender]+(msg.value);
+        pool.totalFunds = pool.totalFunds+(msg.value);
+        pool.availableFunds = pool.availableFunds+(msg.value);
+        
+        emit FundsDeposited(msg.sender, msg.value);
+    }
+
+    /**
+     * @dev Deposit funds to the lending pool (same as staking)
      */
     function depositToPool() external payable {
         require(msg.value > 0, "Must deposit some ETH");
@@ -87,7 +104,24 @@ contract CreditLending is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Withdraw funds from the lending pool
+     * @dev Unstake ETH (same as withdrawing from pool)
+     */
+    function unstakeETH(uint256 amount) external nonReentrant {
+        require(pool.lenderShares[msg.sender] >= amount, "Insufficient staked amount");
+        require(pool.availableFunds >= amount, "Insufficient pool funds");
+        
+        pool.lenderShares[msg.sender] = pool.lenderShares[msg.sender]-(amount);
+        pool.totalFunds = pool.totalFunds-(amount);
+        pool.availableFunds = pool.availableFunds-(amount);
+        
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
+        
+        emit FundsWithdrawn(msg.sender, amount);
+    }
+
+    /**
+     * @dev Withdraw funds from the lending pool (same as unstaking)
      */
     function withdrawFromPool(uint256 amount) external nonReentrant {
         require(pool.lenderShares[msg.sender] >= amount, "Insufficient share");
