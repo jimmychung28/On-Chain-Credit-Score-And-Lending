@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { BanknotesIcon, ChartBarIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
@@ -32,9 +32,161 @@ const CustomToastContainer = ({ toasts, removeToast }: { toasts: Toast[]; remove
   </div>
 );
 
+const SingleLoanDisplay = ({ loanId }: { loanId: any }) => {
+  const { data: loanData } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getLoan",
+    args: [loanId],
+  });
+
+  const { writeContractAsync: writeCreditLendingAsync, isMining: isCreditLendingPending } = useScaffoldWriteContract({
+    contractName: "CreditLending",
+  });
+
+  const repayLoan = async (loanId: number, repaymentAmount: bigint) => {
+    try {
+      await writeCreditLendingAsync({
+        functionName: "repayLoan",
+        args: [BigInt(loanId)],
+        value: repaymentAmount,
+      });
+    } catch (error: any) {
+      console.error("Loan repayment error:", error);
+    }
+  };
+
+  if (!loanData) {
+    return (
+      <div className="card bg-base-200 shadow-md animate-pulse">
+        <div className="card-body">
+          <div className="h-4 bg-base-300 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-base-300 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate loan details with safe fallbacks
+  const loanAmount = loanData.amount ? formatEther(loanData.amount) : "0";
+  const interestRateRaw = loanData.interestRate ? Number(loanData.interestRate) : 0;
+  const interestRate = interestRateRaw / 100; // Convert from basis points
+  const interest = (parseFloat(loanAmount) * interestRate) / 100;
+  const totalRepayment = parseFloat(loanAmount) + interest;
+
+  // Safe date handling
+  const dueDateTimestamp = loanData.dueDate ? Number(loanData.dueDate) : 0;
+  const dueDate = new Date(dueDateTimestamp * 1000);
+  const isValidDate = !isNaN(dueDate.getTime()) && dueDateTimestamp > 0;
+  const isOverdue = isValidDate && Date.now() > dueDate.getTime();
+  const daysUntilDue = isValidDate ? Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
+
+  return (
+    <div
+      className={`card bg-base-200 shadow-md ${isOverdue ? "border-l-4 border-error" : loanData.isActive ? "border-l-4 border-primary" : "border-l-4 border-success"}`}
+    >
+      <div className="card-body">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h4 className="text-lg font-bold">Loan #{loanId.toString()}</h4>
+            <div
+              className={`badge ${loanData.isActive ? (isOverdue ? "badge-error" : "badge-primary") : "badge-success"}`}
+            >
+              {loanData.isRepaid ? "Repaid" : isOverdue ? "Overdue" : "Active"}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold">{loanAmount} ETH</div>
+            <div className="text-sm text-base-content/70">Principal</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="stat bg-base-100 rounded p-3">
+            <div className="stat-title text-xs">Interest Rate</div>
+            <div className="stat-value text-lg">{interestRate}%</div>
+          </div>
+          <div className="stat bg-base-100 rounded p-3">
+            <div className="stat-title text-xs">Interest</div>
+            <div className="stat-value text-lg">{interest.toFixed(4)} ETH</div>
+          </div>
+          <div className="stat bg-base-100 rounded p-3">
+            <div className="stat-title text-xs">Total Due</div>
+            <div className="stat-value text-lg">{totalRepayment.toFixed(4)} ETH</div>
+          </div>
+          <div className="stat bg-base-100 rounded p-3">
+            <div className="stat-title text-xs">Due Date</div>
+            <div className="stat-value text-sm">{isValidDate ? dueDate.toLocaleDateString() : "N/A"}</div>
+          </div>
+        </div>
+
+        {loanData.isActive && !loanData.isRepaid && (
+          <div className="flex flex-col gap-3">
+            <div className={`alert ${isOverdue ? "alert-error" : daysUntilDue <= 3 ? "alert-warning" : "alert-info"}`}>
+              <div>
+                {!isValidDate ? (
+                  <>
+                    <div className="font-semibold">Active Loan</div>
+                    <div className="text-sm">Loan is active. Due date information not available.</div>
+                  </>
+                ) : isOverdue ? (
+                  <>
+                    <div className="font-semibold">Loan Overdue!</div>
+                    <div className="text-sm">
+                      This loan is {Math.abs(daysUntilDue)} days overdue. Repay immediately to avoid credit score
+                      damage.
+                    </div>
+                  </>
+                ) : daysUntilDue <= 3 ? (
+                  <>
+                    <div className="font-semibold">Due Soon</div>
+                    <div className="text-sm">
+                      This loan is due in {daysUntilDue} {daysUntilDue === 1 ? "day" : "days"}.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-semibold">Active Loan</div>
+                    <div className="text-sm">
+                      Due in {daysUntilDue} days. Make timely payments to maintain good credit.
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <button
+              className={`btn ${isOverdue ? "btn-error" : "btn-primary"} w-full ${isCreditLendingPending ? "loading" : ""}`}
+              onClick={() => {
+                if (!isNaN(totalRepayment) && totalRepayment > 0) {
+                  repayLoan(Number(loanId), parseEther(totalRepayment.toString()));
+                }
+              }}
+              disabled={isCreditLendingPending || isNaN(totalRepayment) || totalRepayment <= 0}
+            >
+              {isCreditLendingPending
+                ? "Processing..."
+                : `Repay ${!isNaN(totalRepayment) ? totalRepayment.toFixed(4) : "0.0000"} ETH`}
+            </button>
+          </div>
+        )}
+
+        {loanData.isRepaid && (
+          <div className="alert alert-success">
+            <CheckCircleIcon className="h-5 w-5" />
+            <div>
+              <div className="font-semibold">Loan Repaid</div>
+              <div className="text-sm">This loan has been successfully repaid. Great job maintaining your credit!</div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const CreditScoringPage = () => {
   const { address: connectedAddress } = useAccount();
-  const [activeTab, setActiveTab] = useState<"profile" | "stake" | "borrow">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "stake" | "borrow" | "loans">("profile");
   const [isRegistering, setIsRegistering] = useState(false);
   const [loanAmount, setLoanAmount] = useState("");
   const [stakeAmount, setStakeAmount] = useState("");
@@ -58,11 +210,16 @@ const CreditScoringPage = () => {
     args: [connectedAddress],
   });
 
-  const { data: borrowerLoans } = useScaffoldReadContract({
+  const { data: borrowerLoanIds } = useScaffoldReadContract({
     contractName: "CreditLending",
     functionName: "getBorrowerLoans",
     args: [connectedAddress],
   });
+
+  // Debug logging
+  console.log("Connected Address:", connectedAddress);
+  console.log("Borrower Loan IDs:", borrowerLoanIds);
+  console.log("Loan IDs Array Length:", borrowerLoanIds?.length);
   // Contract write hooks
   const { writeContractAsync: writeCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "CreditScoring",
@@ -174,17 +331,71 @@ const CreditScoringPage = () => {
     return "bg-red-500";
   };
 
+  // Dynamic rate state
+  const [dynamicRate, setDynamicRate] = useState<string>("Loading...");
+  const [currentUtilization, setCurrentUtilization] = useState<number>(0);
+  const [rateComponents, setRateComponents] = useState<any>(null);
+
+  // Get current pool utilization
+  const { data: poolUtilizationData } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getCurrentUtilization",
+  });
+
+  // Get loan eligibility (which includes dynamic rate)
+  const { data: loanEligibility } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "checkLoanEligibility",
+    args: [connectedAddress, parseEther(loanAmount || "1")],
+  });
+
+  // Get rate components if connected
+  const { data: rateComponentsData } = useScaffoldReadContract({
+    contractName: "CreditLending",
+    functionName: "getRateComponents",
+    args: [connectedAddress, parseEther(loanAmount || "1")],
+  });
+
+  // Update dynamic rate when data changes
+  useEffect(() => {
+    if (poolUtilizationData) {
+      setCurrentUtilization(Number(poolUtilizationData) / 100);
+    }
+
+    if (loanEligibility && loanEligibility[0]) {
+      const rate = Number(loanEligibility[2]) / 100;
+      setDynamicRate(`${rate.toFixed(2)}%`);
+    } else if (loanEligibility && !loanEligibility[0]) {
+      setDynamicRate("N/A");
+    }
+
+    if (rateComponentsData) {
+      setRateComponents({
+        creditScore: Number(rateComponentsData[0]),
+        poolUtilization: Number(rateComponentsData[1]) / 100,
+        baseUtilizationRate: Number(rateComponentsData[2]) / 100,
+        creditAdjustedRate: Number(rateComponentsData[3]) / 100,
+        marketAdjustedRate: Number(rateComponentsData[4]) / 100,
+        finalRate: Number(rateComponentsData[5]) / 100,
+      });
+    }
+  }, [poolUtilizationData, loanEligibility, rateComponentsData]);
+
   const getInterestRate = (score: number) => {
-    if (score >= 750) return "3%";
-    if (score >= 700) return "5%";
-    if (score >= 650) return "8%";
-    if (score >= 600) return "11%";
-    if (score >= 500) return "15%";
-    if (score >= 450) return "20%";
-    if (score >= 400) return "30%";
-    if (score >= 350) return "50%";
-    if (score >= 320) return "70%";
-    return "100%";
+    if (dynamicRate === "Loading..." || dynamicRate === "Error") {
+      // Fallback to static calculation while loading
+      if (score >= 750) return "3%";
+      if (score >= 700) return "5%";
+      if (score >= 650) return "8%";
+      if (score >= 600) return "11%";
+      if (score >= 500) return "15%";
+      if (score >= 450) return "20%";
+      if (score >= 400) return "30%";
+      if (score >= 350) return "50%";
+      if (score >= 320) return "70%";
+      return "100%";
+    }
+    return dynamicRate;
   };
 
   // Check if user is registered
@@ -305,7 +516,7 @@ const CreditScoringPage = () => {
                   <ChartBarIcon className="h-8 w-8 text-accent" />
                   <div>
                     <div className="text-sm text-base-content/70">Active Loans</div>
-                    <div className="text-xl font-bold">{borrowerLoans ? borrowerLoans.length : 0}</div>
+                    <div className="text-xl font-bold">{borrowerLoanIds ? borrowerLoanIds.length : 0}</div>
                   </div>
                 </div>
               </div>
@@ -331,6 +542,15 @@ const CreditScoringPage = () => {
               onClick={() => setActiveTab("borrow")}
             >
               Borrow
+            </button>
+            <button
+              className={`tab tab-lg ${activeTab === "loans" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("loans")}
+            >
+              My Loans{" "}
+              {borrowerLoanIds && borrowerLoanIds.length > 0 && (
+                <span className="badge badge-primary ml-2">{borrowerLoanIds.length}</span>
+              )}
             </button>
           </div>
 
@@ -584,10 +804,13 @@ const CreditScoringPage = () => {
                 <div className="mb-6">
                   <div className="alert alert-info mb-4">
                     <div>
-                      <div className="font-semibold">Your Loan Terms</div>
-                      <div className="text-sm">Interest Rate: {getInterestRate(creditScore)}</div>
-                      <div className="text-sm">Max Amount: 100 ETH</div>
-                      <div className="text-sm">Duration: 30 days</div>
+                      <div className="font-semibold">Your Dynamic Loan Terms</div>
+                      <div className="text-sm">
+                        Interest Rate:{" "}
+                        <span className="font-semibold text-primary">{getInterestRate(creditScore)}</span>
+                      </div>
+                      <div className="text-sm">Pool Utilization: {currentUtilization.toFixed(1)}%</div>
+                      <div className="text-sm">Max Amount: 100 ETH • Duration: 30 days</div>
                     </div>
                   </div>
 
@@ -624,55 +847,145 @@ const CreditScoringPage = () => {
                 </div>
               </div>
 
-              {/* Interest Rate Tiers */}
+              {/* Dynamic Rate Information */}
               <div className="bg-base-100 rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold mb-4">Interest Rate Tiers</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-green-50">
-                    <span className="text-green-700">750+ (Excellent)</span>
-                    <span className="font-semibold text-green-700">3%</span>
+                <h3 className="text-xl font-bold mb-4">Dynamic Rate Model</h3>
+
+                {/* Current Rate Display */}
+                <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Your Current Rate</span>
+                    <span className="text-2xl font-bold text-primary">{dynamicRate}</span>
                   </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-blue-50">
-                    <span className="text-blue-700">700-749 (Very Good)</span>
-                    <span className="font-semibold text-blue-700">5%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-yellow-50">
-                    <span className="text-yellow-700">650-699 (Good)</span>
-                    <span className="font-semibold text-yellow-700">8%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-orange-50">
-                    <span className="text-orange-700">600-649 (Fair)</span>
-                    <span className="font-semibold text-orange-700">11%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-50">
-                    <span className="text-red-700">500-599 (Poor)</span>
-                    <span className="font-semibold text-red-700">15%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-100">
-                    <span className="text-red-800">450-499 (Bad)</span>
-                    <span className="font-semibold text-red-800">20%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-200">
-                    <span className="text-red-900">400-449 (Terrible)</span>
-                    <span className="font-semibold text-red-900">30%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-300">
-                    <span className="text-red-900">350-399 (High Risk)</span>
-                    <span className="font-semibold text-red-900">50%</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 rounded-lg bg-red-400">
-                    <span className="text-red-900">300-349 (Extreme Risk)</span>
-                    <span className="font-semibold text-red-900">70-100%</span>
+                  <div className="text-sm text-base-content/70 mt-1">
+                    Pool Utilization: {currentUtilization.toFixed(1)}%
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-info/10 rounded-lg">
-                  <p className="text-sm text-base-content/70">
-                    All loans are uncollateralized and based purely on your behavioral credit score. Build good credit
-                    through consistent repayment and on-chain activity.
+                {/* Rate Components Breakdown */}
+                {rateComponents && (
+                  <div className="space-y-3 mb-4">
+                    <h4 className="font-semibold text-sm text-base-content/70">Rate Breakdown:</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Base Rate:</span>
+                        <span>{rateComponents.baseUtilizationRate.toFixed(2)}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Credit Adjusted:</span>
+                        <span>{rateComponents.creditAdjustedRate.toFixed(2)}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Market Adjusted:</span>
+                        <span>{rateComponents.marketAdjustedRate.toFixed(2)}%</span>
+                      </div>
+                      <div className="flex justify-between font-semibold">
+                        <span>Final Rate:</span>
+                        <span>{rateComponents.finalRate.toFixed(2)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Utilization Impact */}
+                <div className="space-y-2 mb-4">
+                  <h4 className="font-semibold text-sm text-base-content/70">Utilization Impact:</h4>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-center p-2 rounded bg-green-50">
+                      <div className="font-semibold text-green-700">Low (0-50%)</div>
+                      <div className="text-green-600">Lower Rates</div>
+                    </div>
+                    <div className="text-center p-2 rounded bg-yellow-50">
+                      <div className="font-semibold text-yellow-700">Target (80%)</div>
+                      <div className="text-yellow-600">Optimal Rates</div>
+                    </div>
+                    <div className="text-center p-2 rounded bg-red-50">
+                      <div className="font-semibold text-red-700">High (90%+)</div>
+                      <div className="text-red-600">Higher Rates</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-4 bg-info/10 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ChartBarIcon className="h-4 w-4 text-info" />
+                    <span className="font-semibold text-info text-sm">Dynamic Pricing</span>
+                  </div>
+                  <p className="text-xs text-base-content/70">
+                    Rates adjust automatically based on pool utilization, your credit score, market conditions, and loan
+                    size. Lower utilization = better rates. Higher credit scores = lower rates.
                   </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === "loans" && (
+            <div className="space-y-6">
+              {/* Active Loans Header */}
+              <div className="bg-base-100 rounded-2xl shadow-xl p-6">
+                <h3 className="text-xl font-bold mb-4">My Active Loans</h3>
+
+                {borrowerLoanIds && borrowerLoanIds.length > 0 ? (
+                  <div className="space-y-4">
+                    {borrowerLoanIds.map((loanId: any) => {
+                      return <SingleLoanDisplay key={loanId.toString()} loanId={loanId} />;
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <BanknotesIcon className="h-16 w-16 text-base-content/30 mx-auto mb-4" />
+                    <h4 className="text-xl font-semibold mb-2">No Active Loans</h4>
+                    <p className="text-base-content/70 mb-6">
+                      You don&apos;t have any active loans. Visit the &quot;Borrow&quot; tab to request your first loan.
+                    </p>
+                    <button className="btn btn-primary" onClick={() => setActiveTab("borrow")}>
+                      Request a Loan
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Loan History Summary */}
+              {creditProfile && (
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6">
+                  <h3 className="text-xl font-bold mb-4">Loan History Summary</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Total Loans</div>
+                      <div className="stat-value">{Number(creditProfile.loanCount)}</div>
+                      <div className="stat-desc">All time</div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Successfully Repaid</div>
+                      <div className="stat-value text-success">{Number(creditProfile.repaidLoans)}</div>
+                      <div className="stat-desc">
+                        {Number(creditProfile.loanCount) > 0
+                          ? `${((Number(creditProfile.repaidLoans) / Number(creditProfile.loanCount)) * 100).toFixed(1)}% success rate`
+                          : "No history yet"}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Defaults</div>
+                      <div className="stat-value text-error">{Number(creditProfile.defaultedLoans)}</div>
+                      <div className="stat-desc">
+                        {Number(creditProfile.defaultedLoans) === 0 ? "Perfect record!" : "Impacts credit score"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-info/10 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <ChartBarIcon className="h-5 w-5 text-info" />
+                      <span className="font-semibold text-info">Credit Impact</span>
+                    </div>
+                    <p className="text-sm text-base-content/70">
+                      Your repayment history accounts for 30% of your credit score. Timely payments significantly
+                      improve your creditworthiness and reduce future loan interest rates.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

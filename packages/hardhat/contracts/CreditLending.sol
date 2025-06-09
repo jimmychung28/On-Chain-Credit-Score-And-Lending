@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "./CreditScoring.sol";
+import "./DynamicTargetRateModel.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
@@ -12,6 +13,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract CreditLending is Ownable, ReentrancyGuard {
 
     CreditScoring public creditScoringContract;
+    DynamicTargetRateModel public rateModel;
 
     struct Loan {
         uint256 amount;           // Loan amount in wei
@@ -65,8 +67,9 @@ contract CreditLending is Ownable, ReentrancyGuard {
         _;
     }
 
-    constructor(address _creditScoringContract) Ownable(msg.sender) {
+    constructor(address _creditScoringContract, address _rateModel) Ownable(msg.sender) {
         creditScoringContract = CreditScoring(_creditScoringContract);
+        rateModel = DynamicTargetRateModel(_rateModel);
     }
 
     /**
@@ -148,8 +151,14 @@ contract CreditLending is Ownable, ReentrancyGuard {
         uint256 creditScore = creditScoringContract.getCreditScore(msg.sender);
         require(creditScore >= MIN_CREDIT_SCORE, "Credit score too low");
         
-        // Calculate interest rate based on credit score
-        uint256 interestRate = _calculateInterestRate(creditScore);
+        // Calculate dynamic interest rate based on multiple factors
+        uint256 poolUtilization = _calculatePoolUtilization();
+        uint256 interestRate = rateModel.calculateInterestRate(
+            creditScore,
+            poolUtilization,
+            amount,
+            LOAN_DURATION
+        );
         
         // Create loan
         uint256 loanId = nextLoanId++;
@@ -206,8 +215,9 @@ contract CreditLending is Ownable, ReentrancyGuard {
             loan.isRepaid = true;
             loan.isActive = false;
             
-            // Record successful repayment in credit scoring
+            // Record successful repayment in credit scoring and rate model
             creditScoringContract.recordLoan(msg.sender, loan.amount, true);
+            rateModel.recordLoanPerformance(true);
             
             // Update pool
             pool.totalLoaned = pool.totalLoaned-(loan.amount);
@@ -238,8 +248,9 @@ contract CreditLending is Ownable, ReentrancyGuard {
         
         loan.isActive = false;
         
-        // Record default in credit scoring
+        // Record default in credit scoring and rate model
         creditScoringContract.recordLoan(loan.borrower, loan.amount, false);
+        rateModel.recordLoanPerformance(false);
         
         // Update pool (loss of principal)
         pool.totalLoaned = pool.totalLoaned-(loan.amount);
@@ -248,23 +259,11 @@ contract CreditLending is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Calculate interest rate based on credit score
+     * @dev Calculate current pool utilization rate
      */
-    function _calculateInterestRate(uint256 creditScore) internal pure returns (uint256) {
-        // Better credit score = lower interest rate
-        // Score range: 300-850, Interest range: 3%-100%
-        
-        if (creditScore >= 750) return MIN_INTEREST_RATE;           // 3% for excellent credit
-        if (creditScore >= 700) return MIN_INTEREST_RATE+(200);  // 5% for good credit
-        if (creditScore >= 650) return MIN_INTEREST_RATE+(500);  // 8% for fair credit
-        if (creditScore >= 600) return MIN_INTEREST_RATE+(800);  // 11% for poor credit
-        if (creditScore >= 500) return MIN_INTEREST_RATE+(1200); // 15% for bad credit
-        if (creditScore >= 450) return MIN_INTEREST_RATE+(1700); // 20% for very bad credit
-        if (creditScore >= 400) return MIN_INTEREST_RATE+(2700); // 30% for terrible credit
-        if (creditScore >= 350) return MIN_INTEREST_RATE+(4700); // 50% for extremely poor credit
-        if (creditScore >= 320) return MIN_INTEREST_RATE+(6700); // 70% for disaster credit
-        
-        return MAX_INTEREST_RATE; // 100% for the worst possible credit (300-319)
+    function _calculatePoolUtilization() internal view returns (uint256) {
+        if (pool.totalFunds == 0) return 0;
+        return (pool.totalLoaned * 10000) / pool.totalFunds; // Return in basis points
     }
 
     /**
@@ -482,7 +481,8 @@ contract CreditLending is Ownable, ReentrancyGuard {
                 return (false, score, 0, "Insufficient pool funds");
             }
             
-            interestRate = _calculateInterestRate(score);
+            uint256 poolUtilization = _calculatePoolUtilization();
+            interestRate = rateModel.calculateInterestRate(score, poolUtilization, amount, LOAN_DURATION);
             return (true, score, interestRate, "Eligible for loan");
             
         } catch {
@@ -529,5 +529,58 @@ contract CreditLending is Ownable, ReentrancyGuard {
      */
     function updateCreditScoringContract(address newContract) external onlyOwner {
         creditScoringContract = CreditScoring(newContract);
+    }
+
+    /**
+     * @dev Update rate model contract address (only owner)
+     */
+    function updateRateModel(address newRateModel) external onlyOwner {
+        rateModel = DynamicTargetRateModel(newRateModel);
+    }
+
+    /**
+     * @dev Get current pool utilization rate
+     */
+    function getCurrentUtilization() external view returns (uint256) {
+        return _calculatePoolUtilization();
+    }
+
+    /**
+     * @dev Get dynamic rate components for a potential loan
+     */
+    function getRateComponents(address borrower, uint256 amount) external view returns (
+        uint256 creditScore,
+        uint256 poolUtilization,
+        uint256 baseUtilizationRate,
+        uint256 creditAdjustedRate,
+        uint256 marketAdjustedRate,
+        uint256 finalRate
+    ) {
+        try creditScoringContract.getCreditScore(borrower) returns (uint256 score) {
+            creditScore = score;
+            poolUtilization = _calculatePoolUtilization();
+            
+            (baseUtilizationRate, creditAdjustedRate, marketAdjustedRate, finalRate) = 
+                rateModel.getCurrentRateComponents(creditScore, poolUtilization);
+        } catch {
+            // Return zeros if user not registered
+            creditScore = 0;
+            poolUtilization = _calculatePoolUtilization();
+            baseUtilizationRate = 0;
+            creditAdjustedRate = 0;
+            marketAdjustedRate = 0;
+            finalRate = 0;
+        }
+    }
+
+    /**
+     * @dev Get rate model performance statistics
+     */
+    function getRateModelStats() external view returns (
+        uint256 totalOriginated,
+        uint256 totalDefaulted,
+        uint256 defaultRate
+    ) {
+        return rateModel.getPerformanceStats();
     }
 } 
