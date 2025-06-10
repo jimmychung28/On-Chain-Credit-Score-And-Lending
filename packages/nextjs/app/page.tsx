@@ -16,38 +16,22 @@ import {
 } from "@heroicons/react/24/outline";
 import { AnimatedHero } from "~~/components/AnimatedHero";
 import { AnimatedStatsCards } from "~~/components/AnimatedStatsCards";
-
-// import { ThreeJSScene } from "~~/components/ThreeJSScene";
+import { ThreeJSScene } from "~~/components/ThreeJSScene";
 
 const Home: NextPage = () => {
   const { isConnected } = useAccount();
 
   return (
     <>
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
-        <motion.div
-          className="absolute inset-0 opacity-20"
-          animate={{
-            background: [
-              "radial-gradient(circle at 20% 20%, #3b82f6 0%, transparent 50%)",
-              "radial-gradient(circle at 80% 80%, #8b5cf6 0%, transparent 50%)",
-              "radial-gradient(circle at 50% 50%, #10b981 0%, transparent 50%)",
-              "radial-gradient(circle at 20% 80%, #f59e0b 0%, transparent 50%)",
-              "radial-gradient(circle at 80% 20%, #ef4444 0%, transparent 50%)",
-              "radial-gradient(circle at 20% 20%, #3b82f6 0%, transparent 50%)",
-            ],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
+      {/* Three.js Background */}
+      <ThreeJSScene />
 
       {/* Animated Hero Section */}
       <AnimatedHero />
 
       {/* Sophisticated Credit Factors Section */}
       <motion.div
-        className="py-20 bg-base-200/50 backdrop-blur-sm relative overflow-hidden"
+        className="py-20 bg-white/95 backdrop-blur-lg relative overflow-hidden"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -76,20 +60,18 @@ const Home: NextPage = () => {
             className="text-center mb-16"
           >
             <motion.h2
-              className="text-5xl md:text-6xl font-bold mb-6"
+              className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg"
               initial={{ scale: 0.5 }}
               whileInView={{ scale: 1 }}
               transition={{ duration: 1, type: "spring", stiffness: 100 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Sophisticated
-              </span>
+              <span className="text-black">Sophisticated</span>
               <br />
-              Credit Factors
+              <span className="text-black">Credit Factors</span>
             </motion.h2>
             <motion.p
-              className="text-xl text-base-content/80 max-w-3xl mx-auto"
+              className="text-xl text-black max-w-3xl mx-auto"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
@@ -97,7 +79,9 @@ const Home: NextPage = () => {
             >
               Revolutionary 7-factor analysis that goes beyond traditional credit scoring.
               <br />
-              <span className="text-primary font-semibold">Fair, sophisticated, privacy-preserving.</span>
+              <span className="text-blue-800 font-bold bg-yellow-200 px-2 py-1 rounded">
+                Fair, sophisticated, privacy-preserving.
+              </span>
             </motion.p>
           </motion.div>
 
@@ -107,7 +91,7 @@ const Home: NextPage = () => {
 
       {/* How It Works Section */}
       <motion.div
-        className="py-20 bg-gradient-to-br from-base-100/80 to-base-200/60 backdrop-blur-sm"
+        className="py-20 bg-gray-100/95 backdrop-blur-lg"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -115,7 +99,7 @@ const Home: NextPage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            className="text-4xl md:text-5xl font-bold text-center mb-16 drop-shadow-lg text-black"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -153,7 +137,7 @@ const Home: NextPage = () => {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="card bg-base-100/70 backdrop-blur-sm shadow-xl border border-base-300/50"
+                className="card bg-white/95 backdrop-blur-lg shadow-xl border border-gray-300"
                 initial={{ opacity: 0, y: 50, rotateY: -10 }}
                 whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
                 transition={{ duration: 0.8, delay: item.delay }}
@@ -184,7 +168,7 @@ const Home: NextPage = () => {
 
       {/* Revolutionary Features Section */}
       <motion.div
-        className="py-20 bg-base-100/80 backdrop-blur-sm"
+        className="py-20 bg-base-100/90 backdrop-blur-md"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -192,17 +176,13 @@ const Home: NextPage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            className="text-4xl md:text-5xl font-bold text-center mb-16 drop-shadow-lg text-gray-900"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Privacy-First
-            </span>{" "}
-            Credit?
+            Why Choose <span className="text-blue-900">Privacy-First</span> Credit?
           </motion.h2>
 
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -264,7 +244,7 @@ const Home: NextPage = () => {
             </motion.div>
 
             <motion.div
-              className="bg-base-200/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-base-300/50"
+              className="bg-base-200/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-base-300/80"
               initial={{ opacity: 0, x: 50, rotateY: -15 }}
               whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
               transition={{ duration: 1 }}
@@ -355,7 +335,7 @@ const Home: NextPage = () => {
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-primary-content mb-6"
+            className="text-4xl md:text-5xl font-bold text-primary-content mb-6 drop-shadow-lg"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}

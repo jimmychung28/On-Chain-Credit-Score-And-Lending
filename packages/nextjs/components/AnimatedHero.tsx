@@ -48,7 +48,7 @@ export function AnimatedHero() {
     <div className="hero min-h-screen relative overflow-hidden">
       {/* Animated gradient background */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-primary/20 via-base-100 to-secondary/20"
+        className="absolute inset-0 bg-gray-100/95 backdrop-blur-lg"
         animate={{
           background: [
             "linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.1), rgba(139, 92, 246, 0.2))",
@@ -66,9 +66,9 @@ export function AnimatedHero() {
       <div className="hero-content text-center z-10 relative">
         <motion.div className="max-w-6xl" variants={containerVariants} initial="hidden" animate="visible">
           {/* Main title with typewriter effect */}
-          <motion.h1 className="text-7xl md:text-8xl font-bold mb-6" variants={itemVariants}>
+          <motion.h1 className="text-7xl md:text-8xl font-bold mb-6 drop-shadow-xl" variants={itemVariants}>
             <motion.span
-              className="text-primary"
+              className="text-black"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
@@ -77,7 +77,7 @@ export function AnimatedHero() {
             </motion.span>
             <br />
             <motion.span
-              className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent"
+              className="text-black"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, delay: 1 }}
@@ -87,14 +87,11 @@ export function AnimatedHero() {
           </motion.h1>
 
           {/* Animated subtitle */}
-          <motion.div
-            className="text-xl md:text-2xl mb-8 text-base-content/80 max-w-4xl mx-auto"
-            variants={itemVariants}
-          >
+          <motion.div className="text-xl md:text-2xl mb-8 text-black max-w-4xl mx-auto" variants={itemVariants}>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.5 }}>
               The first{" "}
               <motion.span
-                className="text-primary font-semibold"
+                className="text-blue-800 font-bold bg-yellow-200 px-2 py-1 rounded"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -124,7 +121,7 @@ export function AnimatedHero() {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="bg-base-100/50 backdrop-blur-sm rounded-2xl p-6 border border-base-300/30"
+                className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 border border-gray-300 shadow-xl"
                 variants={itemVariants}
                 whileHover={{
                   scale: 1.05,
@@ -140,8 +137,8 @@ export function AnimatedHero() {
                 >
                   {feature.emoji}
                 </motion.div>
-                <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
-                <p className="text-base-content/70 text-sm">{feature.desc}</p>
+                <h3 className="font-bold text-lg mb-2 text-black">{feature.title}</h3>
+                <p className="text-gray-800 text-sm">{feature.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -156,7 +153,7 @@ export function AnimatedHero() {
                 transition={{ duration: 0.8, delay: 2.5 }}
               >
                 <motion.div
-                  className="flex items-center gap-3 bg-base-100/80 backdrop-blur-sm p-4 rounded-2xl border border-base-300/50"
+                  className="flex items-center gap-3 bg-base-100/90 backdrop-blur-md p-4 rounded-2xl border border-base-300/70 shadow-lg"
                   whileHover={{ scale: 1.02 }}
                 >
                   <span className="text-sm font-medium">Connected:</span>
@@ -229,7 +226,7 @@ export function AnimatedHero() {
             ].map((stat, index) => (
               <motion.div key={index} className="text-center" variants={itemVariants} whileHover={{ scale: 1.1 }}>
                 <motion.div
-                  className="text-3xl font-bold text-primary mb-2"
+                  className="text-3xl font-bold text-blue-900 mb-2"
                   animate={{
                     scale: [1, 1.05, 1],
                   }}
@@ -241,7 +238,7 @@ export function AnimatedHero() {
                 >
                   {stat.value}
                 </motion.div>
-                <div className="text-base-content/70 text-sm">{stat.label}</div>
+                <div className="text-gray-700 text-sm">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>

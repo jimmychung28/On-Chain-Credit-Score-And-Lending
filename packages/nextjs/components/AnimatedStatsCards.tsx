@@ -32,7 +32,7 @@ function StatCard({ icon: Icon, title, value, description, color, delay }: StatC
         rotateY: 5,
         boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
       }}
-      className="bg-base-100/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-base-300/50"
+      className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-gray-300"
     >
       <motion.div
         initial={{ rotate: 0 }}
@@ -44,7 +44,7 @@ function StatCard({ icon: Icon, title, value, description, color, delay }: StatC
       </motion.div>
 
       <motion.h3
-        className="text-xl font-bold mb-2"
+        className="text-xl font-bold mb-2 text-black"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: delay + 0.2 }}
@@ -62,7 +62,7 @@ function StatCard({ icon: Icon, title, value, description, color, delay }: StatC
       </motion.div>
 
       <motion.p
-        className="text-base-content/70 text-sm"
+        className="text-black text-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: delay + 0.6 }}
