@@ -1,221 +1,456 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import {
   ArrowRightIcon,
   BanknotesIcon,
   ChartBarIcon,
-  CheckBadgeIcon,
   CreditCardIcon,
+  CubeTransparentIcon,
   GlobeAltIcon,
-  ShieldCheckIcon,
+  LockClosedIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+import { AnimatedHero } from "~~/components/AnimatedHero";
+import { AnimatedStatsCards } from "~~/components/AnimatedStatsCards";
+
+// import { ThreeJSScene } from "~~/components/ThreeJSScene";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   return (
     <>
-      {/* Hero Section */}
-      <div className="hero min-h-screen bg-gradient-to-br from-primary/20 via-base-100 to-secondary/20">
-        <div className="hero-content text-center">
-          <div className="max-w-4xl">
-            <h1 className="text-6xl font-bold mb-6">
-              <span className="text-primary">On-Chain</span> Credit Protocol
-            </h1>
-            <p className="text-xl mb-8 text-base-content/80 max-w-2xl mx-auto">
-              Build your creditworthiness using blockchain data. Access DeFi lending without traditional financial
-              history.
-            </p>
-
-            {isConnected ? (
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex items-center gap-2 bg-base-200 p-4 rounded-xl">
-                  <span className="text-sm font-medium">Connected:</span>
-                  <Address address={connectedAddress} />
-                </div>
-                <Link href="/credit-scoring" className="btn btn-primary btn-lg gap-2">
-                  🔐 Get Started with Privacy
-                  <ArrowRightIcon className="h-5 w-5" />
-                </Link>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-base-content/60">Connect your wallet to get started</p>
-                <div className="btn btn-primary btn-lg btn-disabled">Connect Wallet to Continue</div>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          animate={{
+            background: [
+              "radial-gradient(circle at 20% 20%, #3b82f6 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 80%, #8b5cf6 0%, transparent 50%)",
+              "radial-gradient(circle at 50% 50%, #10b981 0%, transparent 50%)",
+              "radial-gradient(circle at 20% 80%, #f59e0b 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 20%, #ef4444 0%, transparent 50%)",
+              "radial-gradient(circle at 20% 20%, #3b82f6 0%, transparent 50%)",
+            ],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        />
       </div>
 
-      {/* Features Section */}
-      <div className="py-20 bg-base-200">
+      {/* Animated Hero Section */}
+      <AnimatedHero />
+
+      {/* Sophisticated Credit Factors Section */}
+      <motion.div
+        className="py-20 bg-base-200/50 backdrop-blur-sm relative overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0 opacity-10"
+          animate={{
+            background: [
+              "radial-gradient(circle at 20% 80%, #3b82f6 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 20%, #8b5cf6 0%, transparent 50%)",
+              "radial-gradient(circle at 40% 40%, #10b981 0%, transparent 50%)",
+              "radial-gradient(circle at 20% 80%, #3b82f6 0%, transparent 50%)",
+            ],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <motion.h2
+              className="text-5xl md:text-6xl font-bold mb-6"
+              initial={{ scale: 0.5 }}
+              whileInView={{ scale: 1 }}
+              transition={{ duration: 1, type: "spring", stiffness: 100 }}
+              viewport={{ once: true }}
+            >
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Sophisticated
+              </span>
+              <br />
+              Credit Factors
+            </motion.h2>
+            <motion.p
+              className="text-xl text-base-content/80 max-w-3xl mx-auto"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              Revolutionary 7-factor analysis that goes beyond traditional credit scoring.
+              <br />
+              <span className="text-primary font-semibold">Fair, sophisticated, privacy-preserving.</span>
+            </motion.p>
+          </motion.div>
+
+          <AnimatedStatsCards />
+        </div>
+      </motion.div>
+
+      {/* How It Works Section */}
+      <motion.div
+        className="py-20 bg-gradient-to-br from-base-100/80 to-base-200/60 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
+          <motion.h2
+            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            How It Works
+          </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body items-center text-center">
-                <CreditCardIcon className="h-16 w-16 text-primary mb-4" />
-                <h3 className="card-title">Build Credit Score</h3>
-                <p>
-                  Your on-chain activities automatically build your credit profile based on transaction history, account
-                  age, and DeFi engagement.
-                </p>
-              </div>
-            </div>
-
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body items-center text-center">
-                <BanknotesIcon className="h-16 w-16 text-secondary mb-4" />
-                <h3 className="card-title">Access Loans</h3>
-                <p>
-                  Get competitive interest rates (3-20%) based on your credit score. No traditional credit checks
-                  required.
-                </p>
-              </div>
-            </div>
-
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body items-center text-center">
-                <ChartBarIcon className="h-16 w-16 text-accent mb-4" />
-                <h3 className="card-title">Earn Yield</h3>
-                <p>
-                  Stake ETH to boost your credit score and provide liquidity to earn lending fees from the protocol.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Credit Score Factors */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h3 className="text-2xl font-bold text-center mb-8">Credit Score Factors</h3>
-              <div className="grid md:grid-cols-5 gap-6">
-                <div className="text-center">
-                  <div className="radial-progress text-primary mb-2" style={{ "--value": 30 } as any}>
-                    30%
-                  </div>
-                  <p className="font-semibold">Repayment History</p>
-                  <p className="text-sm text-base-content/70">Most important factor</p>
+            {[
+              {
+                icon: CreditCardIcon,
+                title: "Build Privacy-First Credit",
+                description:
+                  "Your on-chain activities build your credit profile using zero-knowledge proofs. Financial data stays private.",
+                color: "text-primary",
+                delay: 0,
+              },
+              {
+                icon: BanknotesIcon,
+                title: "Access Dynamic Loans",
+                description:
+                  "Get competitive rates (3-100%) based on sophisticated behavioral analysis, not wealth. Real-time rate adjustments.",
+                color: "text-secondary",
+                delay: 0.2,
+              },
+              {
+                icon: ChartBarIcon,
+                title: "Earn Staking Yield",
+                description:
+                  "Provide liquidity to the lending pool and earn yield. Help build the future of decentralized credit.",
+                color: "text-accent",
+                delay: 0.4,
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className="card bg-base-100/70 backdrop-blur-sm shadow-xl border border-base-300/50"
+                initial={{ opacity: 0, y: 50, rotateY: -10 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ duration: 0.8, delay: item.delay }}
+                viewport={{ once: true }}
+                whileHover={{
+                  scale: 1.05,
+                  rotateY: 5,
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+                }}
+              >
+                <div className="card-body items-center text-center">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    transition={{ duration: 1, delay: item.delay + 0.2, type: "spring", stiffness: 200 }}
+                    viewport={{ once: true }}
+                  >
+                    <item.icon className={`h-16 w-16 ${item.color} mb-4`} />
+                  </motion.div>
+                  <h3 className="card-title text-xl mb-4">{item.title}</h3>
+                  <p className="text-base-content/80">{item.description}</p>
                 </div>
-                <div className="text-center">
-                  <div className="radial-progress text-secondary mb-2" style={{ "--value": 25 } as any}>
-                    25%
-                  </div>
-                  <p className="font-semibold">Transaction Volume</p>
-                  <p className="text-sm text-base-content/70">Total ETH moved</p>
-                </div>
-                <div className="text-center">
-                  <div className="radial-progress text-accent mb-2" style={{ "--value": 20 } as any}>
-                    20%
-                  </div>
-                  <p className="font-semibold">Activity Frequency</p>
-                  <p className="text-sm text-base-content/70">Regular usage</p>
-                </div>
-                <div className="text-center">
-                  <div className="radial-progress text-info mb-2" style={{ "--value": 15 } as any}>
-                    15%
-                  </div>
-                  <p className="font-semibold">Account Age</p>
-                  <p className="text-sm text-base-content/70">Time on blockchain</p>
-                </div>
-                <div className="text-center">
-                  <div className="radial-progress text-warning mb-2" style={{ "--value": 10 } as any}>
-                    10%
-                  </div>
-                  <p className="font-semibold">Staking Amount</p>
-                  <p className="text-sm text-base-content/70">ETH staked</p>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Benefits Section */}
-      <div className="py-20 bg-base-100">
+      {/* Revolutionary Features Section */}
+      <motion.div
+        className="py-20 bg-base-100/80 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">Why Choose On-Chain Credit?</h2>
+          <motion.h2
+            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            Why Choose{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Privacy-First
+            </span>{" "}
+            Credit?
+          </motion.h2>
 
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="flex gap-4">
-                <ShieldCheckIcon className="h-8 w-8 text-success flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Decentralized & Transparent</h3>
-                  <p className="text-base-content/80">
-                    All scoring algorithms and lending rules are transparent and immutable on the blockchain.
-                  </p>
-                </div>
-              </div>
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              {[
+                {
+                  icon: LockClosedIcon,
+                  title: "Zero-Knowledge Privacy",
+                  description:
+                    "Groth16 ZK-SNARKs keep your financial data cryptographically private. Prove creditworthiness without revealing details.",
+                  color: "text-primary",
+                },
+                {
+                  icon: SparklesIcon,
+                  title: "Sophisticated Analysis",
+                  description:
+                    "7-factor behavioral scoring beats traditional 4-factor systems. No wealth bias - pure behavioral assessment.",
+                  color: "text-secondary",
+                },
+                {
+                  icon: GlobeAltIcon,
+                  title: "Global DeFi Access",
+                  description:
+                    "Available to anyone with an Ethereum wallet. No traditional banking, KYC, or geographic restrictions.",
+                  color: "text-accent",
+                },
+                {
+                  icon: CubeTransparentIcon,
+                  title: "Transparent & Fair",
+                  description:
+                    "All algorithms are open-source and immutable on blockchain. Economic honesty - privacy is FREE.",
+                  color: "text-info",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  className="flex gap-4"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ x: 10 }}
+                >
+                  <motion.div whileHover={{ rotate: 360, scale: 1.2 }} transition={{ duration: 0.6 }}>
+                    <item.icon className={`h-8 w-8 ${item.color} flex-shrink-0 mt-1`} />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                    <p className="text-base-content/80">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-              <div className="flex gap-4">
-                <GlobeAltIcon className="h-8 w-8 text-info flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Global Access</h3>
-                  <p className="text-base-content/80">
-                    Available to anyone with an Ethereum wallet, regardless of location or traditional banking access.
-                  </p>
-                </div>
+            <motion.div
+              className="bg-base-200/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-base-300/50"
+              initial={{ opacity: 0, x: 50, rotateY: -15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+              whileHover={{ rotateY: 5, scale: 1.02 }}
+            >
+              <div className="stats stats-vertical w-full">
+                {[
+                  {
+                    title: "Credit Score Range",
+                    value: "300-850",
+                    desc: "FICO-compatible scoring",
+                    color: "text-primary",
+                  },
+                  {
+                    title: "Interest Rates",
+                    value: "3% - 100%",
+                    desc: "Dynamic, behavior-based pricing",
+                    color: "text-secondary",
+                  },
+                  {
+                    title: "Privacy Protection",
+                    value: "100%",
+                    desc: "Zero-knowledge verification",
+                    color: "text-accent",
+                  },
+                  {
+                    title: "Gas Efficiency",
+                    value: "~250k",
+                    desc: "Optimized for real-world usage",
+                    color: "text-info",
+                  },
+                ].map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    className="stat place-items-center"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="stat-title text-base-content/70">{stat.title}</div>
+                    <motion.div
+                      className={`stat-value ${stat.color} text-2xl`}
+                      animate={{
+                        scale: [1, 1.05, 1],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: index * 0.5,
+                      }}
+                    >
+                      {stat.value}
+                    </motion.div>
+                    <div className="stat-desc text-sm">{stat.desc}</div>
+                  </motion.div>
+                ))}
               </div>
-
-              <div className="flex gap-4">
-                <CheckBadgeIcon className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Privacy-First</h3>
-                  <p className="text-base-content/80">
-                    No personal information required. Your wallet activity speaks for itself.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="stats stats-vertical shadow-xl">
-              <div className="stat">
-                <div className="stat-title">Credit Score Range</div>
-                <div className="stat-value text-primary">300-850</div>
-                <div className="stat-desc">Similar to traditional FICO</div>
-              </div>
-
-              <div className="stat">
-                <div className="stat-title">Interest Rates</div>
-                <div className="stat-value text-secondary">3% - 20%</div>
-                <div className="stat-desc">Based on credit score</div>
-              </div>
-
-              <div className="stat">
-                <div className="stat-title">Loan Term</div>
-                <div className="stat-value text-accent">30 Days</div>
-                <div className="stat-desc">Fixed term loans</div>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-primary to-secondary">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-primary-content mb-6">Ready to Build Your Credit?</h2>
-          <p className="text-xl text-primary-content/80 mb-8 max-w-2xl mx-auto">
-            Join the future of decentralized finance and start building your on-chain credit profile today.
-          </p>
+      {/* Call to Action Section */}
+      <motion.div
+        className="py-20 bg-gradient-to-r from-primary via-secondary to-accent relative overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          animate={{
+            background: [
+              "radial-gradient(circle at 0% 50%, #ffffff 0%, transparent 50%)",
+              "radial-gradient(circle at 100% 50%, #ffffff 0%, transparent 50%)",
+              "radial-gradient(circle at 50% 0%, #ffffff 0%, transparent 50%)",
+              "radial-gradient(circle at 50% 100%, #ffffff 0%, transparent 50%)",
+              "radial-gradient(circle at 0% 50%, #ffffff 0%, transparent 50%)",
+            ],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
 
-          {isConnected ? (
-            <Link href="/credit-scoring" className="btn btn-accent btn-lg gap-2">
-              Get Started Now
-              <ArrowRightIcon className="h-5 w-5" />
-            </Link>
-          ) : (
-            <div className="btn btn-accent btn-lg btn-disabled">Connect Wallet to Start</div>
-          )}
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <motion.h2
+            className="text-4xl md:text-5xl font-bold text-primary-content mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            Ready to Experience the Future?
+          </motion.h2>
+
+          <motion.p
+            className="text-xl text-primary-content/90 mb-8 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Join the revolution in decentralized finance. Build your privacy-first credit profile and access
+            sophisticated lending without compromising your financial privacy.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            {isConnected ? (
+              <Link href="/credit-scoring">
+                <motion.button
+                  className="btn btn-accent btn-lg gap-3 text-lg px-12 py-4 text-black font-bold"
+                  whileHover={{
+                    scale: 1.1,
+                    boxShadow: "0 15px 35px rgba(0,0,0,0.2)",
+                    y: -5,
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  animate={{
+                    boxShadow: [
+                      "0 0 20px rgba(255,255,255,0.3)",
+                      "0 0 40px rgba(255,255,255,0.5)",
+                      "0 0 20px rgba(255,255,255,0.3)",
+                    ],
+                  }}
+                  transition={{
+                    boxShadow: { duration: 2, repeat: Infinity },
+                    scale: { type: "spring", stiffness: 300 },
+                  }}
+                >
+                  🚀 Launch Your Credit Journey
+                  <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                    <ArrowRightIcon className="h-6 w-6" />
+                  </motion.div>
+                </motion.button>
+              </Link>
+            ) : (
+              <motion.div
+                className="btn btn-accent btn-lg btn-disabled text-lg px-12 text-black"
+                animate={{
+                  opacity: [0.7, 1, 0.7],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                Connect Wallet to Begin
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Additional CTA elements */}
+          <motion.div
+            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
+            {["🔐 Zero setup fees", "⚡ Instant credit assessment", "🌍 Global accessibility"].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="text-primary-content/90 font-medium"
+                animate={{
+                  scale: [1, 1.05, 1],
+                  opacity: [0.9, 1, 0.9],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: index * 0.3,
+                }}
+              >
+                {feature}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };
