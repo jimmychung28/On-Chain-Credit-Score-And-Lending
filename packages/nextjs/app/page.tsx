@@ -123,7 +123,7 @@ const Home: NextPage = () => {
                 title: "Access Dynamic Loans",
                 description:
                   "Get competitive rates (3-100%) based on sophisticated behavioral analysis, not wealth. Real-time rate adjustments.",
-                color: "text-secondary",
+                color: "text-primary",
                 delay: 0.2,
               },
               {
@@ -206,7 +206,7 @@ const Home: NextPage = () => {
                   title: "Sophisticated Analysis",
                   description:
                     "7-factor behavioral scoring beats traditional 4-factor systems. No wealth bias - pure behavioral assessment.",
-                  color: "text-secondary",
+                  color: "text-primary",
                 },
                 {
                   icon: GlobeAltIcon,
@@ -263,7 +263,7 @@ const Home: NextPage = () => {
                     title: "Interest Rates",
                     value: "3% - 100%",
                     desc: "Dynamic, behavior-based pricing",
-                    color: "text-secondary",
+                    color: "text-primary",
                   },
                   {
                     title: "Privacy Protection",
