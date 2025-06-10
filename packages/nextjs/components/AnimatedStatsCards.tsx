@@ -133,11 +133,27 @@ export function AnimatedStatsCards() {
     },
   ];
 
+  // Split into two rows: first 4 items, then centered 3 items
+  const firstRow = stats.slice(0, 4);
+  const secondRow = stats.slice(4, 7);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {stats.map((stat, index) => (
-        <StatCard key={index} {...stat} />
-      ))}
+    <div className="space-y-6">
+      {/* First row - 4 items */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {firstRow.map((stat, index) => (
+          <StatCard key={index} {...stat} />
+        ))}
+      </div>
+
+      {/* Second row - 3 items centered */}
+      <div className="flex justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl">
+          {secondRow.map((stat, index) => (
+            <StatCard key={index + 4} {...stat} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
