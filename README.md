@@ -299,6 +299,59 @@ Visit `http://localhost:3001/credit-scoring` and connect your wallet!
 
 **Final Rate = (Base Rate × Credit Multiplier) + Market Premiums + Privacy Premium**
 
+## 🔮 Hybrid Oracle System
+
+### Three Oracle Types for Maximum Flexibility
+
+Our sophisticated oracle system supports development, compatibility, and production needs:
+
+| Oracle Type | Use Case | Features | Best For |
+|-------------|----------|----------|----------|
+| **Custom Advanced** | Development & Testing | Price simulation, market scenarios, volatility modeling | Comprehensive testing, edge case simulation |
+| **Chainlink Standard** | Compatibility & Audits | Simple price feeds, industry standard interface | Audits, partnerships, ecosystem compatibility |
+| **Hybrid** | Production Testing | Runtime switching, fallback mechanisms, health monitoring | Production validation, risk management |
+
+### Real-Time Market Data Integration
+
+**Oracle Feeds:**
+- **ETH/USD Price Feed** - Real-time Ethereum pricing for volatility calculation
+- **Volatility Oracle** - Market volatility multiplier (affects risk premiums)
+- **Liquidity Oracle** - DeFi liquidity conditions (crisis detection)
+- **DeFi Rate Oracle** - Cross-protocol rate comparison
+
+### Advanced Oracle Features
+
+```solidity
+// Switch oracle modes at runtime
+await hybridOracle.setMockType(0); // CUSTOM_ADVANCED
+await hybridOracle.setMockType(1); // CHAINLINK_STANDARD  
+await hybridOracle.setMockType(2); // HYBRID_MODE
+
+// Advanced testing capabilities
+await customOracle.simulatePriceMovement(1000, 5); // 10% volatility, 5 steps
+
+// Batch oracle management
+await factory.batchUpdatePrices(
+    ["ETH_USD", "VOLATILITY", "LIQUIDITY"],
+    [320000000000, 15000000000, 100000000] // New prices
+);
+```
+
+### Oracle Commands
+
+```bash
+# Deploy hybrid oracle system
+yarn deploy:oracles
+
+# Test oracle functionality
+yarn test:oracles
+
+# Test different oracle types
+yarn test:oracles:hardhat
+```
+
+**📖 For detailed oracle documentation, see [Oracle Integration Guide](./ORACLE_INTEGRATION_GUIDE.md)**
+
 ## 🧪 Advanced Testing
 
 ### Comprehensive Test Suite

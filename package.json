@@ -60,6 +60,7 @@
     "node": ">=20.18.3"
   },
   "dependencies": {
+    "@chainlink/contracts": "^1.4.0",
     "circomlib": "^2.0.5",
     "ffjavascript": "^0.3.1",
     "snarkjs": "^0.7.5"

@@ -1,33 +1,55 @@
-# Chainlink Oracle Integration for OnChain Credit
+# 🔮 Oracle Integration Guide - Hybrid System
 
 ## 🎯 Overview
 
-This implementation provides a complete Chainlink Oracle Integration for the OnChain Credit system, allowing **real-time market data** to automatically adjust interest rates based on:
+OnChain Credit Protocol features a sophisticated **Hybrid Oracle System** that supports both advanced custom mocks and official Chainlink-compatible oracles. This system provides maximum flexibility for development, testing, and production deployment while maintaining compatibility with industry standards.
 
-- **ETH/USD Price Movements**
-- **Market Volatility Levels**
-- **DeFi Liquidity Conditions**  
-- **Cross-Protocol Rate Comparisons**
+**Key Benefits:**
+- **Development**: Advanced testing with price simulation and market scenarios
+- **Compatibility**: Industry-standard Chainlink interface support
+- **Flexibility**: Runtime switching between oracle types
+- **Production Ready**: Seamless migration to real Chainlink oracles
 
 ## 🏗️ Architecture
 
+### Oracle Types
+
+Our system supports three distinct oracle implementations:
+
+| Type | Use Case | Features | Best For |
+|------|----------|----------|----------|
+| **Custom Advanced** | Development & Testing | Price simulation, market scenarios, volatility modeling | Comprehensive testing, edge case simulation |
+| **Chainlink Standard** | Compatibility & Audits | Simple price feeds, industry standard interface | Audits, partnerships, ecosystem compatibility |
+| **Hybrid** | Production Testing | Runtime switching, fallback mechanisms, health monitoring | Production validation, risk management |
+
+### System Components
+
+```
+┌─────────────────────────────────────────┐
+│           MockOracleFactory              │
+│  ┌─────────────────────────────────┐   │
+│  │     Oracle Management           │   │
+│  │  - Deploy oracles              │   │
+│  │  - Batch operations             │   │
+│  │  - Health monitoring           │   │
+│  └─────────────────────────────────┘   │
+└─────────────────┬───────────────────────┘
+                  │
+     ┌────────────┼────────────┬─────────────┐
+     │            │            │             │
+┌────▼─────┐ ┌───▼────┐ ┌─────▼─────┐ ┌─────▼─────┐
+│Custom    │ │Chainlink│ │  Hybrid   │ │ Rate Model│
+│Advanced  │ │Standard │ │  Oracle   │ │Integration│
+│Mock      │ │Mock     │ │           │ │           │
+└──────────┘ └─────────┘ └───────────┘ └───────────┘
+```
+
 ### Core Components
 
-1. **Mock Oracle Contracts** (`MockAggregatorV3.sol`)
-   - Implements Chainlink `AggregatorV3Interface`
-   - Provides testing environment without oracle costs
-   - Supports manual price updates and realistic simulations
-
-2. **Enhanced Rate Model** (`DynamicTargetRateModelWithOracles.sol`)
-   - Extends base rate model with oracle integration
-   - Automatic volatility calculation from price history
-   - Real-time market condition adjustments
-   - Emergency fallback to manual mode
-
-3. **Deployment Scripts**
-   - Automated deployment of mock oracles
-   - Oracle initialization and configuration
-   - Comprehensive testing setup
+1. **HybridMockOracle.sol** - Supports switching between custom advanced and Chainlink standard modes
+2. **ChainlinkMockAggregator.sol** - Simple Chainlink-compatible mock
+3. **MockOracleFactory.sol** - Factory to deploy and manage different oracle types
+4. **Enhanced Rate Model** (`DynamicTargetRateModelWithOracles.sol`) - Oracle-integrated interest rate calculations
 
 ### Oracle Data Feeds
 
@@ -40,30 +62,61 @@ This implementation provides a complete Chainlink Oracle Integration for the OnC
 
 ## 🚀 Quick Start
 
-### 1. Deploy Oracle System
+### 1. Deploy Hybrid Oracle System
 
 ```bash
-# Deploy all contracts with oracle integration
-yarn deploy --reset
+# Deploy hybrid oracle system
+yarn deploy:oracles
 
-# Test oracle functionality
-yarn hardhat run scripts/test-oracle-integration.ts --network localhost
+# Test oracle functionality  
+yarn test:oracles
 
-# Run market simulations
-yarn hardhat run scripts/simulate-market-scenarios.ts --network localhost
+# Test on Hardhat network
+yarn test:oracles:hardhat
 ```
 
-### 2. Contract Addresses (After Deployment)
+### 2. Basic Usage
 
-```javascript
-// Mock Oracle Feeds
-const ethUsdFeed = "0x79E8AB29Ff79805025c9462a2f2F12e9A496f81d";
-const volatilityFeed = "0x0Dd99d9f56A14E9D53b2DdC62D9f0bAbe806647A";
-const liquidityFeed = "0xeAd789bd8Ce8b9E94F5D0FCa99F8787c7e758817";
-const defiRateFeed = "0x95775fD3Afb1F4072794CA4ddA27F2444BCf8Ac3";
+```typescript
+// Get factory contract
+const factory = await ethers.getContractAt("MockOracleFactory", factoryAddress);
 
-// Enhanced Rate Model
-const oracleRateModel = "0xd9fEc8238711935D6c8d79Bef2B9546ef23FC046";
+// Deploy oracle set
+const tx = await factory.deployOracleSet();
+await tx.wait();
+
+// Get oracle addresses
+const ethUsdOracle = await factory.getOracleAddress("ETH_USD");
+const volatilityOracle = await factory.getOracleAddress("VOLATILITY");
+const liquidityOracle = await factory.getOracleAddress("LIQUIDITY");
+const defiRateOracle = await factory.getOracleAddress("DEFI_RATE");
+```
+
+### 3. Using Different Oracle Types
+
+```solidity
+// Deploy custom advanced oracle
+const customOracle = await factory.deployCustomAdvancedMock(
+    "TEST_CUSTOM",
+    8,                    // decimals
+    "Test Custom Oracle", // description
+    300000000000         // $3000 initial price
+);
+
+// Deploy Chainlink standard oracle
+const chainlinkOracle = await factory.deployChainlinkStandardMock(
+    "TEST_CHAINLINK",
+    8,
+    300000000000
+);
+
+// Deploy hybrid oracle
+const hybridOracle = await factory.deployHybridMock(
+    "TEST_HYBRID",
+    8,
+    "Test Hybrid Oracle",
+    300000000000
+);
 ```
 
 ## 💻 Usage Examples

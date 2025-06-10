@@ -19,6 +19,9 @@
     "lint": "eslint",
     "lint-staged": "eslint",
     "test": "REPORT_GAS=true hardhat test --network hardhat",
+    "test:oracles": "hardhat run scripts/test-hybrid-oracles.ts --network localhost",
+    "test:oracles:hardhat": "hardhat run scripts/test-hybrid-oracles.ts --network hardhat",
+    "deploy:oracles": "hardhat deploy --tags HybridOracles --network localhost",
     "verify": "hardhat etherscan-verify"
   },
   "dependencies": {
