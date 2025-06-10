@@ -2,7 +2,6 @@ import React from "react";
 import {
   BuildingLibraryIcon,
   ChartBarIcon,
-  CreditCardIcon,
   CurrencyDollarIcon,
   ShieldCheckIcon,
   StarIcon,
@@ -34,14 +33,12 @@ interface EnhancedProfile {
 }
 
 interface EnhancedCreditDisplayProps {
-  score: number;
   scoreBreakdown?: ScoreBreakdown;
   enhancedProfile?: EnhancedProfile;
   className?: string;
 }
 
 export const EnhancedCreditDisplay: React.FC<EnhancedCreditDisplayProps> = ({
-  score,
   scoreBreakdown,
   enhancedProfile,
   className = "",
@@ -54,14 +51,6 @@ export const EnhancedCreditDisplay: React.FC<EnhancedCreditDisplayProps> = ({
     return "text-red-500";
   };
 
-  const getCreditRating = (score: number) => {
-    if (score >= 750) return "Excellent";
-    if (score >= 700) return "Good";
-    if (score >= 650) return "Fair";
-    if (score >= 600) return "Poor";
-    return "Very Poor";
-  };
-
   const getScoreBarColor = (score: number) => {
     if (score >= 750) return "bg-green-500";
     if (score >= 700) return "bg-blue-500";
@@ -69,8 +58,6 @@ export const EnhancedCreditDisplay: React.FC<EnhancedCreditDisplayProps> = ({
     if (score >= 600) return "bg-orange-500";
     return "bg-red-500";
   };
-
-  const scorePercentage = ((score - 300) / 550) * 100;
 
   const formatBigInt = (value: bigint, decimals: number = 18): string => {
     const divisor = BigInt(10 ** decimals);
@@ -147,36 +134,6 @@ export const EnhancedCreditDisplay: React.FC<EnhancedCreditDisplayProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Main Score Display */}
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <CreditCardIcon className={`h-16 w-16 ${getCreditScoreColor(score)}`} />
-              <div>
-                <div className={`text-6xl font-bold ${getCreditScoreColor(score)}`}>{score}</div>
-                <div className="text-xl text-base-content/70">{getCreditRating(score)}</div>
-              </div>
-            </div>
-
-            <div className="flex-1 max-w-md ml-8">
-              <div className="mb-2">
-                <div className="flex justify-between text-sm text-base-content/70">
-                  <span>Poor (300)</span>
-                  <span>Excellent (850)</span>
-                </div>
-              </div>
-              <div className="w-full bg-base-300 rounded-full h-4">
-                <div
-                  className={`h-4 rounded-full ${getScoreBarColor(score)} transition-all duration-1000`}
-                  style={{ width: `${Math.max(0, Math.min(100, scorePercentage))}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Score Breakdown */}
       {scoreBreakdown && (
         <div className="card bg-base-100 shadow-xl">

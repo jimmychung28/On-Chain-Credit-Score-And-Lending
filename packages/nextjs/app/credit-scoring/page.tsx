@@ -705,7 +705,6 @@ const CreditScoringPage = () => {
             <div className="space-y-6">
               {/* Enhanced Credit Display */}
               <EnhancedCreditDisplay
-                score={creditScore}
                 scoreBreakdown={
                   scoreBreakdown
                     ? {
@@ -737,98 +736,218 @@ const CreditScoringPage = () => {
                 }
               />
 
-              <div className="grid lg:grid-cols-2 gap-6">
-                {/* Simplified Credit Score Factors for backward compatibility */}
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Sophisticated Credit Score Factors */}
                 <div className="bg-base-100 rounded-2xl shadow-xl p-6">
-                  <h3 className="text-xl font-bold mb-4">Traditional Credit Factors</h3>
-                  <div className="space-y-6">
-                    {/* Repayment History - 25% */}
-                    <div className="border-l-4 border-primary pl-4">
+                  <h3 className="text-xl font-bold mb-4">Sophisticated Credit Factors</h3>
+                  <div className="space-y-4">
+                    {/* Transactional Behavior - 20% */}
+                    <div className="border-l-4 border-blue-500 pl-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold">Repayment History</span>
-                        <span className="text-sm text-base-content/70">25% weight</span>
-                      </div>
-                      <div className="text-sm text-base-content/80 mb-2">
-                        {creditScore > 0 ? (
-                          <>
-                            <div>Total Loans: 3</div>
-                            <div className="text-green-600">Repaid: 3</div>
-                            <div className="text-red-600">Defaulted: 0</div>
-                            <div className="mt-1">Success Rate: 100%</div>
-                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                              <span>🔐</span>
-                              <span>ZK verified (external visibility controlled by privacy settings)</span>
-                            </div>
-                          </>
-                        ) : (
-                          <div>No loan history yet</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Transaction Volume - 30% */}
-                    <div className="border-l-4 border-secondary pl-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold">Transaction Volume</span>
-                        <span className="text-sm text-base-content/70">30% weight</span>
-                      </div>
-                      <div className="text-sm text-base-content/80 mb-2">
-                        {creditScore > 0 ? (
-                          <>
-                            <div>Total Volume: 45.7 ETH</div>
-                            <div>Average Transaction: 2.3 ETH</div>
-                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                              <span>🔐</span>
-                              <span>ZK verified (external visibility controlled by privacy settings)</span>
-                            </div>
-                          </>
-                        ) : (
-                          <div>No transaction history yet</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Activity Frequency - 25% */}
-                    <div className="border-l-4 border-accent pl-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold">Activity Frequency</span>
-                        <span className="text-sm text-base-content/70">25% weight</span>
-                      </div>
-                      <div className="text-sm text-base-content/80 mb-2">
-                        {creditScore > 0 ? (
-                          <>
-                            <div>Total Transactions: 20</div>
-                            <div>Activity Level: Medium</div>
-                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                              <span>🔐</span>
-                              <span>ZK verified (external visibility controlled by privacy settings)</span>
-                            </div>
-                          </>
-                        ) : (
-                          <div>No activity history yet</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Account Age - 20% */}
-                    <div className="border-l-4 border-warning pl-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold">Account Age</span>
+                        <span className="font-semibold">Transactional Behavior</span>
                         <span className="text-sm text-base-content/70">20% weight</span>
                       </div>
                       <div className="text-sm text-base-content/80 mb-2">
-                        {creditProfile && profileData ? (
-                          <>
-                            <div>Registration Date: {new Date(Number(profileData[1]) * 1000).toLocaleDateString()}</div>
-                            <div>Status: New User</div>
-                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                              <span>🔐</span>
-                              <span>ZK verified (external visibility controlled by privacy settings)</span>
-                            </div>
-                          </>
-                        ) : (
-                          <div>Loading...</div>
-                        )}
+                        <div className="font-medium mb-1">
+                          Total transaction volume, frequency patterns & account maturity
+                        </div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>Volume:</strong> Total ETH moved across all transactions
+                          </div>
+                          <div>
+                            • <strong>Frequency:</strong> Consistency and regularity of on-chain activity
+                          </div>
+                          <div>
+                            • <strong>Account Age:</strong> Length of time your wallet has been active
+                          </div>
+                          <div>
+                            • <strong>Avg Transaction Size:</strong> Economic sophistication indicators
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - amounts private, patterns analyzed</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Behavioral Patterns - 15% */}
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Behavioral Patterns</span>
+                        <span className="text-sm text-base-content/70">15% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">
+                          Smart transaction patterns & protocol interaction quality
+                        </div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>Gas Efficiency:</strong> Strategic fee management (higher gas = more valuable
+                            transactions)
+                          </div>
+                          <div>
+                            • <strong>Protocol Diversity:</strong> Number of unique DeFi protocols used
+                          </div>
+                          <div>
+                            • <strong>Transaction Types:</strong> DeFi interactions vs simple transfers
+                          </div>
+                          <div>
+                            • <strong>Smart Contract Calls:</strong> Complexity and sophistication of interactions
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - behavior patterns, not specific transactions</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Asset Management - 15% */}
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Asset Management</span>
+                        <span className="text-sm text-base-content/70">15% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">Portfolio sophistication & risk management strategies</div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>Asset Diversity:</strong> Number of different tokens held (rewards
+                            diversification)
+                          </div>
+                          <div>
+                            • <strong>Stablecoin Ratio:</strong> Risk management balance (optimal: 20-40%)
+                          </div>
+                          <div>
+                            • <strong>Holding Patterns:</strong> Long-term vs short-term investment behavior
+                          </div>
+                          <div>
+                            • <strong>Token Quality:</strong> Blue-chip vs speculative asset preferences
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - portfolio structure, not balances</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* DeFi Participation - 20% */}
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">DeFi Participation</span>
+                        <span className="text-sm text-base-content/70">20% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">Active contribution to DeFi ecosystem health & growth</div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>Liquidity Provision:</strong> DEX liquidity contributions (Uniswap, Curve, etc.)
+                          </div>
+                          <div>
+                            • <strong>Staking Rewards:</strong> Ethereum and protocol staking participation
+                          </div>
+                          <div>
+                            • <strong>Yield Farming:</strong> Sophisticated DeFi strategy implementation
+                          </div>
+                          <div>
+                            • <strong>Protocol Tokens:</strong> Long-term alignment with protocol success
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - participation level, not specific positions</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Repayment History - 20% */}
+                    <div className="border-l-4 border-emerald-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Repayment History</span>
+                        <span className="text-sm text-base-content/70">20% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">Track record of honoring financial commitments</div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>Loan Performance:</strong> Percentage of loans successfully repaid
+                          </div>
+                          <div>
+                            • <strong>Payment Timing:</strong> Early vs late payment patterns
+                          </div>
+                          <div>
+                            • <strong>Default Rate:</strong> Historical reliability in meeting obligations
+                          </div>
+                          <div>
+                            • <strong>Loan Diversity:</strong> Experience across different protocols and loan types
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - performance metrics, not loan amounts</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Governance - 5% */}
+                    <div className="border-l-4 border-indigo-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Governance</span>
+                        <span className="text-sm text-base-content/70">5% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">Community leadership & responsible protocol stewardship</div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>DAO Voting:</strong> Active participation in protocol governance decisions
+                          </div>
+                          <div>
+                            • <strong>Proposal Creation:</strong> Leadership in community governance initiatives
+                          </div>
+                          <div>
+                            • <strong>Voting Consistency:</strong> Regular long-term engagement vs one-time
+                            participation
+                          </div>
+                          <div>
+                            • <strong>Delegation:</strong> Responsible delegation patterns and proxy voting behavior
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - participation counts, not voting choices</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Social Reputation - 5% */}
+                    <div className="border-l-4 border-pink-500 pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Social Reputation</span>
+                        <span className="text-sm text-base-content/70">5% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        <div className="font-medium mb-1">Verified identity & positive community contributions</div>
+                        <div className="text-xs space-y-1">
+                          <div>
+                            • <strong>On-Chain Attestations:</strong> Gitcoin Passport, ENS, verified identity systems
+                          </div>
+                          <div>
+                            • <strong>NFT Activity:</strong> Cultural engagement and ecosystem participation
+                          </div>
+                          <div>
+                            • <strong>Social Protocols:</strong> Lens, Farcaster, and decentralized social platforms
+                          </div>
+                          <div>
+                            • <strong>Community Building:</strong> Open source contributions and ecosystem development
+                          </div>
+                        </div>
+                        <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                          <span>🔐</span>
+                          <span>ZK verified - reputation scores, not social connections</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -884,7 +1003,7 @@ const CreditScoringPage = () => {
                 </div>
 
                 {/* Privacy Settings */}
-                <div className="bg-base-100 rounded-2xl shadow-xl p-6 lg:col-span-1 md:col-span-2">
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <span>🛡️</span> Privacy Settings
                   </h3>
