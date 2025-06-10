@@ -32,7 +32,7 @@ async function main() {
       // Check current block number
       const currentBlock = await ethers.provider.getBlockNumber();
       console.log("Current block number:", currentBlock);
-      
+
       // Now use setTestCreditProfile to fine-tune the credit score
       console.log("Maximizing credit profile for 750+ excellent credit...");
       const tx = await creditScoring.setTestCreditProfile(

@@ -31,7 +31,7 @@ describe("Privacy-by-Default ZK Credit System", function () {
     const ZKCreditLendingFactory = await ethers.getContractFactory("ZKCreditLending");
     zkCreditLending = await ZKCreditLendingFactory.deploy(
       await zkCreditScoring.getAddress(),
-      await rateModel.getAddress()
+      await rateModel.getAddress(),
     );
 
     // Setup
@@ -42,26 +42,26 @@ describe("Privacy-by-Default ZK Credit System", function () {
   describe("Privacy-by-Default Registration", function () {
     it("Should register users with maximum privacy by default", async function () {
       await zkCreditScoring.connect(user1).registerUser();
-      
+
       const profile = await zkCreditScoring.getCreditProfile(user1.address);
       expect(profile[3]).to.equal(5); // privacyLevel should be 5 (maximum privacy)
     });
 
     it("Should allow registration with transparency levels (premium)", async function () {
       await zkCreditScoring.connect(user2).registerUserWithTransparency(1);
-      
+
       const profile = await zkCreditScoring.getCreditProfile(user2.address);
       expect(profile[3]).to.equal(1); // transparencyLevel 1 (highest premium)
     });
 
     it("Should reject invalid transparency levels", async function () {
-      await expect(
-        zkCreditScoring.connect(user3).registerUserWithTransparency(0)
-      ).to.be.revertedWith("Invalid transparency level");
+      await expect(zkCreditScoring.connect(user3).registerUserWithTransparency(0)).to.be.revertedWith(
+        "Invalid transparency level",
+      );
 
-      await expect(
-        zkCreditScoring.connect(user3).registerUserWithTransparency(6)
-      ).to.be.revertedWith("Invalid transparency level");
+      await expect(zkCreditScoring.connect(user3).registerUserWithTransparency(6)).to.be.revertedWith(
+        "Invalid transparency level",
+      );
     });
   });
 
@@ -78,7 +78,7 @@ describe("Privacy-by-Default ZK Credit System", function () {
       const premium2 = await zkCreditScoring.getTransparencyPremium(user2.address);
       const premium3 = await zkCreditScoring.getTransparencyPremium(user3.address);
 
-      expect(premium1).to.equal(0);   // Level 5: 0% premium (default privacy)
+      expect(premium1).to.equal(0); // Level 5: 0% premium (default privacy)
       expect(premium2).to.equal(200); // Level 1: 2.0% premium (full transparency)
       expect(premium3).to.equal(100); // Level 3: 1.0% premium (partial transparency)
     });
@@ -94,8 +94,8 @@ describe("Privacy-by-Default ZK Credit System", function () {
       // User1 (privacy) should have lowest rate (no premium)
       // User2 (full transparency) should have highest rate (+2% premium)
       // User3 (partial transparency) should be in between (+1% premium)
-      
-      expect(eligibility1[4]).to.equal(0);   // No transparency premium
+
+      expect(eligibility1[4]).to.equal(0); // No transparency premium
       expect(eligibility2[4]).to.equal(200); // 2% transparency premium
       expect(eligibility3[4]).to.equal(100); // 1% transparency premium
 
@@ -123,7 +123,7 @@ describe("Privacy-by-Default ZK Credit System", function () {
       // Privacy should use less gas (ZK verification vs public processing)
       console.log(`Privacy user gas: ${receipt1?.gasUsed}`);
       console.log(`Transparency user gas: ${receipt2?.gasUsed}`);
-      
+
       // Both should work, but this demonstrates the concept
       expect(receipt1?.gasUsed).to.be.gt(0);
       expect(receipt2?.gasUsed).to.be.gt(0);
@@ -132,13 +132,13 @@ describe("Privacy-by-Default ZK Credit System", function () {
     it("Should allow switching to maximum privacy for free", async function () {
       // User starts with transparency (premium) - use test user creation for verified status
       await zkCreditScoring.createTestUserWithTransparency(user1.address, 1);
-      
+
       let premium = await zkCreditScoring.getTransparencyPremium(user1.address);
       expect(premium).to.equal(200); // 2% premium
 
       // Switch to maximum privacy (free)
       await zkCreditScoring.connect(user1).switchToMaxPrivacy();
-      
+
       premium = await zkCreditScoring.getTransparencyPremium(user1.address);
       expect(premium).to.equal(0); // No premium
 
@@ -148,10 +148,10 @@ describe("Privacy-by-Default ZK Credit System", function () {
 
     it("Should allow updating transparency levels", async function () {
       await zkCreditScoring.createTestUser(user1.address); // Start with privacy and verified status
-      
+
       // Update to transparency level 2
       await zkCreditScoring.connect(user1).updateTransparencyLevel(2);
-      
+
       const premium = await zkCreditScoring.getTransparencyPremium(user1.address);
       expect(premium).to.equal(150); // 1.5% premium for level 2
 
@@ -189,8 +189,8 @@ describe("Privacy-by-Default ZK Credit System", function () {
       // The premium is applied during loan calculation, not stored separately
       const premium1 = await zkCreditScoring.getTransparencyPremium(user1.address);
       const premium2 = await zkCreditScoring.getTransparencyPremium(user2.address);
-      
-      expect(premium1).to.equal(0);   // No premium for privacy user
+
+      expect(premium1).to.equal(0); // No premium for privacy user
       expect(premium2).to.equal(200); // 2% premium for transparency user
     });
   });
@@ -199,7 +199,7 @@ describe("Privacy-by-Default ZK Credit System", function () {
     it("Should demonstrate the concept of efficient privacy", async function () {
       // This test demonstrates the concept that privacy-by-default
       // is more efficient than public transparency processing
-      
+
       // Create users with different transparency levels
       await zkCreditScoring.createTestUser(user1.address); // Privacy (level 5)
       await zkCreditScoring.createTestUserWithTransparency(user2.address, 1); // Transparency (level 1)
@@ -207,13 +207,13 @@ describe("Privacy-by-Default ZK Credit System", function () {
       // Both users can get loans, but transparency user pays premium
       const premium1 = await zkCreditScoring.getTransparencyPremium(user1.address);
       const premium2 = await zkCreditScoring.getTransparencyPremium(user2.address);
-      
-      expect(premium1).to.equal(0);   // Privacy is free
+
+      expect(premium1).to.equal(0); // Privacy is free
       expect(premium2).to.equal(200); // Transparency costs extra
-      
+
       // This demonstrates the economic model: privacy is default and cheaper
       console.log(`Privacy user premium: ${premium1} bp (FREE)`);
       console.log(`Transparency user premium: ${premium2} bp (COSTS MORE)`);
     });
   });
-}); 
+});

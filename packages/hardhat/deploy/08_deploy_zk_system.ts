@@ -56,7 +56,7 @@ const deployZKSystem: DeployFunction = async function (hre: HardhatRuntimeEnviro
   // Setup contracts
   console.log("🔧 Setting up ZK system...");
 
-  const zkCreditScoringContract = await hre.ethers.getContract("ZKCreditScoring", deployer) as any;
+  const zkCreditScoringContract = (await hre.ethers.getContract("ZKCreditScoring", deployer)) as any;
 
   // Add ZK Credit Lending as verified address in ZK Credit Scoring
   console.log("Adding ZKCreditLending as verified address...");
@@ -66,10 +66,10 @@ const deployZKSystem: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   // Create test users - privacy by default, some with transparency levels
   console.log("Creating test users with privacy by default...");
-  
+
   const testUsers = [
     { address: "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f", transparencyLevel: 1 }, // High transparency (premium)
-    { address: "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720", transparencyLevel: 3 }, // Medium transparency  
+    { address: "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720", transparencyLevel: 3 }, // Medium transparency
     { address: "0xBcd4042DE499D14e55001CcbB24a551F3b954096", transparencyLevel: 5 }, // Max privacy (default)
   ];
 
@@ -109,7 +109,7 @@ const deployZKSystem: DeployFunction = async function (hre: HardhatRuntimeEnviro
   if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {
     try {
       console.log("🔍 Verifying contracts on block explorer...");
-      
+
       await hre.run("verify:verify", {
         address: mockZKVerifier.address,
         constructorArguments: [],
@@ -137,4 +137,4 @@ const deployZKSystem: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
 export default deployZKSystem;
 deployZKSystem.tags = ["ZKSystem"];
-deployZKSystem.dependencies = []; 
+deployZKSystem.dependencies = [];

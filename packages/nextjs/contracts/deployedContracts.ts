@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0x11632F9766Ee9d9317F95562a6bD529652ead78f",
+      address: "0xfb6dAB6200b8958C2655C3747708F82243d3F32E",
       abi: [
         {
           inputs: [
@@ -1101,7 +1101,7 @@ const deployedContracts = {
       },
     },
     CreditScoring: {
-      address: "0xE401FBb0d6828e9f25481efDc9dd18Da9E500983",
+      address: "0x3Af511B1bdD6A0377e23796aD6B7391d8De68636",
       abi: [
         {
           inputs: [],
@@ -1145,6 +1145,50 @@ const deployedContracts = {
               type: "address",
             },
             {
+              indexed: true,
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "AssetHoldingUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "attestationType",
+              type: "bytes32",
+            },
+          ],
+          name: "AttestationAdded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
               indexed: false,
               internalType: "uint256",
               name: "newScore",
@@ -1158,6 +1202,25 @@ const deployedContracts = {
             },
           ],
           name: "CreditScoreUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "proposalCount",
+              type: "uint256",
+            },
+          ],
+          name: "GovernanceParticipation",
           type: "event",
         },
         {
@@ -1202,6 +1265,31 @@ const deployedContracts = {
             },
           ],
           name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "protocol",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "volume",
+              type: "uint256",
+            },
+          ],
+          name: "ProtocolInteractionRecorded",
           type: "event",
         },
         {
@@ -1260,8 +1348,14 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "uint256",
-              name: "timestamp",
+              name: "gasUsed",
               type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint8",
+              name: "txType",
+              type: "uint8",
             },
           ],
           name: "TransactionRecorded",
@@ -1329,6 +1423,29 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "attestationType",
+              type: "bytes32",
+            },
+            {
+              internalType: "uint256",
+              name: "scoreBonus",
+              type: "uint256",
+            },
+          ],
+          name: "addAttestation",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "addr",
               type: "address",
             },
@@ -1339,8 +1456,84 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "assetHoldings",
+          outputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "acquisitionTime",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isStablecoin",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
-          name: "ageWeight",
+          name: "assetWeight",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          name: "attestations",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "behavioralWeight",
           outputs: [
             {
               internalType: "uint256",
@@ -1431,6 +1624,69 @@ const deployedContracts = {
               name: "defaultedLoans",
               type: "uint256",
             },
+            {
+              internalType: "uint256",
+              name: "totalGasPaid",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "uniqueProtocols",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "stablecoinRatio",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "assetDiversity",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "avgHoldingPeriod",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "liquidityProvided",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "stakingRewards",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "governanceVotes",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "nftInteractions",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "socialScore",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defiWeight",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -1443,8 +1699,60 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "frequencyWeight",
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "getAssetHolding",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "token",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "acquisitionTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "isStablecoin",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct CreditScoring.AssetHolding",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getAssetHoldingsCount",
           outputs: [
             {
               internalType: "uint256",
@@ -1517,6 +1825,56 @@ const deployedContracts = {
                   name: "defaultedLoans",
                   type: "uint256",
                 },
+                {
+                  internalType: "uint256",
+                  name: "totalGasPaid",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "uniqueProtocols",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "stablecoinRatio",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "assetDiversity",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "avgHoldingPeriod",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "liquidityProvided",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "stakingRewards",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "governanceVotes",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "nftInteractions",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "socialScore",
+                  type: "uint256",
+                },
               ],
               internalType: "struct CreditScoring.CreditProfile",
               name: "",
@@ -1552,6 +1910,170 @@ const deployedContracts = {
               name: "user",
               type: "address",
             },
+          ],
+          name: "getEnhancedProfile",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalGasPaid",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "uniqueProtocols",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "stablecoinRatio",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "assetDiversity",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "avgHoldingPeriod",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "liquidityProvided",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "stakingRewards",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "governanceVotes",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "nftInteractions",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "socialScore",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "protocol",
+              type: "address",
+            },
+          ],
+          name: "getProtocolInteraction",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "protocol",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "interactionCount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalVolume",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "firstInteraction",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "lastInteraction",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct CreditScoring.ProtocolInteraction",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getScoreBreakdown",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "transactional",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "behavioral",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "asset",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "defi",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "repayment",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "governance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "social",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
             {
               internalType: "uint256",
               name: "index",
@@ -1569,7 +2091,7 @@ const deployedContracts = {
                 },
                 {
                   internalType: "uint256",
-                  name: "frequency",
+                  name: "gasUsed",
                   type: "uint256",
                 },
                 {
@@ -1581,6 +2103,16 @@ const deployedContracts = {
                   internalType: "address",
                   name: "counterparty",
                   type: "address",
+                },
+                {
+                  internalType: "bytes4",
+                  name: "methodSignature",
+                  type: "bytes4",
+                },
+                {
+                  internalType: "uint8",
+                  name: "transactionType",
+                  type: "uint8",
                 },
               ],
               internalType: "struct CreditScoring.TransactionData",
@@ -1614,6 +2146,62 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "governanceParticipation",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "governanceWeight",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "attestationType",
+              type: "bytes32",
+            },
+          ],
+          name: "hasAttestation",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "user",
               type: "address",
             },
@@ -1635,6 +2223,44 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "liquidityPositions",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "nftActivity",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "owner",
           outputs: [
@@ -1645,6 +2271,109 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "protocolInteractions",
+          outputs: [
+            {
+              internalType: "address",
+              name: "protocol",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "interactionCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalVolume",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "firstInteraction",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastInteraction",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isStablecoin",
+              type: "bool",
+            },
+          ],
+          name: "recordAssetHolding",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "recordGovernanceVote",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "recordLiquidityProvision",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -1678,6 +2407,29 @@ const deployedContracts = {
               type: "address",
             },
             {
+              internalType: "address",
+              name: "protocol",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "volume",
+              type: "uint256",
+            },
+          ],
+          name: "recordProtocolInteraction",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
               internalType: "uint256",
               name: "volume",
               type: "uint256",
@@ -1686,6 +2438,62 @@ const deployedContracts = {
               internalType: "address",
               name: "counterparty",
               type: "address",
+            },
+          ],
+          name: "recordSimpleTransaction",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "rewards",
+              type: "uint256",
+            },
+          ],
+          name: "recordStakingRewards",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "volume",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "gasUsed",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "counterparty",
+              type: "address",
+            },
+            {
+              internalType: "bytes4",
+              name: "methodSignature",
+              type: "bytes4",
+            },
+            {
+              internalType: "uint8",
+              name: "transactionType",
+              type: "uint8",
             },
           ],
           name: "recordTransaction",
@@ -1772,6 +2580,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "socialWeight",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
@@ -1792,7 +2613,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "stakingWeight",
+          name: "transactionalWeight",
           outputs: [
             {
               internalType: "uint256",
@@ -1820,17 +2641,22 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
-              name: "_volumeWeight",
+              name: "_transactionalWeight",
               type: "uint256",
             },
             {
               internalType: "uint256",
-              name: "_frequencyWeight",
+              name: "_behavioralWeight",
               type: "uint256",
             },
             {
               internalType: "uint256",
-              name: "_ageWeight",
+              name: "_assetWeight",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_defiWeight",
               type: "uint256",
             },
             {
@@ -1840,7 +2666,12 @@ const deployedContracts = {
             },
             {
               internalType: "uint256",
-              name: "_stakingWeight",
+              name: "_governanceWeight",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_socialWeight",
               type: "uint256",
             },
           ],
@@ -1871,7 +2702,7 @@ const deployedContracts = {
             },
             {
               internalType: "uint256",
-              name: "frequency",
+              name: "gasUsed",
               type: "uint256",
             },
             {
@@ -1883,6 +2714,16 @@ const deployedContracts = {
               internalType: "address",
               name: "counterparty",
               type: "address",
+            },
+            {
+              internalType: "bytes4",
+              name: "methodSignature",
+              type: "bytes4",
+            },
+            {
+              internalType: "uint8",
+              name: "transactionType",
+              type: "uint8",
             },
           ],
           stateMutability: "view",
@@ -1902,19 +2743,6 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "volumeWeight",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -1941,7 +2769,7 @@ const deployedContracts = {
       },
     },
     DynamicTargetRateModel: {
-      address: "0x6fFa22292b86D678fF6621eEdC9B15e68dC44DcD",
+      address: "0xBD2fe040D03EB1d1E5A151fbcc19A03333223019",
       abi: [
         {
           inputs: [],
@@ -2545,7 +3373,7 @@ const deployedContracts = {
       },
     },
     DynamicTargetRateModelWithOracles: {
-      address: "0xCA87833e830652C2ab07E1e03eBa4F2c246D3b58",
+      address: "0x82A9286dB983093Ff234cefCea1d8fA66382876B",
       abi: [
         {
           inputs: [],
@@ -3598,7 +4426,7 @@ const deployedContracts = {
       },
     },
     Groth16Verifier: {
-      address: "0x499AA73A1D27e54B33E7DB05ffd22854EC70257E",
+      address: "0xabebE9a2D62Af9a89E86EB208b51321e748640C3",
       abi: [
         {
           inputs: [],
@@ -3713,7 +4541,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     MockDeFiRateFeed: {
-      address: "0x29023DE63D7075B4cC2CE30B55f050f9c67548d4",
+      address: "0x28227B230d3945e580eD3B1c6c8ea1df658A7AA9",
       abi: [
         {
           inputs: [
@@ -3912,7 +4740,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     MockETHUSDFeed: {
-      address: "0x4c04377f90Eb1E42D845AB21De874803B8773669",
+      address: "0xf42Ec71A4440F5e9871C643696DD6Dc9a38911F8",
       abi: [
         {
           inputs: [
@@ -4111,7 +4939,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     MockLiquidityFeed: {
-      address: "0x8CeA85eC7f3D314c4d144e34F2206C8Ac0bbadA1",
+      address: "0xD73bAb8F06DB28c87932571f87D0D2C0FDF13D94",
       abi: [
         {
           inputs: [
@@ -4310,7 +5138,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     MockVolatilityFeed: {
-      address: "0xf93b0549cD50c849D792f0eAE94A598fA77C7718",
+      address: "0xbc71F5687CFD36f64Ae6B4549186EE3A6eE259a4",
       abi: [
         {
           inputs: [
@@ -4509,7 +5337,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     MockZKVerifier: {
-      address: "0x90E75f390332356426B60FB440DF23f860F6A113",
+      address: "0xF67e26649037695DdFAB19f4E22d5c9Fd1564592",
       abi: [
         {
           anonymous: false,
@@ -4622,7 +5450,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0xb6aA91E8904d691a10372706e57aE1b390D26353",
+      address: "0x10537D7bD661C9c34F547b38EC662D6FD482Ae95",
       abi: [
         {
           inputs: [
@@ -4765,7 +5593,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     ZKCreditLending: {
-      address: "0x834Ea01e45F9b5365314358159d92d134d89feEb",
+      address: "0x6431AF84d34F0522cAA58b221d94A150B5AdAC69",
       abi: [
         {
           inputs: [
@@ -5563,7 +6391,7 @@ const deployedContracts = {
       },
     },
     ZKCreditScoring: {
-      address: "0x59c7D03d2E9893FB7bAa89dA50a9452e1e9B8b90",
+      address: "0xeA8AE08513f8230cAA8d031D28cB4Ac8CE720c68",
       abi: [
         {
           inputs: [

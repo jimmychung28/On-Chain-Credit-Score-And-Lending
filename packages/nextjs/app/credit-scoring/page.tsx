@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { BanknotesIcon, ChartBarIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { EnhancedCreditDisplay } from "~~/components/EnhancedCreditDisplay";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -215,6 +216,19 @@ const CreditScoringPage = () => {
   const { data: transparencyPremium } = useScaffoldReadContract({
     contractName: "ZKCreditScoring",
     functionName: "getTransparencyPremium",
+    args: [connectedAddress],
+  });
+
+  // Enhanced credit data
+  const { data: scoreBreakdown } = useScaffoldReadContract({
+    contractName: "CreditScoring",
+    functionName: "getScoreBreakdown",
+    args: [connectedAddress],
+  });
+
+  const { data: enhancedProfile } = useScaffoldReadContract({
+    contractName: "CreditScoring",
+    functionName: "getEnhancedProfile",
     args: [connectedAddress],
   });
 
@@ -688,274 +702,318 @@ const CreditScoringPage = () => {
 
           {/* Tab Content */}
           {activeTab === "profile" && (
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
-              {/* Credit Score Breakdown */}
-              <div className="bg-base-100 rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold mb-4">Credit Score Factors</h3>
-                <div className="space-y-6">
-                  {/* Repayment History - 25% */}
-                  <div className="border-l-4 border-primary pl-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold">Repayment History</span>
-                      <span className="text-sm text-base-content/70">25% weight</span>
-                    </div>
-                    <div className="text-sm text-base-content/80 mb-2">
-                      {creditScore > 0 ? (
-                        <>
-                          <div>Total Loans: 3</div>
-                          <div className="text-green-600">Repaid: 3</div>
-                          <div className="text-red-600">Defaulted: 0</div>
-                          <div className="mt-1">Success Rate: 100%</div>
-                          <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                            <span>🔐</span>
-                            <span>ZK verified (external visibility controlled by privacy settings)</span>
-                          </div>
-                        </>
-                      ) : (
-                        <div>No loan history yet</div>
-                      )}
-                    </div>
-                  </div>
+            <div className="space-y-6">
+              {/* Enhanced Credit Display */}
+              <EnhancedCreditDisplay
+                score={creditScore}
+                scoreBreakdown={
+                  scoreBreakdown
+                    ? {
+                        transactional: Number(scoreBreakdown[0]),
+                        behavioral: Number(scoreBreakdown[1]),
+                        asset: Number(scoreBreakdown[2]),
+                        defi: Number(scoreBreakdown[3]),
+                        repayment: Number(scoreBreakdown[4]),
+                        governance: Number(scoreBreakdown[5]),
+                        social: Number(scoreBreakdown[6]),
+                      }
+                    : undefined
+                }
+                enhancedProfile={
+                  enhancedProfile
+                    ? {
+                        totalGasPaid: BigInt(enhancedProfile[0]),
+                        uniqueProtocols: BigInt(enhancedProfile[1]),
+                        stablecoinRatio: BigInt(enhancedProfile[2]),
+                        assetDiversity: BigInt(enhancedProfile[3]),
+                        avgHoldingPeriod: BigInt(enhancedProfile[4]),
+                        liquidityProvided: BigInt(enhancedProfile[5]),
+                        stakingRewards: BigInt(enhancedProfile[6]),
+                        governanceVotes: BigInt(enhancedProfile[7]),
+                        nftInteractions: BigInt(enhancedProfile[8]),
+                        socialScore: BigInt(enhancedProfile[9]),
+                      }
+                    : undefined
+                }
+              />
 
-                  {/* Transaction Volume - 30% */}
-                  <div className="border-l-4 border-secondary pl-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold">Transaction Volume</span>
-                      <span className="text-sm text-base-content/70">30% weight</span>
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* Simplified Credit Score Factors for backward compatibility */}
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6">
+                  <h3 className="text-xl font-bold mb-4">Traditional Credit Factors</h3>
+                  <div className="space-y-6">
+                    {/* Repayment History - 25% */}
+                    <div className="border-l-4 border-primary pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Repayment History</span>
+                        <span className="text-sm text-base-content/70">25% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        {creditScore > 0 ? (
+                          <>
+                            <div>Total Loans: 3</div>
+                            <div className="text-green-600">Repaid: 3</div>
+                            <div className="text-red-600">Defaulted: 0</div>
+                            <div className="mt-1">Success Rate: 100%</div>
+                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                              <span>🔐</span>
+                              <span>ZK verified (external visibility controlled by privacy settings)</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div>No loan history yet</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-sm text-base-content/80 mb-2">
-                      {creditScore > 0 ? (
-                        <>
-                          <div>Total Volume: 45.7 ETH</div>
-                          <div>Average Transaction: 2.3 ETH</div>
-                          <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                            <span>🔐</span>
-                            <span>ZK verified (external visibility controlled by privacy settings)</span>
-                          </div>
-                        </>
-                      ) : (
-                        <div>No transaction history yet</div>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Activity Frequency - 25% */}
-                  <div className="border-l-4 border-accent pl-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold">Activity Frequency</span>
-                      <span className="text-sm text-base-content/70">25% weight</span>
+                    {/* Transaction Volume - 30% */}
+                    <div className="border-l-4 border-secondary pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Transaction Volume</span>
+                        <span className="text-sm text-base-content/70">30% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        {creditScore > 0 ? (
+                          <>
+                            <div>Total Volume: 45.7 ETH</div>
+                            <div>Average Transaction: 2.3 ETH</div>
+                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                              <span>🔐</span>
+                              <span>ZK verified (external visibility controlled by privacy settings)</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div>No transaction history yet</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-sm text-base-content/80 mb-2">
-                      {creditScore > 0 ? (
-                        <>
-                          <div>Total Transactions: 20</div>
-                          <div>Activity Level: Medium</div>
-                          <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                            <span>🔐</span>
-                            <span>ZK verified (external visibility controlled by privacy settings)</span>
-                          </div>
-                        </>
-                      ) : (
-                        <div>No activity history yet</div>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Account Age - 20% */}
-                  <div className="border-l-4 border-warning pl-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold">Account Age</span>
-                      <span className="text-sm text-base-content/70">20% weight</span>
+                    {/* Activity Frequency - 25% */}
+                    <div className="border-l-4 border-accent pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Activity Frequency</span>
+                        <span className="text-sm text-base-content/70">25% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        {creditScore > 0 ? (
+                          <>
+                            <div>Total Transactions: 20</div>
+                            <div>Activity Level: Medium</div>
+                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                              <span>🔐</span>
+                              <span>ZK verified (external visibility controlled by privacy settings)</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div>No activity history yet</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-sm text-base-content/80 mb-2">
-                      {creditProfile && profileData ? (
-                        <>
-                          <div>Registration Date: {new Date(Number(profileData[1]) * 1000).toLocaleDateString()}</div>
-                          <div>Status: New User</div>
-                          <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                            <span>🔐</span>
-                            <span>ZK verified (external visibility controlled by privacy settings)</span>
-                          </div>
-                        </>
-                      ) : (
-                        <div>Loading...</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              {/* How to Improve */}
-              <div className="bg-base-100 rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold mb-4">How to Improve Your Score</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold">Make Timely Payments</div>
-                      <div className="text-sm text-base-content/70">Repay all loans on time to build trust</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold">Stay Active On-Chain</div>
-                      <div className="text-sm text-base-content/70">Regular transactions show economic activity</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold">Build Transaction History</div>
-                      <div className="text-sm text-base-content/70">More transactions = better credit assessment</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold">Maintain Your Account</div>
-                      <div className="text-sm text-base-content/70">Older accounts show stability</div>
+                    {/* Account Age - 20% */}
+                    <div className="border-l-4 border-warning pl-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Account Age</span>
+                        <span className="text-sm text-base-content/70">20% weight</span>
+                      </div>
+                      <div className="text-sm text-base-content/80 mb-2">
+                        {creditProfile && profileData ? (
+                          <>
+                            <div>Registration Date: {new Date(Number(profileData[1]) * 1000).toLocaleDateString()}</div>
+                            <div>Status: New User</div>
+                            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                              <span>🔐</span>
+                              <span>ZK verified (external visibility controlled by privacy settings)</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div>Loading...</div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-info/10 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-info" />
-                    <span className="font-semibold text-info">No Wealth Bias</span>
+                {/* How to Improve */}
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6">
+                  <h3 className="text-xl font-bold mb-4">How to Improve Your Score</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold">Make Timely Payments</div>
+                        <div className="text-sm text-base-content/70">Repay all loans on time to build trust</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold">Stay Active On-Chain</div>
+                        <div className="text-sm text-base-content/70">Regular transactions show economic activity</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold">Build Transaction History</div>
+                        <div className="text-sm text-base-content/70">More transactions = better credit assessment</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold">Maintain Your Account</div>
+                        <div className="text-sm text-base-content/70">Older accounts show stability</div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm text-base-content/70">
-                    Your credit score is based purely on behavior, not how much ETH you have. This ensures fair access
-                    to credit for everyone.
-                  </p>
-                </div>
-              </div>
 
-              {/* Privacy Settings */}
-              <div className="bg-base-100 rounded-2xl shadow-xl p-6 lg:col-span-1 md:col-span-2">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <span>🛡️</span> Privacy Settings
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="mt-6 p-4 bg-info/10 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-green-600">✅</span>
-                      <span className="font-semibold text-green-700">Current Status</span>
+                      <ExclamationTriangleIcon className="h-5 w-5 text-info" />
+                      <span className="font-semibold text-info">No Wealth Bias</span>
                     </div>
-                    <div className="text-sm">
-                      <div>
-                        Privacy Level: <span className="font-bold">{profileData?.[3] || 5}</span>
-                      </div>
-                      <div>
-                        Transparency Premium:{" "}
-                        <span className="font-bold">
-                          {transparencyPremium ? `${Number(transparencyPremium) / 100}%` : "0%"}
-                        </span>
-                      </div>
-                      <div className="text-green-600 mt-1">
-                        {(profileData?.[3] || 5) === 5 ? "✓ Maximum Privacy (Free)" : "⚠️ Paying transparency premium"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h4 className="font-semibold">Choose Your Privacy Level:</h4>
-
-                    {/* Privacy Level Options */}
-                    {[
-                      {
-                        level: 5,
-                        name: "Maximum Privacy",
-                        premium: "0%",
-                        description: "All data private (FREE)",
-                        color: "green",
-                      },
-                      {
-                        level: 4,
-                        name: "Minimal Public",
-                        premium: "0.5%",
-                        description: "Basic score visible",
-                        color: "blue",
-                      },
-                      {
-                        level: 3,
-                        name: "Partial Public",
-                        premium: "1.0%",
-                        description: "Score + volume visible",
-                        color: "yellow",
-                      },
-                      {
-                        level: 2,
-                        name: "Mostly Public",
-                        premium: "1.5%",
-                        description: "Most data visible",
-                        color: "orange",
-                      },
-                      { level: 1, name: "Fully Public", premium: "2.0%", description: "All data public", color: "red" },
-                    ].map(option => (
-                      <div
-                        key={option.level}
-                        className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                          (profileData?.[3] || 5) === option.level
-                            ? `border-${option.color}-500 bg-${option.color}-50`
-                            : "border-base-300 hover:border-base-400"
-                        }`}
-                        onClick={() => updateTransparencyLevel(option.level)}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-semibold flex items-center gap-2">
-                              Level {option.level}: {option.name}
-                              {(profileData?.[3] || 5) === option.level && (
-                                <span className="text-green-600">✓ Current</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-base-content/70">{option.description}</div>
-                          </div>
-                          <div className="text-right">
-                            <div className={`font-bold ${option.level === 5 ? "text-green-600" : "text-orange-600"}`}>
-                              {option.premium}
-                            </div>
-                            <div className="text-xs text-base-content/70">premium</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-blue-600">💡</span>
-                      <span className="font-semibold text-blue-700 text-sm">Economic Honesty</span>
-                    </div>
-                    <p className="text-xs text-blue-600">
-                      Privacy is FREE because it&apos;s cheaper to provide. You only pay premiums for expensive public
-                      processing.
+                    <p className="text-sm text-base-content/70">
+                      Your credit score is based purely on behavior, not how much ETH you have. This ensures fair access
+                      to credit for everyone.
                     </p>
                   </div>
+                </div>
 
-                  <div className="mt-4 space-y-2">
-                    <button
-                      className="btn btn-success btn-sm w-full"
-                      onClick={switchToMaxPrivacy}
-                      disabled={!profileData || profileData[3] === 5}
-                    >
-                      🔒 Switch to Maximum Privacy (FREE)
-                    </button>
+                {/* Privacy Settings */}
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6 lg:col-span-1 md:col-span-2">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span>🛡️</span> Privacy Settings
+                  </h3>
 
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center gap-2 mb-1">
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center gap-2 mb-2">
                         <span className="text-green-600">✅</span>
-                        <span className="font-semibold text-green-700 text-sm">Privacy Controls Active</span>
+                        <span className="font-semibold text-green-700">Current Status</span>
                       </div>
-                      <p className="text-xs text-green-600">
-                        Privacy controls what external parties can see. You always see your full data. Privacy is always
-                        free!
+                      <div className="text-sm">
+                        <div>
+                          Privacy Level: <span className="font-bold">{profileData?.[3] || 5}</span>
+                        </div>
+                        <div>
+                          Transparency Premium:{" "}
+                          <span className="font-bold">
+                            {transparencyPremium ? `${Number(transparencyPremium) / 100}%` : "0%"}
+                          </span>
+                        </div>
+                        <div className="text-green-600 mt-1">
+                          {(profileData?.[3] || 5) === 5
+                            ? "✓ Maximum Privacy (Free)"
+                            : "⚠️ Paying transparency premium"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="font-semibold">Choose Your Privacy Level:</h4>
+
+                      {/* Privacy Level Options */}
+                      {[
+                        {
+                          level: 5,
+                          name: "Maximum Privacy",
+                          premium: "0%",
+                          description: "All data private (FREE)",
+                          color: "green",
+                        },
+                        {
+                          level: 4,
+                          name: "Minimal Public",
+                          premium: "0.5%",
+                          description: "Basic score visible",
+                          color: "blue",
+                        },
+                        {
+                          level: 3,
+                          name: "Partial Public",
+                          premium: "1.0%",
+                          description: "Score + volume visible",
+                          color: "yellow",
+                        },
+                        {
+                          level: 2,
+                          name: "Mostly Public",
+                          premium: "1.5%",
+                          description: "Most data visible",
+                          color: "orange",
+                        },
+                        {
+                          level: 1,
+                          name: "Fully Public",
+                          premium: "2.0%",
+                          description: "All data public",
+                          color: "red",
+                        },
+                      ].map(option => (
+                        <div
+                          key={option.level}
+                          className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                            (profileData?.[3] || 5) === option.level
+                              ? `border-${option.color}-500 bg-${option.color}-50`
+                              : "border-base-300 hover:border-base-400"
+                          }`}
+                          onClick={() => updateTransparencyLevel(option.level)}
+                        >
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <div className="font-semibold flex items-center gap-2">
+                                Level {option.level}: {option.name}
+                                {(profileData?.[3] || 5) === option.level && (
+                                  <span className="text-green-600">✓ Current</span>
+                                )}
+                              </div>
+                              <div className="text-xs text-base-content/70">{option.description}</div>
+                            </div>
+                            <div className="text-right">
+                              <div className={`font-bold ${option.level === 5 ? "text-green-600" : "text-orange-600"}`}>
+                                {option.premium}
+                              </div>
+                              <div className="text-xs text-base-content/70">premium</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-blue-600">💡</span>
+                        <span className="font-semibold text-blue-700 text-sm">Economic Honesty</span>
+                      </div>
+                      <p className="text-xs text-blue-600">
+                        Privacy is FREE because it&apos;s cheaper to provide. You only pay premiums for expensive public
+                        processing.
                       </p>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      <button
+                        className="btn btn-success btn-sm w-full"
+                        onClick={switchToMaxPrivacy}
+                        disabled={!profileData || profileData[3] === 5}
+                      >
+                        🔒 Switch to Maximum Privacy (FREE)
+                      </button>
+
+                      <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-green-600">✅</span>
+                          <span className="font-semibold text-green-700 text-sm">Privacy Controls Active</span>
+                        </div>
+                        <p className="text-xs text-green-600">
+                          Privacy controls what external parties can see. You always see your full data. Privacy is
+                          always free!
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

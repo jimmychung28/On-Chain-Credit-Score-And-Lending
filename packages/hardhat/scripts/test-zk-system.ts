@@ -4,9 +4,9 @@ async function main() {
   console.log("🔐 Testing ZK-First Credit System...\n");
 
   // Get deployed contracts
-  const zkCreditScoring = await ethers.getContract("ZKCreditScoring") as any;
-  const zkCreditLending = await ethers.getContract("ZKCreditLending") as any;
-  const mockZKVerifier = await ethers.getContract("MockZKVerifier") as any;
+  const zkCreditScoring = (await ethers.getContract("ZKCreditScoring")) as any;
+  const zkCreditLending = (await ethers.getContract("ZKCreditLending")) as any;
+  const mockZKVerifier = (await ethers.getContract("MockZKVerifier")) as any;
 
   console.log("📍 Contract Addresses:");
   console.log(`ZK Credit Scoring: ${await zkCreditScoring.getAddress()}`);
@@ -19,7 +19,7 @@ async function main() {
     "0x742D35CC6C6C8b5B2C8A4D15c9C3f47b4E5F1234", // Level 4 privacy, score 720
     "0x8ba1f109551BD432803012645FAc136c22c87654", // Level 3 privacy, score 650
     "0x1234567890AbcdEF1234567890aBcdef12345678", // Level 2 privacy, score 580
-    "0xABcdEFABcdEFabcdEfAbCdefabcdeFABcDEFabCD"  // Level 1 privacy, score 520
+    "0xABcdEFABcdEFabcdEfAbCdefabcdeFABcDEFabCD", // Level 1 privacy, score 520
   ];
 
   // Test 1: Check test users were created with ZK privacy
@@ -28,12 +28,14 @@ async function main() {
     try {
       const profile = await zkCreditScoring.getCreditProfile(testUsers[i]);
       const privacyDiscount = await zkCreditScoring.getPrivacyDiscount(testUsers[i]);
-      
+
       console.log(`User ${i + 1} (${testUsers[i].slice(0, 10)}...):`);
       console.log(`  Credit Score: ${profile[0]}`);
       console.log(`  Privacy Level: ${profile[3]}`);
       console.log(`  Is Verified: ${profile[4]}`);
-      console.log(`  Privacy Discount: ${privacyDiscount} basis points (${(Number(privacyDiscount) / 100).toFixed(2)}%)`);
+      console.log(
+        `  Privacy Discount: ${privacyDiscount} basis points (${(Number(privacyDiscount) / 100).toFixed(2)}%)`,
+      );
       console.log("");
     } catch (error) {
       console.log(`❌ Error checking user ${i + 1}: ${error}`);
@@ -47,7 +49,7 @@ async function main() {
   for (let i = 0; i < testUsers.length; i++) {
     try {
       const eligibility = await zkCreditLending.checkLoanEligibility(testUsers[i], loanAmount);
-      
+
       console.log(`User ${i + 1} Loan Eligibility:`);
       console.log(`  Eligible: ${eligibility[0]}`);
       console.log(`  Max Amount: ${ethers.formatEther(eligibility[1])} ETH`);
@@ -71,7 +73,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
-  }); 
+  });

@@ -12,13 +12,7 @@ interface AggregatorV3Interface {
     function latestRoundData()
         external
         view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        );
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
 }
 
 /**
@@ -43,15 +37,11 @@ contract MockAggregatorV3 is AggregatorV3Interface {
 
     event AnswerUpdated(int256 current, uint256 roundId, uint256 updatedAt);
 
-    constructor(
-        uint8 _decimals,
-        string memory _description,
-        int256 _initialAnswer
-    ) {
+    constructor(uint8 _decimals, string memory _description, int256 _initialAnswer) {
         decimals = _decimals;
         description = _description;
         owner = msg.sender;
-        
+
         _latestRoundData = RoundData({
             roundId: 1,
             answer: _initialAnswer,
@@ -67,13 +57,7 @@ contract MockAggregatorV3 is AggregatorV3Interface {
         external
         view
         override
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        )
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
     {
         return (
             _latestRoundData.roundId,
@@ -113,12 +97,14 @@ contract MockAggregatorV3 is AggregatorV3Interface {
     // Helper function to simulate realistic price movements
     function simulatePriceMovement(int256 _basePrice, int256 _volatilityPercent) external {
         require(msg.sender == owner, "Only owner can simulate");
-        
+
         // Generate pseudo-random price movement
-        uint256 randomSeed = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, _latestRoundData.roundId)));
+        uint256 randomSeed = uint256(
+            keccak256(abi.encodePacked(block.timestamp, block.prevrandao, _latestRoundData.roundId))
+        );
         int256 priceChange = (int256(randomSeed % uint256(_volatilityPercent * 2)) - _volatilityPercent);
-        int256 newPrice = _basePrice + (_basePrice * priceChange / 10000); // volatility in basis points
-        
+        int256 newPrice = _basePrice + ((_basePrice * priceChange) / 10000); // volatility in basis points
+
         if (newPrice > 0) {
             _latestRoundData.roundId++;
             _latestRoundData.answer = newPrice;
@@ -128,4 +114,4 @@ contract MockAggregatorV3 is AggregatorV3Interface {
             emit AnswerUpdated(newPrice, _latestRoundData.roundId, block.timestamp);
         }
     }
-} 
+}
