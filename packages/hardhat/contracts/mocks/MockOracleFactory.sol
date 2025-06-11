@@ -125,28 +125,28 @@ contract MockOracleFactory is Ownable {
         address defiRateOracle
     ) {
         // Deploy hybrid oracles for comprehensive testing
-        ethUsdOracle = deployHybridMock(
+        ethUsdOracle = this.deployHybridMock(
             "ETH_USD",
             8,
             "ETH/USD Price Feed",
             300000000000  // $3000
         );
 
-        volatilityOracle = deployHybridMock(
+        volatilityOracle = this.deployHybridMock(
             "VOLATILITY",
             8,
             "Volatility Multiplier",
             10000000000   // 100% (1.0 with 8 decimals)
         );
 
-        liquidityOracle = deployHybridMock(
+        liquidityOracle = this.deployHybridMock(
             "LIQUIDITY",
             8,
             "Liquidity Premium",
             0             // 0% initially
         );
 
-        defiRateOracle = deployHybridMock(
+        defiRateOracle = this.deployHybridMock(
             "DEFI_RATE",
             8,
             "DeFi Average Rate",

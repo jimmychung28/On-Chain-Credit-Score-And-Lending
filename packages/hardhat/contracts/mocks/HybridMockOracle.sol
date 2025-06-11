@@ -236,7 +236,7 @@ contract HybridMockOracle is AggregatorV3Interface, Ownable {
             currentMockType == MockType.CUSTOM_ADVANCED || currentMockType == MockType.HYBRID_MODE,
             "Advanced features only available in custom mock mode"
         );
-        customMock.simulatePriceMovement(maxPercentChange, steps);
+        customMock.simulatePriceMovement(int256(maxPercentChange), int256(steps));
     }
 
     /**

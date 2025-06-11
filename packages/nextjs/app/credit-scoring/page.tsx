@@ -2,11 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { formatEther, parseEther } from "viem";
-import { useAccount } from "wagmi";
-import { BanknotesIcon, ChartBarIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useAccount, useWalletClient } from "wagmi";
+import {
+  BanknotesIcon,
+  ChartBarIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  GlobeAltIcon,
+} from "@heroicons/react/24/outline";
 import { EnhancedCreditDisplay } from "~~/components/EnhancedCreditDisplay";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 // Toast notification system
 type Toast = {
@@ -36,7 +43,7 @@ const CustomToastContainer = ({ toasts, removeToast }: { toasts: Toast[]; remove
 const SingleLoanDisplay = ({ loanId }: { loanId: any }) => {
   const { data: loanData } = useScaffoldReadContract({
     contractName: "ZKCreditLending",
-    functionName: "getLoanDetails",
+    functionName: "loans",
     args: [loanId],
   });
 
@@ -186,7 +193,8 @@ const SingleLoanDisplay = ({ loanId }: { loanId: any }) => {
 };
 
 const CreditScoringPage = () => {
-  const { address: connectedAddress } = useAccount();
+  const { address: connectedAddress, chain: accountChain } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const [activeTab, setActiveTab] = useState<"profile" | "stake" | "borrow" | "loans">("profile");
   const [isRegistering, setIsRegistering] = useState(false);
   const [loanAmount, setLoanAmount] = useState("");
@@ -194,12 +202,37 @@ const CreditScoringPage = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [expandedRateSection, setExpandedRateSection] = useState<string | null>(null);
 
+  // Multi-chain state
+  const [isLoadingUniversal, setIsLoadingUniversal] = useState(false);
+  const [universalScore, setUniversalScore] = useState<{
+    score: number;
+    timestamp: number;
+    isStale: boolean;
+  } | null>(null);
+  const [chainScores, setChainScores] = useState<
+    Array<{
+      chainId: number;
+      score: number;
+      timestamp: number;
+      isActive: boolean;
+    }>
+  >([]);
+
   // Contract read hooks - enhanced with privacy features
   const { data: creditProfile } = useScaffoldReadContract({
     contractName: "ZKCreditScoring",
     functionName: "getCreditProfile",
     args: [connectedAddress],
   });
+
+  // Debug logging - use useEffect to avoid re-render loops
+  useEffect(() => {
+    console.log("=== DEBUG: Credit Profile Loading ===");
+    console.log("Connected address:", connectedAddress);
+    console.log("Credit profile raw data:", creditProfile);
+    console.log("Credit profile type:", typeof creditProfile);
+    console.log("Is credit profile array?", Array.isArray(creditProfile));
+  }, [connectedAddress, creditProfile]);
 
   const { data: lenderInfo } = useScaffoldReadContract({
     contractName: "ZKCreditLending",
@@ -213,31 +246,83 @@ const CreditScoringPage = () => {
     args: [connectedAddress],
   });
 
+  // ZK privacy features - transparency premium available
   const { data: transparencyPremium } = useScaffoldReadContract({
     contractName: "ZKCreditScoring",
     functionName: "getTransparencyPremium",
     args: [connectedAddress],
   });
 
-  // Enhanced credit data
-  const { data: scoreBreakdown } = useScaffoldReadContract({
-    contractName: "CreditScoring",
-    functionName: "getScoreBreakdown",
-    args: [connectedAddress],
-  });
+  // ZK contracts don't expose detailed breakdowns for privacy - use placeholder data
+  const scoreBreakdown = null;
+  const enhancedProfile = null;
 
-  const { data: enhancedProfile } = useScaffoldReadContract({
-    contractName: "CreditScoring",
-    functionName: "getEnhancedProfile",
-    args: [connectedAddress],
-  });
+  // Get current transparency premium for display
+  const currentTransparencyPremium = transparencyPremium ? Number(transparencyPremium) / 100 : 0;
 
   // Contract write hooks - enhanced with privacy features
   const { writeContractAsync: writeCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "ZKCreditScoring",
   });
+
+  useEffect(() => {
+    console.log("=== DEBUG: Contract Hooks ===");
+    console.log("writeCreditScoringAsync available:", !!writeCreditScoringAsync);
+    console.log("writeCreditScoringAsync type:", typeof writeCreditScoringAsync);
+  }, [writeCreditScoringAsync]);
   const { writeContractAsync: writeCreditLendingAsync, isMining: isCreditLendingPending } = useScaffoldWriteContract({
     contractName: "ZKCreditLending",
+  });
+
+  // Multi-chain contract hooks (removed unused variables)
+
+  // Universal score contract hooks
+  const { data: universalScoreData } = useScaffoldReadContract({
+    contractName: "CrossChainCreditAggregator",
+    functionName: "getUniversalScore",
+    args: [connectedAddress],
+  });
+
+  const { data: allChainScores } = useScaffoldReadContract({
+    contractName: "CrossChainCreditAggregator",
+    functionName: "getUserChainData",
+    args: [connectedAddress],
+  });
+
+  const {
+    data: estimatedFee,
+    error: feeError,
+    isLoading: feeLoading,
+  } = useScaffoldReadContract({
+    contractName: "CrossChainCreditAggregator",
+    functionName: "estimateUniversalScoreFee",
+    args: [connectedAddress],
+  });
+
+  // Debug fee estimation
+  useEffect(() => {
+    console.log("=== FEE ESTIMATION DEBUG ===");
+    console.log("Estimated fee:", estimatedFee);
+    console.log("Fee error:", feeError);
+    console.log("Fee loading:", feeLoading);
+    console.log("Connected address for fee:", connectedAddress);
+  }, [estimatedFee, feeError, feeLoading, connectedAddress]);
+
+  // Supported chains for multi-chain functionality (commented out to avoid console spam)
+  // const { data: supportedChains } = useScaffoldReadContract({
+  //   contractName: "CrossChainCreditAggregator",
+  //   functionName: "getSupportedChains",
+  // });
+
+  const { writeContractAsync: requestUniversalScore } = useScaffoldWriteContract({
+    contractName: "CrossChainCreditAggregator",
+  });
+
+  // Read user registration status for multi-chain
+  const { data: userProfile } = useScaffoldReadContract({
+    contractName: "ZKCreditScoring",
+    functionName: "creditProfiles",
+    args: [connectedAddress],
   });
 
   // Toast functions
@@ -253,19 +338,87 @@ const CreditScoringPage = () => {
 
   // Registration function
   const registerUser = async () => {
-    if (!connectedAddress) return;
+    console.log("=== REGISTRATION FUNCTION START ===");
+    console.log("Function called at:", new Date().toISOString());
+    console.log("Connected address:", connectedAddress);
+    console.log("Is registered (before check):", isRegistered);
+    console.log("Credit profile:", creditProfile);
+    console.log("Wallet client available:", !!walletClient);
 
+    if (!connectedAddress) {
+      console.log("❌ No connected address, returning");
+      return;
+    }
+
+    console.log("📝 Setting isRegistering to true...");
     setIsRegistering(true);
+
     try {
-      await writeCreditScoringAsync({
-        functionName: "registerUser",
-        // No args needed - the function uses msg.sender internally
-      });
-      addToast("success", "Successfully registered! Building your credit profile...");
+      console.log("🔍 Checking if user is already registered...");
+      // Check if user is already registered first
+      if (isRegistered) {
+        console.log("ℹ️ User is already registered, showing toast");
+        addToast("info", "You are already registered!");
+        return;
+      }
+
+      console.log("✅ User not registered, proceeding with registration...");
+      console.log("Wallet client status:", !!walletClient);
+      console.log("Connected address:", connectedAddress);
+      console.log("Account chain:", accountChain);
+
+      try {
+        // Try registration with clear user guidance
+        console.log("🚀 Attempting transaction...");
+        addToast("info", "Please check your wallet and approve the transaction when prompted.");
+
+        console.log("=== Using scaffold-eth hook ===");
+        console.log("About to call writeCreditScoringAsync with:");
+        console.log("- functionName: registerUser");
+        console.log("- args: []");
+        console.log("- writeCreditScoringAsync type:", typeof writeCreditScoringAsync);
+
+        // Use scaffold-eth hook (clean and simple)
+        console.log("🔄 Calling writeCreditScoringAsync...");
+
+        const tx = await writeCreditScoringAsync({
+          functionName: "registerUser",
+          args: undefined,
+        });
+
+        console.log("✅ Registration transaction successful:", tx);
+
+        console.log("Transaction sent successfully!");
+        console.log("Transaction details:", tx);
+
+        addToast("success", "Successfully registered! Building your credit profile...");
+      } catch (innerError: any) {
+        console.error("Inner transaction error:", innerError);
+        console.error("Error name:", innerError?.name);
+        console.error("Error code:", innerError?.code);
+        console.error("Error details:", innerError);
+        throw innerError;
+      }
     } catch (error: any) {
-      console.error("Registration error:", error);
-      addToast("error", `Registration failed: ${error.message}`);
+      console.error("=== DEBUG: Registration Error ===");
+      console.error("Full error object:", error);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+
+      if (error.message?.includes("User already registered")) {
+        addToast("info", "You are already registered!");
+      } else {
+        if (error.message?.includes("timeout")) {
+          addToast(
+            "error",
+            "Registration is taking longer than expected. Please check your wallet for a pending transaction or try refreshing the page.",
+          );
+        } else {
+          addToast("error", `Registration failed: ${error.message}`);
+        }
+      }
     } finally {
+      console.log("Setting isRegistering to false");
       setIsRegistering(false);
     }
   };
@@ -319,20 +472,94 @@ const CreditScoringPage = () => {
     }
   };
 
-  // Add ZK Credit Scoring contract write hook
+  // Add Credit Scoring contract write hook for privacy functions
   const { writeContractAsync: writeZKCreditScoringAsync } = useScaffoldWriteContract({
     contractName: "ZKCreditScoring",
   });
 
-  // Privacy/Transparency functions
+  // Multi-chain functions
+  const handleRequestUniversalScore = async () => {
+    console.log("=== UNIVERSAL SCORE BUTTON CLICKED ===");
+    console.log("Connected address:", connectedAddress);
+    console.log("Estimated fee:", estimatedFee);
+    console.log("User profile:", userProfile);
+
+    if (!connectedAddress) {
+      console.log("❌ No connected address");
+      addToast("error", "Please connect your wallet first");
+      return;
+    }
+
+    if (!estimatedFee) {
+      console.log("❌ No estimated fee, but proceeding anyway");
+      console.log("Fee error:", feeError);
+      addToast("info", "Unable to estimate fee - proceeding with default amount");
+    }
+
+    try {
+      console.log("📝 Setting loading state...");
+      setIsLoadingUniversal(true);
+
+      // Check if user is registered in credit scoring system
+      console.log("🔍 Checking if user is registered...");
+      if (!userProfile || !userProfile[2]) {
+        // isActive at index 2
+        console.log("ℹ️ User not registered, registering first...");
+        notification.info("Registering user in credit scoring system...");
+
+        // Use the same registration approach as the main register function
+        await writeCreditScoringAsync({
+          functionName: "registerUser",
+          args: undefined,
+        });
+
+        notification.success("User registered successfully!");
+        console.log("✅ User registration completed");
+
+        // Wait a moment for the transaction to be mined
+        console.log("⏳ Waiting for transaction to be mined...");
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        console.log("✅ User already registered");
+      }
+
+      // Now request universal score
+      console.log("🌐 Requesting universal score...");
+      const feeToUse = estimatedFee || parseEther("0.01"); // Default to 0.01 ETH if estimation fails
+      console.log("Using fee amount:", feeToUse);
+
+      await requestUniversalScore({
+        functionName: "requestUniversalScore",
+        args: [connectedAddress],
+        value: feeToUse,
+      });
+      console.log("✅ Universal score request submitted");
+      addToast("success", "Universal score request submitted!");
+    } catch (error: any) {
+      console.error("Failed to request universal score:", error);
+
+      // Check if the error is related to user registration
+      if (error.message && error.message.includes("User not registered")) {
+        addToast("error", "Please register in the credit scoring system first");
+      } else {
+        addToast(
+          "error",
+          "Failed to request universal score. This may be due to LayerZero configuration on localhost.",
+        );
+      }
+    } finally {
+      setIsLoadingUniversal(false);
+    }
+  };
+
+  // Privacy/Transparency functions - now fully available with ZK contracts
   const updateTransparencyLevel = async (level: number) => {
     try {
-      // Try ZK contract first, fallback to regular contract
       await writeZKCreditScoringAsync({
         functionName: "updateTransparencyLevel",
         args: [level],
       });
-      addToast("success", `Transparency level updated to ${level}`);
+      addToast("success", `Privacy level updated to ${level}`);
     } catch (error: any) {
       console.error("Transparency update error:", error);
       addToast("error", `Failed to update transparency: ${error.message}`);
@@ -344,7 +571,7 @@ const CreditScoringPage = () => {
       await writeZKCreditScoringAsync({
         functionName: "switchToMaxPrivacy",
       });
-      addToast("success", "Switched to maximum privacy (free)!");
+      addToast("success", "Switched to maximum privacy level (FREE)");
     } catch (error: any) {
       console.error("Privacy switch error:", error);
       addToast("error", `Failed to switch to privacy: ${error.message}`);
@@ -419,6 +646,48 @@ const CreditScoringPage = () => {
     }
   }, [poolInfoData, loanEligibility]);
 
+  // Handle universal score data
+  useEffect(() => {
+    if (universalScoreData) {
+      setUniversalScore({
+        score: Number(universalScoreData[0]),
+        timestamp: Number(universalScoreData[1]),
+        isStale: universalScoreData[2],
+      });
+    }
+  }, [universalScoreData]);
+
+  // Handle chain scores data
+  useEffect(() => {
+    if (allChainScores && Array.isArray(allChainScores) && allChainScores[0] && Array.isArray(allChainScores[0])) {
+      const scores: Array<{
+        chainId: number;
+        score: number;
+        timestamp: number;
+        isActive: boolean;
+      }> = [];
+      const [chainIds, , scoreValues, , timestamps] = allChainScores as readonly [
+        readonly number[],
+        readonly string[],
+        readonly bigint[],
+        readonly number[],
+        readonly bigint[],
+      ];
+
+      for (let i = 0; i < chainIds.length; i++) {
+        scores.push({
+          chainId: Number(chainIds[i]),
+          score: Number(scoreValues[i]),
+          timestamp: Number(timestamps[i]),
+          isActive: true,
+        });
+      }
+      setChainScores(scores);
+    } else {
+      setChainScores([]);
+    }
+  }, [allChainScores]);
+
   const getInterestRate = (score: number) => {
     if (dynamicRate === "Loading..." || dynamicRate === "Error") {
       // Fallback to static calculation while loading
@@ -436,28 +705,18 @@ const CreditScoringPage = () => {
     return dynamicRate;
   };
 
-  // Check if user is registered
-  // Handle both object and array returns from the contract
-  const profileData = creditProfile as any;
+  // Check if user is registered - ZK contract returns tuple [score, lastUpdated, isActive, privacyLevel, isVerified]
+  const isRegistered = !!(creditProfile && creditProfile[2] === true); // isActive is at index 2
 
-  // Debug logging
-  console.log("Debug - creditProfile:", creditProfile);
-  console.log("Debug - profileData:", profileData);
-  console.log("Debug - connectedAddress:", connectedAddress);
-  console.log("Debug - borrowerLoanIds:", borrowerLoanIds);
-  console.log("Debug - lenderInfo:", lenderInfo);
-  console.log("Debug - transparencyPremium:", transparencyPremium);
-
-  // More robust registration check - handle both object and array formats
-  const isRegistered = !!(
-    profileData &&
-    // Object format: { isActive: true, ... }
-    (profileData.isActive === true ||
-      // Array format: [score, lastUpdated, isActive, ...]
-      (Array.isArray(profileData) && profileData.length >= 3 && profileData[2] === true))
-  );
-
-  console.log("Debug - isRegistered:", isRegistered);
+  // Debug registration status
+  useEffect(() => {
+    console.log("=== DEBUG: Registration Check ===");
+    console.log("Is registered:", isRegistered);
+    console.log("creditProfile[2] (isActive):", creditProfile?.[2]);
+    console.log("creditProfile full:", creditProfile);
+    console.log("typeof creditProfile:", typeof creditProfile);
+    console.log("creditProfile === undefined:", creditProfile === undefined);
+  }, [isRegistered, creditProfile]);
 
   // Show loading state while data is being fetched
   if (!connectedAddress) {
@@ -483,8 +742,14 @@ const CreditScoringPage = () => {
     );
   }
 
-  // Registration screen
-  if (!isRegistered) {
+  // Registration screen - only show for confirmed unregistered users
+  console.log("=== DEBUG: Registration Screen Check ===");
+  console.log("Should show registration screen?", creditProfile !== undefined && !isRegistered);
+  console.log("creditProfile !== undefined:", creditProfile !== undefined);
+  console.log("!isRegistered:", !isRegistered);
+
+  if (creditProfile !== undefined && !isRegistered) {
+    console.log("SHOWING REGISTRATION SCREEN");
     return (
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
         <CustomToastContainer toasts={toasts} removeToast={removeToast} />
@@ -498,11 +763,23 @@ const CreditScoringPage = () => {
 
             <button
               className={`btn btn-primary w-full ${isRegistering ? "loading" : ""}`}
-              onClick={registerUser}
+              onClick={() => {
+                console.log("=== DEBUG: Register Button Clicked ===");
+                console.log("Button state - isRegistering:", isRegistering);
+                console.log("Button state - connectedAddress:", connectedAddress);
+                console.log("Button disabled?", isRegistering || !connectedAddress);
+                registerUser();
+              }}
               disabled={isRegistering || !connectedAddress}
             >
               {isRegistering ? "Registering..." : "Get Started with Privacy"}
             </button>
+
+            {/* Debug button state */}
+            <div className="mt-2 text-xs text-base-content/50">
+              Debug: isRegistering={isRegistering ? "true" : "false"}, connected={connectedAddress ? "true" : "false"},
+              disabled={isRegistering || !connectedAddress ? "true" : "false"}
+            </div>
 
             <div className="mt-6 text-left">
               <h3 className="font-semibold mb-2">How it works:</h3>
@@ -533,30 +810,17 @@ const CreditScoringPage = () => {
   }
 
   const creditScore = (() => {
-    if (profileData) {
-      let score = 0;
-      let isActive = false;
-
-      // Handle object format: { score: '750', isActive: true, ... }
-      if (profileData.score !== undefined) {
-        score = Number(profileData.score);
-        isActive = profileData.isActive === true;
-      }
-      // Handle array format: [score, lastUpdated, isActive, ...]
-      else if (Array.isArray(profileData) && profileData.length >= 1) {
-        score = Number(profileData[0]);
-        isActive = profileData.length >= 3 && profileData[2] === true;
-      }
-
-      // If user is registered but has no score (score = 0), give them a starting score of 650
-      if (score === 0 && isActive) {
-        return 650; // Fair starting score for new users
+    if (creditProfile && creditProfile[2]) {
+      // isActive at index 2
+      const score = Number(creditProfile[0]); // score at index 0
+      // If user is registered but has no score (score = 0), give them a starting score
+      if (score === 0) {
+        return 300; // Minimum score for new users
       }
       return score;
     }
     return 0;
   })();
-  const scorePercentage = ((creditScore - 300) / 550) * 100;
 
   // Calculate realistic APY based on current utilization and base rates
   const calculateCurrentAPY = () => {
@@ -584,6 +848,9 @@ const CreditScoringPage = () => {
   };
 
   const currentAPY = calculateCurrentAPY();
+
+  console.log("=== DEBUG: Rendering Main Interface ===");
+  console.log("User is registered, showing main credit scoring interface");
 
   return (
     <>
@@ -613,14 +880,28 @@ const CreditScoringPage = () => {
                   <h2 className="text-2xl font-bold">Credit Score</h2>
                   <div className="flex gap-2">
                     <div className="badge badge-success badge-sm">🔐 Private</div>
-                    <div className="badge badge-primary badge-lg">{getCreditRating(creditScore)}</div>
+                    {universalScore && universalScore.score > 0 ? (
+                      <div className="badge badge-accent badge-sm">🌐 Universal</div>
+                    ) : (
+                      <div className="badge badge-primary badge-sm">🏠 Local</div>
+                    )}
+                    <div className="badge badge-primary badge-lg">
+                      {getCreditRating(universalScore?.score || creditScore)}
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-6">
                   <div className="text-center">
-                    <div className={`text-6xl font-bold ${getCreditScoreColor(creditScore)}`}>{creditScore}</div>
+                    <div className={`text-6xl font-bold ${getCreditScoreColor(universalScore?.score || creditScore)}`}>
+                      {universalScore?.score || creditScore}
+                    </div>
                     <div className="text-sm text-base-content/70 mt-1">out of 850</div>
+                    {universalScore && universalScore.score > 0 ? (
+                      <div className="text-xs text-success mt-1">🌐 Enhanced with cross-chain data</div>
+                    ) : (
+                      <div className="text-xs text-base-content/60 mt-1">📈 Can be enhanced with Universal Score</div>
+                    )}
                   </div>
 
                   <div className="flex-1">
@@ -632,13 +913,45 @@ const CreditScoringPage = () => {
                     </div>
                     <div className="w-full bg-base-300 rounded-full h-3">
                       <div
-                        className={`h-3 rounded-full ${getScoreBarColor(creditScore)} transition-all duration-1000`}
-                        style={{ width: `${scorePercentage}%` }}
+                        className={`h-3 rounded-full ${getScoreBarColor(universalScore?.score || creditScore)} transition-all duration-1000`}
+                        style={{ width: `${(((universalScore?.score || creditScore) - 300) / 550) * 100}%` }}
                       ></div>
                     </div>
                     <div className="mt-2 text-sm text-base-content/70">
-                      Your loan rate: <span className="font-semibold">{getInterestRate(creditScore)}</span>
+                      Your loan rate:{" "}
+                      <span className="font-semibold">{getInterestRate(universalScore?.score || creditScore)}</span>
                     </div>
+                    {!universalScore || universalScore.score === 0 ? (
+                      <div className="mt-2">
+                        <button
+                          className="btn btn-sm btn-outline btn-accent"
+                          onClick={handleRequestUniversalScore}
+                          disabled={isLoadingUniversal}
+                        >
+                          {isLoadingUniversal ? (
+                            <span className="loading loading-spinner loading-xs"></span>
+                          ) : (
+                            "🌐 Get Universal Score"
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      universalScore.isStale && (
+                        <div className="mt-2">
+                          <button
+                            className="btn btn-xs btn-outline btn-warning"
+                            onClick={handleRequestUniversalScore}
+                            disabled={isLoadingUniversal}
+                          >
+                            {isLoadingUniversal ? (
+                              <span className="loading loading-spinner loading-xs"></span>
+                            ) : (
+                              "🔄 Refresh Score"
+                            )}
+                          </button>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -675,6 +988,7 @@ const CreditScoringPage = () => {
               className={`tab tab-lg ${activeTab === "profile" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("profile")}
             >
+              <GlobeAltIcon className="h-4 w-4 mr-1" />
               Credit Profile
             </button>
             <button
@@ -735,6 +1049,99 @@ const CreditScoringPage = () => {
                     : undefined
                 }
               />
+
+              {/* Cross-Chain Information - only show if user has universal score or cross-chain data */}
+              {(universalScore?.score || chainScores.length > 0) && (
+                <div className="bg-base-100 rounded-2xl shadow-xl p-6">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <GlobeAltIcon className="h-6 w-6 text-accent" />
+                    Cross-Chain Credit Data
+                  </h3>
+
+                  {/* Chain Breakdown */}
+                  {chainScores.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-bold mb-3">🌐 Multi-Chain Score Breakdown</h4>
+                      <div className="space-y-3">
+                        {chainScores.map(chainScore => {
+                          const chainNames: Record<number, string> = {
+                            1: "Ethereum",
+                            137: "Polygon",
+                            42161: "Arbitrum",
+                            10: "Optimism",
+                            8453: "Base",
+                            31337: "Localhost",
+                          };
+                          return (
+                            <div
+                              key={chainScore.chainId}
+                              className="flex items-center justify-between p-3 bg-base-200 rounded"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-4 h-4 rounded-full bg-accent"></div>
+                                <span className="font-medium">
+                                  {chainNames[chainScore.chainId] || `Chain ${chainScore.chainId}`}
+                                </span>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-bold">{chainScore.score}</div>
+                                <div className="text-xs text-base-content/70">
+                                  {new Date(chainScore.timestamp * 1000).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Universal Score Benefits */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-bold mb-2">🌐 Cross-Chain Bonuses</h4>
+                      <ul className="text-sm space-y-2">
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">+50</span>
+                          <span>Diversification Bonus</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">+30</span>
+                          <span>Consistency Bonus</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">+25</span>
+                          <span>Volume Bonus</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">+15</span>
+                          <span>Sophistication Bonus</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-bold mb-2">⚡ Benefits</h4>
+                      <ul className="text-sm space-y-2">
+                        <li>• Better interest rates</li>
+                        <li>• Higher loan limits</li>
+                        <li>• Faster approvals</li>
+                        <li>• Reduced collateral</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {universalScore && universalScore.isStale && (
+                    <div className="mt-4 p-3 bg-warning/10 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-warning">⚠️</span>
+                        <span className="text-sm">
+                          Your universal score is stale. Refresh for the most current data.
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="grid lg:grid-cols-3 gap-6">
                 {/* Sophisticated Credit Score Factors */}
@@ -1016,19 +1423,12 @@ const CreditScoringPage = () => {
                       </div>
                       <div className="text-sm">
                         <div>
-                          Privacy Level: <span className="font-bold">{profileData?.[3] || 5}</span>
+                          Privacy Level: <span className="font-bold">5 (Maximum)</span>
                         </div>
                         <div>
-                          Transparency Premium:{" "}
-                          <span className="font-bold">
-                            {transparencyPremium ? `${Number(transparencyPremium) / 100}%` : "0%"}
-                          </span>
+                          Transparency Premium: <span className="font-bold">{currentTransparencyPremium}%</span>
                         </div>
-                        <div className="text-green-600 mt-1">
-                          {(profileData?.[3] || 5) === 5
-                            ? "✓ Maximum Privacy (Free)"
-                            : "⚠️ Paying transparency premium"}
-                        </div>
+                        <div className="text-green-600 mt-1">✓ Maximum Privacy (Free)</div>
                       </div>
                     </div>
 
@@ -1076,8 +1476,8 @@ const CreditScoringPage = () => {
                         <div
                           key={option.level}
                           className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                            (profileData?.[3] || 5) === option.level
-                              ? `border-${option.color}-500 bg-${option.color}-50`
+                            option.level === 5
+                              ? `border-green-500 bg-green-50`
                               : "border-base-300 hover:border-base-400"
                           }`}
                           onClick={() => updateTransparencyLevel(option.level)}
@@ -1086,9 +1486,7 @@ const CreditScoringPage = () => {
                             <div>
                               <div className="font-semibold flex items-center gap-2">
                                 Level {option.level}: {option.name}
-                                {(profileData?.[3] || 5) === option.level && (
-                                  <span className="text-green-600">✓ Current</span>
-                                )}
+                                {option.level === 5 && <span className="text-green-600">✓ Current</span>}
                               </div>
                               <div className="text-xs text-base-content/70">{option.description}</div>
                             </div>
@@ -1115,11 +1513,7 @@ const CreditScoringPage = () => {
                     </div>
 
                     <div className="mt-4 space-y-2">
-                      <button
-                        className="btn btn-success btn-sm w-full"
-                        onClick={switchToMaxPrivacy}
-                        disabled={!profileData || profileData[3] === 5}
-                      >
+                      <button className="btn btn-success btn-sm w-full" onClick={switchToMaxPrivacy} disabled={false}>
                         🔒 Switch to Maximum Privacy (FREE)
                       </button>
 
@@ -1274,7 +1668,12 @@ const CreditScoringPage = () => {
                       <div className="font-semibold">Your Dynamic Loan Terms</div>
                       <div className="text-sm">
                         Interest Rate:{" "}
-                        <span className="font-semibold text-primary">{getInterestRate(creditScore)}</span>
+                        <span className="font-semibold text-primary">
+                          {getInterestRate(universalScore?.score || creditScore)}
+                        </span>
+                        {universalScore?.score && universalScore.score > creditScore && (
+                          <span className="text-xs text-success ml-2">🌐 Enhanced by Universal Score</span>
+                        )}
                       </div>
                       <div className="text-sm">Pool Utilization: {currentUtilization.toFixed(1)}%</div>
                       <div className="text-sm">Max Amount: 100 ETH • Duration: 30 days</div>
@@ -1294,7 +1693,7 @@ const CreditScoringPage = () => {
                     />
                   </div>
 
-                  {creditScore < 350 ? (
+                  {(universalScore?.score || creditScore) < 350 ? (
                     <div className="alert alert-error">
                       <ExclamationTriangleIcon className="h-5 w-5" />
                       <div>

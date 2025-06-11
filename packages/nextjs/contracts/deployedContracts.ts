@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     CreditLending: {
-      address: "0xfb6dAB6200b8958C2655C3747708F82243d3F32E",
+      address: "0x6B763F54D260aFF608CbbAeD8721c96992eC24Db",
       abi: [
         {
           inputs: [
@@ -1101,7 +1101,7 @@ const deployedContracts = {
       },
     },
     CreditScoring: {
-      address: "0x3Af511B1bdD6A0377e23796aD6B7391d8De68636",
+      address: "0x8AFB0C54bAE39A5e56b984DF1C4b5702b2abf205",
       abi: [
         {
           inputs: [],
@@ -2768,8 +2768,424 @@ const deployedContracts = {
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
     },
+    CrossChainCreditAggregator: {
+      address: "0xf09e7Af8b380cD01BD0d009F83a6b668A47742ec",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creditScoring",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint16",
+              name: "chainId",
+              type: "uint16",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "score",
+              type: "uint256",
+            },
+          ],
+          name: "ChainScoreSimulated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "totalChains",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "weightedScore",
+              type: "uint256",
+            },
+          ],
+          name: "CrossChainDataAggregated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "score",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "requestId",
+              type: "bytes32",
+            },
+          ],
+          name: "UniversalScoreCalculated",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          name: "chainLastUpdated",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          name: "chainNames",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          name: "chainScores",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          name: "chainWeights",
+          outputs: [
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "creditScoring",
+          outputs: [
+            {
+              internalType: "contract ZKCreditScoring",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "crossChainBonus",
+          outputs: [
+            {
+              internalType: "uint16",
+              name: "diversificationBonus",
+              type: "uint16",
+            },
+            {
+              internalType: "uint16",
+              name: "consistencyBonus",
+              type: "uint16",
+            },
+            {
+              internalType: "uint16",
+              name: "volumeBonus",
+              type: "uint16",
+            },
+            {
+              internalType: "uint16",
+              name: "sophisticationBonus",
+              type: "uint16",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "estimateUniversalScoreFee",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "getUniversalScore",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "score",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isStale",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "getUserChainData",
+          outputs: [
+            {
+              internalType: "uint16[]",
+              name: "chains",
+              type: "uint16[]",
+            },
+            {
+              internalType: "string[]",
+              name: "names",
+              type: "string[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "scores",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint16[]",
+              name: "weights",
+              type: "uint16[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "timestamps",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "hasUniversalScore",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "lastUpdated",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "requestUniversalScore",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "requestId",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "universalScores",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "userActiveChains",
+          outputs: [
+            {
+              internalType: "uint16",
+              name: "",
+              type: "uint16",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
     DynamicTargetRateModel: {
-      address: "0xBD2fe040D03EB1d1E5A151fbcc19A03333223019",
+      address: "0x582957C7a35CDfeAAD1Ca4b87AE03913eAAd0Be0",
       abi: [
         {
           inputs: [],
@@ -3372,1061 +3788,8 @@ const deployedContracts = {
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
     },
-    DynamicTargetRateModelWithOracles: {
-      address: "0x82A9286dB983093Ff234cefCea1d8fA66382876B",
-      abi: [
-        {
-          inputs: [],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-          ],
-          name: "OwnableInvalidOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "OwnableUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "borrower",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          name: "InterestRateCalculated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "MarketConditionsAutoUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "MarketConditionsUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "feedType",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "price",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "OracleDataUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-          ],
-          name: "RateModelUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "volatility",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "priceCount",
-              type: "uint256",
-            },
-          ],
-          name: "VolatilityCalculated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "MAX_VOLATILITY_MULTIPLIER",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "MIN_VOLATILITY_MULTIPLIER",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "RATE_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "STALENESS_THRESHOLD",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "UTILIZATION_PRECISION",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "autoUpdateEnabled",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "poolUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "loanDuration",
-              type: "uint256",
-            },
-          ],
-          name: "calculateInterestRate",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "creditRiskTiers",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "minScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "basePremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "defiRateFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "emergencyDisableOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ethUsdFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-          ],
-          name: "getCreditRiskTier",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "minScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "basePremium",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.CreditRiskTier",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-          ],
-          name: "getCurrentRateComponents",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "creditScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "utilization",
-              type: "uint256",
-            },
-          ],
-          name: "getCurrentRateComponentsWithOracles",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseUtilizationRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "creditAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "marketAdjustedRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "finalRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleVolatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleLiquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "oracleRiskPremium",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getMarketConditions",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "volatilityMultiplier",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "liquidityPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskPremium",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "lastUpdateTime",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.MarketConditions",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getModelParameters",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "baseRate",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "targetUtilization",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope1",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "slope2",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxRate",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct DynamicTargetRateModel.RateModel",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getOracleData",
-          outputs: [
-            {
-              internalType: "int256",
-              name: "ethPrice",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "ethPriceTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "volatilityData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "volatilityTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "liquidityData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "liquidityTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "int256",
-              name: "defiRateData",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "defiRateTimestamp",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "oraclesActive",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getOracleFeedAddresses",
-          outputs: [
-            {
-              internalType: "address",
-              name: "ethUsd",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "volatility",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "liquidity",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "defiRate",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getPerformanceStats",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalOriginated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalDefaulted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "defaultRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_ethUsdFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_volatilityFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_liquidityFeed",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_defiRateFeed",
-              type: "address",
-            },
-          ],
-          name: "initializeOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "liquidityFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "marketConditions",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastUpdateTime",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "priceHistory",
-          outputs: [
-            {
-              internalType: "int256",
-              name: "price",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "priceHistoryIndex",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "rateModel",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxRate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "successful",
-              type: "bool",
-            },
-          ],
-          name: "recordLoanPerformance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "renounceOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "_enabled",
-              type: "bool",
-            },
-          ],
-          name: "setAutoUpdateEnabled",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bool",
-              name: "_useOracles",
-              type: "bool",
-            },
-          ],
-          name: "setUseOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalDefaults",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalLoansOriginated",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_volatilityMultiplier",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_liquidityPremium",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_riskPremium",
-              type: "uint256",
-            },
-          ],
-          name: "updateMarketConditions",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "updateMarketConditionsFromOracles",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "updatePriceHistory",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_baseRate",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_targetUtilization",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope1",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_slope2",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_maxRate",
-              type: "uint256",
-            },
-          ],
-          name: "updateRateModel",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "useOracles",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "volatilityFeed",
-          outputs: [
-            {
-              internalType: "contract AggregatorV3Interface",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        RATE_PRECISION: "contracts/DynamicTargetRateModel.sol",
-        UTILIZATION_PRECISION: "contracts/DynamicTargetRateModel.sol",
-        calculateInterestRate: "contracts/DynamicTargetRateModel.sol",
-        creditRiskTiers: "contracts/DynamicTargetRateModel.sol",
-        getCreditRiskTier: "contracts/DynamicTargetRateModel.sol",
-        getCurrentRateComponents: "contracts/DynamicTargetRateModel.sol",
-        getMarketConditions: "contracts/DynamicTargetRateModel.sol",
-        getModelParameters: "contracts/DynamicTargetRateModel.sol",
-        getPerformanceStats: "contracts/DynamicTargetRateModel.sol",
-        marketConditions: "contracts/DynamicTargetRateModel.sol",
-        owner: "contracts/DynamicTargetRateModel.sol",
-        rateModel: "contracts/DynamicTargetRateModel.sol",
-        recordLoanPerformance: "contracts/DynamicTargetRateModel.sol",
-        renounceOwnership: "contracts/DynamicTargetRateModel.sol",
-        totalDefaults: "contracts/DynamicTargetRateModel.sol",
-        totalLoansOriginated: "contracts/DynamicTargetRateModel.sol",
-        transferOwnership: "contracts/DynamicTargetRateModel.sol",
-        updateMarketConditions: "contracts/DynamicTargetRateModel.sol",
-        updateRateModel: "contracts/DynamicTargetRateModel.sol",
-      },
-    },
     Groth16Verifier: {
-      address: "0xabebE9a2D62Af9a89E86EB208b51321e748640C3",
+      address: "0x226A19c076a3047a53e5430B14bcDB42dbccA159",
       abi: [
         {
           inputs: [],
@@ -4540,11 +3903,140 @@ const deployedContracts = {
       ],
       inheritedFunctions: {},
     },
-    MockDeFiRateFeed: {
-      address: "0x28227B230d3945e580eD3B1c6c8ea1df658A7AA9",
+    MockOracleFactory: {
+      address: "0xA5c9020ea95324a05B48491FB3e61Ba111E5dd95",
       abi: [
         {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
           inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "oracleAddress",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "enum MockOracleFactory.OracleType",
+              name: "oracleType",
+              type: "uint8",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "description",
+              type: "string",
+            },
+          ],
+          name: "OracleDeployed",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string[]",
+              name: "_names",
+              type: "string[]",
+            },
+            {
+              internalType: "int256[]",
+              name: "_prices",
+              type: "int256[]",
+            },
+          ],
+          name: "batchUpdatePrices",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          name: "deployChainlinkStandardMock",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
             {
               internalType: "uint8",
               name: "_decimals",
@@ -4561,88 +4053,251 @@ const deployedContracts = {
               type: "int256",
             },
           ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
+          name: "deployCustomAdvancedMock",
           outputs: [
             {
-              internalType: "uint8",
+              internalType: "address",
               name: "",
-              type: "uint8",
+              type: "address",
             },
           ],
-          stateMutability: "view",
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "_decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "_description",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "_initialAnswer",
+              type: "int256",
+            },
+          ],
+          name: "deployHybridMock",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [],
-          name: "description",
+          name: "deployOracleSet",
           outputs: [
+            {
+              internalType: "address",
+              name: "ethUsdOracle",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "volatilityOracle",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "liquidityOracle",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "defiRateOracle",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
             {
               internalType: "string",
               name: "",
               type: "string",
             },
           ],
+          name: "deployedOracles",
+          outputs: [
+            {
+              internalType: "address",
+              name: "oracleAddress",
+              type: "address",
+            },
+            {
+              internalType: "enum MockOracleFactory.OracleType",
+              name: "oracleType",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "description",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "decimals",
+              type: "uint8",
+            },
+            {
+              internalType: "int256",
+              name: "initialAnswer",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "deployedAt",
+              type: "uint256",
+            },
+          ],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [],
-          name: "latestRoundData",
+          name: "getAllOracleNames",
           outputs: [
             {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
+              internalType: "string[]",
+              name: "",
+              type: "string[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string[]",
+              name: "_names",
+              type: "string[]",
+            },
+          ],
+          name: "getBatchPrices",
+          outputs: [
+            {
+              internalType: "int256[]",
+              name: "prices",
+              type: "int256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+          ],
+          name: "getOracleAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+          ],
+          name: "getOracleDetails",
+          outputs: [
+            {
+              internalType: "address",
+              name: "oracleAddress",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "oracleTypeString",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "description",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "decimals",
+              type: "uint8",
             },
             {
               internalType: "int256",
-              name: "answer",
+              name: "initialAnswer",
               type: "int256",
             },
             {
               internalType: "uint256",
-              name: "startedAt",
+              name: "deployedAt",
               type: "uint256",
             },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+          ],
+          name: "getOraclePrice",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "",
+              type: "int256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
             {
               internalType: "uint256",
-              name: "updatedAt",
+              name: "",
               type: "uint256",
             },
+          ],
+          name: "oracleNames",
+          outputs: [
             {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
+              internalType: "string",
+              name: "",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -4662,682 +4317,34 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
-              name: "_newOwner",
+              name: "newOwner",
               type: "address",
             },
           ],
-          name: "setOwner",
+          name: "transferOwnership",
           outputs: [],
           stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
           type: "function",
         },
       ],
-      inheritedFunctions: {},
-    },
-    MockETHUSDFeed: {
-      address: "0xf42Ec71A4440F5e9871C643696DD6Dc9a38911F8",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    MockLiquidityFeed: {
-      address: "0xD73bAb8F06DB28c87932571f87D0D2C0FDF13D94",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    MockVolatilityFeed: {
-      address: "0xbc71F5687CFD36f64Ae6B4549186EE3A6eE259a4",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_decimals",
-              type: "uint8",
-            },
-            {
-              internalType: "string",
-              name: "_description",
-              type: "string",
-            },
-            {
-              internalType: "int256",
-              name: "_initialAnswer",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "int256",
-              name: "current",
-              type: "int256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "roundId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-          ],
-          name: "AnswerUpdated",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "decimals",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "description",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "latestRoundData",
-          outputs: [
-            {
-              internalType: "uint80",
-              name: "roundId",
-              type: "uint80",
-            },
-            {
-              internalType: "int256",
-              name: "answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "startedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "updatedAt",
-              type: "uint256",
-            },
-            {
-              internalType: "uint80",
-              name: "answeredInRound",
-              type: "uint80",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "setOwner",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_basePrice",
-              type: "int256",
-            },
-            {
-              internalType: "int256",
-              name: "_volatilityPercent",
-              type: "int256",
-            },
-          ],
-          name: "simulatePriceMovement",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-          ],
-          name: "updateAnswer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "int256",
-              name: "_answer",
-              type: "int256",
-            },
-            {
-              internalType: "uint256",
-              name: "_timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "updateAnswerWithTimestamp",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+      },
     },
     MockZKVerifier: {
-      address: "0xF67e26649037695DdFAB19f4E22d5c9Fd1564592",
+      address: "0x1966dc8ff30Bc4AeDEd27178642253b3cCC9AA3f",
       abi: [
         {
           anonymous: false,
@@ -5450,7 +4457,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0x10537D7bD661C9c34F547b38EC662D6FD482Ae95",
+      address: "0x81ED8e0325B17A266B2aF225570679cfd635d0bb",
       abi: [
         {
           inputs: [
@@ -5593,7 +4600,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     ZKCreditLending: {
-      address: "0x6431AF84d34F0522cAA58b221d94A150B5AdAC69",
+      address: "0x63ecE4C05B8fB272D16844E96702Ea2f26370982",
       abi: [
         {
           inputs: [
@@ -6391,7 +5398,7 @@ const deployedContracts = {
       },
     },
     ZKCreditScoring: {
-      address: "0xeA8AE08513f8230cAA8d031D28cB4Ac8CE720c68",
+      address: "0x5f58879Fe3a4330B6D85c1015971Ea6e5175AeDD",
       abi: [
         {
           inputs: [

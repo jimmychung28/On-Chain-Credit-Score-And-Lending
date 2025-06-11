@@ -1,19 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-/**
- * @title AggregatorV3Interface
- * @dev Interface for Chainlink Price Feeds
- */
-interface AggregatorV3Interface {
-    function decimals() external view returns (uint8);
-    function description() external view returns (string memory);
-    function version() external view returns (uint256);
-    function latestRoundData()
-        external
-        view
-        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
-}
+import "../interfaces/AggregatorV3Interface.sol";
 
 /**
  * @title MockAggregatorV3
@@ -59,6 +47,23 @@ contract MockAggregatorV3 is AggregatorV3Interface {
         override
         returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
     {
+        return (
+            _latestRoundData.roundId,
+            _latestRoundData.answer,
+            _latestRoundData.startedAt,
+            _latestRoundData.updatedAt,
+            _latestRoundData.answeredInRound
+        );
+    }
+    
+    function getRoundData(uint80 _roundId)
+        external
+        view
+        override
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+    {
+        // For simplicity, return the latest round data for any round ID
+        // In a real implementation, you'd store historical data
         return (
             _latestRoundData.roundId,
             _latestRoundData.answer,

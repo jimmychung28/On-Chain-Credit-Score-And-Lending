@@ -47,7 +47,18 @@
     "vercel": "yarn workspace @se-2/nextjs vercel",
     "vercel:login": "yarn workspace @se-2/nextjs vercel:login",
     "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
-    "verify": "yarn hardhat:verify"
+    "verify": "yarn hardhat:verify",
+    "deploy:cross-chain": "yarn workspace @se-2/hardhat deploy --tags CrossChain",
+    "test:cross-chain": "yarn workspace @se-2/hardhat run scripts/test-cross-chain-system.ts --network localhost",
+    "test:cross-chain:sepolia": "yarn workspace @se-2/hardhat run scripts/test-cross-chain-system.ts --network sepolia",
+    "deploy:multi-chain": "yarn deploy:sepolia && yarn deploy:arbitrum-sepolia && yarn deploy:optimism-sepolia && yarn deploy:base-sepolia",
+    "deploy:sepolia": "yarn workspace @se-2/hardhat deploy --network sepolia",
+    "deploy:arbitrum-sepolia": "yarn workspace @se-2/hardhat deploy --network arbitrumSepolia",
+    "deploy:optimism-sepolia": "yarn workspace @se-2/hardhat deploy --network optimismSepolia",
+    "deploy:base-sepolia": "yarn workspace @se-2/hardhat deploy --network baseSepolia",
+    "setup:cross-chain": "yarn deploy:cross-chain && yarn test:cross-chain",
+    "circuits:compile": "cd circuits && ./compile.sh",
+    "circuits:test": "cd circuits && yarn test"
   },
   "devDependencies": {
     "@types/snarkjs": "^0",
