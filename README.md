@@ -1,10 +1,5 @@
 # 🏗 Privacy-First On-Chain Credit Scoring Protocol
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
-
 🔐 **The first privacy-preserving credit scoring protocol for DeFi** - Assess creditworthiness using sophisticated on-chain behavioral analysis while maintaining complete financial privacy through Zero-Knowledge proofs. Now featuring **Universal Credit Scoring** across multiple blockchain ecosystems via LayerZero integration. Built for the future of decentralized finance where privacy is a fundamental right, not a premium feature.
 
 ⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, TypeScript, Circom, and Groth16 ZK-SNARKs on top of Scaffold-ETH 2.
