@@ -569,24 +569,3 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Scaffold-ETH 2** - Development framework foundation
-- **Circom & SnarkJS** - Zero-knowledge proof system
-- **Ethereum Foundation** - Blockchain infrastructure
-- **DeFi Community** - Inspiration and feedback
-- **Privacy Advocates** - Motivation for privacy-first design
-
-## 🔗 Important Links
-
-- [Scaffold-ETH 2 Docs](https://docs.scaffoldeth.io)
-- [Circom Documentation](https://docs.circom.io)
-- [ZK-SNARKs Explained](https://ethereum.org/en/zero-knowledge-proofs/)
-- [DeFi Security Best Practices](https://consensys.github.io/smart-contract-best-practices/)
-
----
-
-**🔐 Privacy Notice**: This protocol implements privacy-by-design principles. Your financial data remains under your control through cryptographic proofs, not corporate promises.
-
-**⚠️ Disclaimer**: Experimental software for educational purposes. Audit thoroughly before production use. DeFi involves risks - never invest more than you can afford to lose.
