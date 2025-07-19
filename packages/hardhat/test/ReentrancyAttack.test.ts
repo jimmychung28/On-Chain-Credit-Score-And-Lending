@@ -51,7 +51,9 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const initialBalance = await ethers.provider.getBalance(maliciousAddress);
 
       // Attempt reentrancy attack - should fail
-      await expect(maliciousContract.connect(attacker).attack()).to.be.revertedWith("ReentrancyGuard: reentrant call");
+      await expect((maliciousContract as any).connect(attacker).attack()).to.be.revertedWith(
+        "ReentrancyGuard: reentrant call",
+      );
 
       // Verify no extra funds were stolen
       const finalBalance = await ethers.provider.getBalance(maliciousAddress);
@@ -73,7 +75,7 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const finalBalance = await ethers.provider.getBalance(await victim.getAddress());
 
       // Should have received 0.5 ETH minus gas
-      const expectedBalance = initialBalance + ethers.parseEther("0.5") - gasUsed;
+      const expectedBalance = initialBalance + ethers.parseEther("0.5") - BigInt(gasUsed);
       const tolerance = ethers.parseEther("0.01");
       expect(finalBalance).to.be.within(expectedBalance - tolerance, expectedBalance + tolerance);
     });
@@ -98,7 +100,7 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const initialBalance = await ethers.provider.getBalance(maliciousAddress);
 
       // Attempt reentrancy attack - should fail
-      await expect(maliciousContract.connect(attacker).attackUnstake()).to.be.revertedWith(
+      await expect((maliciousContract as any).connect(attacker).attackUnstake()).to.be.revertedWith(
         "ReentrancyGuard: reentrant call",
       );
 
@@ -125,7 +127,7 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const initialBalance = await ethers.provider.getBalance(maliciousAddress);
 
       // Attempt reentrancy attack - should fail
-      await expect(maliciousContract.connect(attacker).attackWithdraw()).to.be.revertedWith(
+      await expect((maliciousContract as any).connect(attacker).attackWithdraw()).to.be.revertedWith(
         "ReentrancyGuard: reentrant call",
       );
 
@@ -154,7 +156,7 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const initialBalance = await ethers.provider.getBalance(maliciousAddress);
 
       // Attempt reentrancy attack - should fail
-      await expect(maliciousContract.connect(attacker).attackUnstake()).to.be.revertedWith(
+      await expect((maliciousContract as any).connect(attacker).attackUnstake()).to.be.revertedWith(
         "ReentrancyGuard: reentrant call",
       );
 
@@ -185,7 +187,9 @@ describe("Reentrancy Attack Prevention Tests", function () {
       const initialBalance = await ethers.provider.getBalance(maliciousAddress);
 
       // Attempt reentrancy attack - should fail
-      await expect(maliciousContract.connect(attacker).attack()).to.be.revertedWith("ReentrancyGuard: reentrant call");
+      await expect((maliciousContract as any).connect(attacker).attack()).to.be.revertedWith(
+        "ReentrancyGuard: reentrant call",
+      );
 
       // Verify no extra funds were stolen
       const finalBalance = await ethers.provider.getBalance(maliciousAddress);
@@ -227,7 +231,7 @@ describe("Reentrancy Attack Prevention Tests", function () {
 
       // Failed attack attempt
       try {
-        await maliciousContract.connect(attacker).attack();
+        await (maliciousContract as any).connect(attacker).attack();
       } catch {
         // Expected to fail - error is intentionally ignored
       }
