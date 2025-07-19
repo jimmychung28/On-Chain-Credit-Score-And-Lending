@@ -221,8 +221,10 @@ contract CreditScoring is Ownable, ReentrancyGuard {
     function withdrawStake(uint256 amount) external nonReentrant {
         require(stakingBalances[msg.sender] >= amount, "Insufficient stake balance");
 
+        // Effects: Update state before external call to prevent reentrancy
         stakingBalances[msg.sender] = stakingBalances[msg.sender] - (amount);
 
+        // Interactions: External call comes after state changes
         (bool success, ) = msg.sender.call{ value: amount }("");
         require(success, "Transfer failed");
 
@@ -1046,5 +1048,32 @@ contract CreditScoring is Ownable, ReentrancyGuard {
                 creditProfiles[testAddresses[4]].transactionCount;
             _updateCreditScore(testAddresses[4]);
         }
+    }
+
+    // ==================== TESTING HELPER FUNCTIONS ====================
+
+    /**
+     * @dev Transfer stake balance between addresses (only owner) - FOR TESTING ONLY
+     */
+    function transferStakeBalance(address from, address to, uint256 amount) external onlyOwner {
+        require(stakingBalances[from] >= amount, "Insufficient balance");
+        stakingBalances[from] -= amount;
+        stakingBalances[to] += amount;
+    }
+
+    /**
+     * @dev Owner can withdraw stake on behalf of any address (only owner) - FOR TESTING ONLY
+     */
+    function withdrawStakeAsOwner(address user, uint256 amount) external onlyOwner nonReentrant {
+        require(stakingBalances[user] >= amount, "Insufficient stake balance");
+
+        // Effects: Update state before external call to prevent reentrancy
+        stakingBalances[user] -= amount;
+
+        // Interactions: External call comes after state changes
+        (bool success, ) = user.call{ value: amount }("");
+        require(success, "Transfer failed");
+
+        emit StakeWithdrawn(user, amount);
     }
 }

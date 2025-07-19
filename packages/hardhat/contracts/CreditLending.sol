@@ -112,10 +112,12 @@ contract CreditLending is Ownable, ReentrancyGuard {
         require(pool.lenderShares[msg.sender] >= amount, "Insufficient staked amount");
         require(pool.availableFunds >= amount, "Insufficient pool funds");
 
+        // Effects: Update all state before external call to prevent reentrancy
         pool.lenderShares[msg.sender] = pool.lenderShares[msg.sender] - (amount);
         pool.totalFunds = pool.totalFunds - (amount);
         pool.availableFunds = pool.availableFunds - (amount);
 
+        // Interactions: External call comes after state changes
         (bool success, ) = msg.sender.call{ value: amount }("");
         require(success, "Transfer failed");
 
@@ -129,10 +131,12 @@ contract CreditLending is Ownable, ReentrancyGuard {
         require(pool.lenderShares[msg.sender] >= amount, "Insufficient share");
         require(pool.availableFunds >= amount, "Insufficient pool funds");
 
+        // Effects: Update all state before external call to prevent reentrancy
         pool.lenderShares[msg.sender] = pool.lenderShares[msg.sender] - (amount);
         pool.totalFunds = pool.totalFunds - (amount);
         pool.availableFunds = pool.availableFunds - (amount);
 
+        // Interactions: External call comes after state changes
         (bool success, ) = msg.sender.call{ value: amount }("");
         require(success, "Transfer failed");
 
@@ -594,5 +598,16 @@ contract CreditLending is Ownable, ReentrancyGuard {
         returns (uint256 totalOriginated, uint256 totalDefaulted, uint256 defaultRate)
     {
         return rateModel.getPerformanceStats();
+    }
+
+    // ==================== TESTING HELPER FUNCTIONS ====================
+
+    /**
+     * @dev Transfer shares between addresses (only owner) - FOR TESTING ONLY
+     */
+    function transferShares(address from, address to, uint256 amount) external onlyOwner {
+        require(pool.lenderShares[from] >= amount, "Insufficient shares");
+        pool.lenderShares[from] -= amount;
+        pool.lenderShares[to] += amount;
     }
 }

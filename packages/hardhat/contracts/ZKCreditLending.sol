@@ -115,10 +115,12 @@ contract ZKCreditLending is Ownable, ReentrancyGuard {
         require(pool.lenderShares[msg.sender] >= amount, "Insufficient staked amount");
         require(pool.availableFunds >= amount, "Insufficient pool funds");
 
+        // Effects: Update all state before external call to prevent reentrancy
         pool.lenderShares[msg.sender] -= amount;
         pool.totalFunds -= amount;
         pool.availableFunds -= amount;
 
+        // Interactions: External call comes after state changes
         (bool success, ) = msg.sender.call{ value: amount }("");
         require(success, "Transfer failed");
 
@@ -132,10 +134,12 @@ contract ZKCreditLending is Ownable, ReentrancyGuard {
         require(pool.lenderShares[msg.sender] >= amount, "Insufficient share");
         require(pool.availableFunds >= amount, "Insufficient pool funds");
 
+        // Effects: Update all state before external call to prevent reentrancy
         pool.lenderShares[msg.sender] -= amount;
         pool.totalFunds -= amount;
         pool.availableFunds -= amount;
 
+        // Interactions: External call comes after state changes
         (bool success, ) = msg.sender.call{ value: amount }("");
         require(success, "Transfer failed");
 
@@ -403,5 +407,16 @@ contract ZKCreditLending is Ownable, ReentrancyGuard {
      */
     function getBorrowerLoanCount(address borrower) external view returns (uint256) {
         return borrowerLoans[borrower].length;
+    }
+
+    // ==================== TESTING HELPER FUNCTIONS ====================
+
+    /**
+     * @dev Transfer shares between addresses (only owner) - FOR TESTING ONLY
+     */
+    function transferShares(address from, address to, uint256 amount) external onlyOwner {
+        require(pool.lenderShares[from] >= amount, "Insufficient shares");
+        pool.lenderShares[from] -= amount;
+        pool.lenderShares[to] += amount;
     }
 }
