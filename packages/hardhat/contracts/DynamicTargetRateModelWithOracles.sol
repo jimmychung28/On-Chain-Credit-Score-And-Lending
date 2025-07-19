@@ -3,17 +3,26 @@ pragma solidity ^0.8.19;
 
 import "./DynamicTargetRateModel.sol";
 import "./mocks/MockAggregatorV3.sol";
+import "./interfaces/IOracleSecurityManager.sol";
+import "./oracles/SecureAggregatorV3.sol";
 
 /**
  * @title DynamicTargetRateModelWithOracles
  * @dev Enhanced rate model that integrates with Chainlink oracles for real-time market data
  */
 contract DynamicTargetRateModelWithOracles is DynamicTargetRateModel {
-    // Oracle interfaces
+    // Oracle interfaces (legacy support)
     AggregatorV3Interface public ethUsdFeed;
     AggregatorV3Interface public volatilityFeed;
     AggregatorV3Interface public liquidityFeed;
     AggregatorV3Interface public defiRateFeed;
+
+    // New security-enhanced oracle system
+    IOracleSecurityManager public oracleSecurityManager;
+    SecureAggregatorV3 public secureEthUsdFeed;
+    SecureAggregatorV3 public secureVolatilityFeed;
+    SecureAggregatorV3 public secureLiquidityFeed;
+    SecureAggregatorV3 public secureDefiRateFeed;
 
     // Oracle configuration
     uint256 public constant STALENESS_THRESHOLD = 1 hours;
@@ -21,6 +30,7 @@ contract DynamicTargetRateModelWithOracles is DynamicTargetRateModel {
     uint256 public constant MIN_VOLATILITY_MULTIPLIER = 50; // 0.5x min
 
     bool public useOracles = false; // Toggle for testing
+    bool public useSecureOracles = false; // Toggle for secure oracle system
     bool public autoUpdateEnabled = false; // Auto-update market conditions
 
     // Historical price data for volatility calculation
@@ -36,6 +46,9 @@ contract DynamicTargetRateModelWithOracles is DynamicTargetRateModel {
     event OracleDataUpdated(string feedType, int256 price, uint256 timestamp);
     event MarketConditionsAutoUpdated(uint256 volatilityMultiplier, uint256 liquidityPremium, uint256 riskPremium);
     event VolatilityCalculated(uint256 volatility, uint256 priceCount);
+    event SecureOracleSystemEnabled(bool enabled);
+    event SecurityManagerUpdated(address oldManager, address newManager);
+    event CircuitBreakerTriggered(string reason);
 
     constructor() DynamicTargetRateModel() {}
 
@@ -86,21 +99,45 @@ contract DynamicTargetRateModelWithOracles is DynamicTargetRateModel {
      * @dev Override market conditions with oracle data
      */
     function _applyMarketConditions(uint256 baseRate) internal view override returns (uint256) {
-        if (!useOracles) {
+        // Check for circuit breaker or system pause
+        if (useSecureOracles && address(oracleSecurityManager) != address(0)) {
+            if (oracleSecurityManager.isPaused() || oracleSecurityManager.isCircuitBreakerActive()) {
+                // Fall back to manual market conditions when secure oracles are unavailable
+                return super._applyMarketConditions(baseRate);
+            }
+        }
+
+        if (!useOracles && !useSecureOracles) {
             return super._applyMarketConditions(baseRate);
         }
 
         MarketConditions memory conditions = _getOracleMarketConditions();
         uint256 adjustedRate = baseRate;
 
-        // Apply volatility multiplier
-        adjustedRate = (adjustedRate * conditions.volatilityMultiplier) / 100;
+        // Apply volatility multiplier with bounds checking
+        uint256 volatilityMultiplier = conditions.volatilityMultiplier;
+        if (volatilityMultiplier > MAX_VOLATILITY_MULTIPLIER) {
+            volatilityMultiplier = MAX_VOLATILITY_MULTIPLIER;
+        }
+        if (volatilityMultiplier < MIN_VOLATILITY_MULTIPLIER) {
+            volatilityMultiplier = MIN_VOLATILITY_MULTIPLIER;
+        }
+        
+        adjustedRate = (adjustedRate * volatilityMultiplier) / 100;
 
-        // Add liquidity premium
-        adjustedRate += conditions.liquidityPremium;
+        // Add liquidity premium with bounds
+        uint256 liquidityPremium = conditions.liquidityPremium;
+        if (liquidityPremium > 1000) { // Max 10% premium
+            liquidityPremium = 1000;
+        }
+        adjustedRate += liquidityPremium;
 
-        // Add risk premium
-        adjustedRate += conditions.riskPremium;
+        // Add risk premium with bounds
+        uint256 riskPremium = conditions.riskPremium;
+        if (riskPremium > 1000) { // Max 10% premium
+            riskPremium = 1000;
+        }
+        adjustedRate += riskPremium;
 
         return adjustedRate;
     }
@@ -405,7 +442,217 @@ contract DynamicTargetRateModelWithOracles is DynamicTargetRateModel {
      */
     function emergencyDisableOracles() external onlyOwner {
         useOracles = false;
+        useSecureOracles = false;
         autoUpdateEnabled = false;
         emit OracleDataUpdated("emergency_disabled", 0, block.timestamp);
+    }
+
+    // ==================== SECURE ORACLE SYSTEM FUNCTIONS ====================
+
+    /**
+     * @dev Initialize secure oracle system
+     */
+    function initializeSecureOracleSystem(
+        address _securityManager,
+        address _secureEthUsdFeed,
+        address _secureVolatilityFeed,
+        address _secureLiquidityFeed,
+        address _secureDefiRateFeed
+    ) external onlyOwner {
+        require(_securityManager != address(0), "Invalid security manager");
+        
+        oracleSecurityManager = IOracleSecurityManager(_securityManager);
+        
+        if (_secureEthUsdFeed != address(0)) {
+            secureEthUsdFeed = SecureAggregatorV3(_secureEthUsdFeed);
+        }
+        if (_secureVolatilityFeed != address(0)) {
+            secureVolatilityFeed = SecureAggregatorV3(_secureVolatilityFeed);
+        }
+        if (_secureLiquidityFeed != address(0)) {
+            secureLiquidityFeed = SecureAggregatorV3(_secureLiquidityFeed);
+        }
+        if (_secureDefiRateFeed != address(0)) {
+            secureDefiRateFeed = SecureAggregatorV3(_secureDefiRateFeed);
+        }
+
+        emit SecurityManagerUpdated(address(0), _securityManager);
+    }
+
+    /**
+     * @dev Enable/disable secure oracle system
+     */
+    function setUseSecureOracles(bool _useSecureOracles) external onlyOwner {
+        require(address(oracleSecurityManager) != address(0), "Secure oracle system not initialized");
+        useSecureOracles = _useSecureOracles;
+        emit SecureOracleSystemEnabled(_useSecureOracles);
+    }
+
+    /**
+     * @dev Update security manager
+     */
+    function updateSecurityManager(address _newSecurityManager) external onlyOwner {
+        require(_newSecurityManager != address(0), "Invalid security manager");
+        address oldManager = address(oracleSecurityManager);
+        oracleSecurityManager = IOracleSecurityManager(_newSecurityManager);
+        emit SecurityManagerUpdated(oldManager, _newSecurityManager);
+    }
+
+    /**
+     * @dev Get secure price with validation
+     */
+    function getSecurePrice(string calldata priceType) external view returns (
+        bool isValid,
+        int256 price,
+        uint256 confidence,
+        string memory reason
+    ) {
+        if (!useSecureOracles || address(oracleSecurityManager) == address(0)) {
+            return (false, 0, 0, "Secure oracles not enabled");
+        }
+
+        try oracleSecurityManager.getSecurePrice(priceType) returns (
+            IOracleSecurityManager.ValidationResult memory result
+        ) {
+            return (result.isValid, result.validatedPrice, result.confidence, result.reason);
+        } catch {
+            return (false, 0, 0, "Oracle security manager call failed");
+        }
+    }
+
+    /**
+     * @dev Override volatility calculation to use secure oracles
+     */
+    function _calculateVolatilityMultiplier() internal view override returns (uint256) {
+        // Try secure oracle system first
+        if (useSecureOracles && address(secureVolatilityFeed) != address(0)) {
+            try secureVolatilityFeed.latestRoundData() returns (
+                uint80,
+                int256 volatility,
+                uint256,
+                uint256 updatedAt,
+                uint80
+            ) {
+                if (block.timestamp - updatedAt <= STALENESS_THRESHOLD && volatility > 0) {
+                    uint256 volatilityMultiplier = uint256(volatility);
+                    // Ensure within bounds
+                    if (volatilityMultiplier > MAX_VOLATILITY_MULTIPLIER) {
+                        return MAX_VOLATILITY_MULTIPLIER;
+                    }
+                    if (volatilityMultiplier < MIN_VOLATILITY_MULTIPLIER) {
+                        return MIN_VOLATILITY_MULTIPLIER;
+                    }
+                    return volatilityMultiplier;
+                }
+            } catch {
+                // Fall through to legacy system
+            }
+        }
+
+        // Fall back to original implementation
+        return super._calculateVolatilityMultiplier();
+    }
+
+    /**
+     * @dev Override liquidity premium to use secure oracles
+     */
+    function _getLiquidityPremium() internal view override returns (uint256) {
+        // Try secure oracle system first
+        if (useSecureOracles && address(secureLiquidityFeed) != address(0)) {
+            try secureLiquidityFeed.latestRoundData() returns (
+                uint80,
+                int256 premium,
+                uint256,
+                uint256 updatedAt,
+                uint80
+            ) {
+                if (block.timestamp - updatedAt <= STALENESS_THRESHOLD) {
+                    uint256 liquidityPremium = premium >= 0 ? uint256(premium) : 0;
+                    // Cap at 10%
+                    return liquidityPremium > 1000 ? 1000 : liquidityPremium;
+                }
+            } catch {
+                // Fall through to legacy system
+            }
+        }
+
+        // Fall back to original implementation
+        return super._getLiquidityPremium();
+    }
+
+    /**
+     * @dev Check market conditions and trigger circuit breaker if needed
+     */
+    function checkMarketConditionsAndTriggerCircuitBreaker() external {
+        if (!useSecureOracles || address(oracleSecurityManager) == address(0)) {
+            return;
+        }
+
+        // Check ETH price volatility
+        try oracleSecurityManager.checkAndTriggerCircuitBreaker("ETH_USD") {
+            // Circuit breaker check completed
+        } catch {
+            // Check failed, but continue
+        }
+
+        // Get current security status
+        if (oracleSecurityManager.isCircuitBreakerActive()) {
+            emit CircuitBreakerTriggered("Oracle security manager triggered circuit breaker");
+        }
+    }
+
+    /**
+     * @dev Get comprehensive oracle status
+     */
+    function getOracleSystemStatus() external view returns (
+        bool legacyOraclesEnabled,
+        bool secureOraclesEnabled,
+        bool securityManagerActive,
+        bool circuitBreakerActive,
+        bool systemPaused,
+        string memory status
+    ) {
+        legacyOraclesEnabled = useOracles;
+        secureOraclesEnabled = useSecureOracles;
+        securityManagerActive = address(oracleSecurityManager) != address(0);
+        
+        if (securityManagerActive) {
+            circuitBreakerActive = oracleSecurityManager.isCircuitBreakerActive();
+            systemPaused = oracleSecurityManager.isPaused();
+        }
+
+        // Determine overall status
+        if (systemPaused) {
+            status = "System paused";
+        } else if (circuitBreakerActive) {
+            status = "Circuit breaker active";
+        } else if (secureOraclesEnabled) {
+            status = "Secure oracles active";
+        } else if (legacyOraclesEnabled) {
+            status = "Legacy oracles active";
+        } else {
+            status = "Manual mode";
+        }
+    }
+
+    /**
+     * @dev Emergency circuit breaker trigger
+     */
+    function emergencyTriggerCircuitBreaker(string calldata reason) external onlyOwner {
+        if (address(oracleSecurityManager) != address(0)) {
+            try oracleSecurityManager.triggerCircuitBreaker(reason) {
+                emit CircuitBreakerTriggered(reason);
+            } catch {
+                // If security manager call fails, disable oracles
+                useOracles = false;
+                useSecureOracles = false;
+                emit CircuitBreakerTriggered(string(abi.encodePacked("Emergency: ", reason)));
+            }
+        } else {
+            // No security manager, just disable oracles
+            useOracles = false;
+            useSecureOracles = false;
+            emit CircuitBreakerTriggered(string(abi.encodePacked("Emergency (no security manager): ", reason)));
+        }
     }
 }
