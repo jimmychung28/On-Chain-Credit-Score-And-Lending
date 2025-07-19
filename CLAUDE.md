@@ -30,6 +30,15 @@ yarn workspace @se-2/hardhat run scripts/test-zk-system.ts --network localhost
 # Test oracle integration
 yarn workspace @se-2/hardhat run scripts/test-oracle-integration.ts --network localhost
 
+# Test oracle security system
+yarn workspace @se-2/hardhat run scripts/test-oracle-security.ts --network localhost
+
+# Simulate oracle attack scenarios
+yarn workspace @se-2/hardhat run scripts/simulate-oracle-attacks.ts --network localhost
+
+# Run comprehensive oracle manipulation tests
+yarn workspace @se-2/hardhat test test/OracleManipulation.test.ts --network localhost
+
 # Run comprehensive test suite
 yarn test
 ```
@@ -82,11 +91,17 @@ This is a Scaffold-ETH 2 monorepo with the following key packages:
 - `circuits/` - Zero-Knowledge proof circuits using Circom
 
 ### Core Smart Contracts
-- **CreditScoring.sol** - Advanced credit scoring with 7 sophisticated factors
+- **CreditScoring.sol** - Advanced credit scoring with 7 sophisticated factors (reentrancy protection)
 - **ZKCreditLending.sol** - Privacy-preserving lending with dynamic rates
 - **CrossChainCreditAggregator.sol** - Multi-chain credit aggregation via LayerZero
 - **Groth16Verifier.sol** - Zero-knowledge proof verification
-- **DynamicTargetRateModelWithOracles.sol** - Oracle-powered interest rate model
+- **DynamicTargetRateModelWithOracles.sol** - Oracle-powered interest rate model with security integration
+
+### Oracle Security System
+- **OracleSecurityManager.sol** - Advanced price validation with deviation limits and multi-oracle consensus
+- **SecureAggregatorV3.sol** - Chainlink-compatible aggregator with manipulation protection
+- **OracleGovernance.sol** - Time-locked governance with multi-signature requirements
+- **MaliciousOracleAttacker.sol** - Mock contract for comprehensive security testing
 
 ### Credit Scoring System
 The system uses 7 sophisticated scoring factors (vs traditional 4-factor systems):
@@ -110,11 +125,16 @@ The system uses 7 sophisticated scoring factors (vs traditional 4-factor systems
 - Weighted scoring: Ethereum (40%), Polygon (25%), Arbitrum (20%), Optimism (10%), Base (5%)
 - Cross-chain bonuses for diversification, consistency, volume, and sophistication
 
-### Oracle System
-Three oracle types for maximum flexibility:
-- **Custom Advanced** - Development/testing with price simulation
-- **Chainlink Standard** - Industry standard for compatibility/audits
-- **Hybrid** - Production with runtime switching and fallback mechanisms
+### Oracle Security System
+**Industry-leading oracle manipulation protection:**
+- **Price Validation** - 20% max deviation limits with real-time detection
+- **Circuit Breaker** - 50% volatility triggers with automatic system pausing
+- **Multi-Oracle Consensus** - Weighted median with outlier detection
+- **Time-Locked Governance** - 24-hour delays with multi-signature requirements
+- **Grace Periods** - Delays for large price changes with re-validation
+- **Emergency Controls** - Instant circuit breaker and system pausing
+
+**Oracle Types:** Secure Production (manipulation protection) | Custom Advanced (development/testing) | Chainlink Standard (compatibility/audits) | Hybrid (runtime switching)
 
 ## Development Patterns
 
@@ -139,6 +159,8 @@ const { writeContractAsync } = useScaffoldWriteContract({
 - Scripts like `test-enhanced-credit-system.ts` provide realistic test data
 - Always test ZK proofs with `test-zk-system.ts` before deployment
 - Oracle integration testing via `test-oracle-integration.ts`
+- **Oracle security testing via `test-oracle-security.ts` and `simulate-oracle-attacks.ts`**
+- **Run `test/OracleManipulation.test.ts` for comprehensive attack scenario testing**
 
 ### Frontend Components
 Key React components in `packages/nextjs/components/`:
@@ -157,11 +179,17 @@ Key React components in `packages/nextjs/components/`:
 - ZK circuits require proper trusted setup for production
 - Use privacy levels appropriately (Level 5 = maximum privacy, FREE)
 - Implement proper access controls and validation in smart contracts
+- **Oracle security is critical: always use SecureAggregatorV3 for production**
+- **Test oracle manipulation scenarios before deployment**
+- **Configure time-locked governance for oracle parameter changes**
+- **Monitor circuit breaker status and oracle health in production**
 
 ## Key File Locations
 
 ### Smart Contracts
 - Core contracts: `packages/hardhat/contracts/`
+- Oracle security: `packages/hardhat/contracts/oracles/`
+- Oracle interfaces: `packages/hardhat/contracts/interfaces/IOracleSecurityManager.sol`
 - Cross-chain: `packages/hardhat/contracts/crosschain/`
 - Mock contracts: `packages/hardhat/contracts/mocks/`
 - Deployment scripts: `packages/hardhat/deploy/`
@@ -180,6 +208,8 @@ Key React components in `packages/nextjs/components/`:
 
 ### Testing & Utilities
 - Test scripts: `packages/hardhat/scripts/test-*.ts`
+- Oracle security tests: `packages/hardhat/test/OracleManipulation.test.ts`
+- Oracle attack simulation: `packages/hardhat/scripts/simulate-oracle-attacks.ts`
 - Unit tests: `packages/hardhat/test/`
 - ZK circuits: `circuits/src/`
 - Utilities: `packages/nextjs/utils/`

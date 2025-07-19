@@ -10,6 +10,7 @@
 🔐 **Privacy by Default** - Financial data stays private with ZK proofs  
 🧠 **Sophisticated Scoring** - 7-factor algorithm beats traditional systems  
 🌐 **Universal Multi-Chain** - Aggregate credit across 5+ blockchain ecosystems
+🛡️ **Oracle Security Leader** - Industry-leading manipulation protection with circuit breakers
 ⚡ **Gas Efficient** - Optimized for real-world DeFi usage  
 🌍 **Globally Accessible** - No traditional banking requirements  
 
@@ -27,6 +28,13 @@ Visit `http://localhost:3001/credit-scoring` to see **sophisticated credit scori
 npx hardhat run scripts/test-universal-score.ts --network localhost
 ```
 Experience **multi-chain credit aggregation** with realistic cross-chain simulation!
+
+**🛡️ Test Oracle Security System:**
+```bash
+npx hardhat run scripts/test-oracle-security.ts --network localhost
+npx hardhat run scripts/simulate-oracle-attacks.ts --network localhost
+```
+Witness **industry-leading oracle manipulation protection** with real-time attack simulation!
 
 ## 🌟 Revolutionary Features
 
@@ -371,14 +379,48 @@ Visit `http://localhost:3001/credit-scoring` and connect your wallet!
 
 **Final Rate = (Base Rate × Credit Multiplier) + Market Premiums + Privacy Premium**
 
-## 🔮 Hybrid Oracle System
+## 🔮 Oracle Security System
+
+### Revolutionary Oracle Manipulation Protection
+
+Our **industry-leading oracle security system** provides comprehensive protection against price manipulation attacks while maintaining compatibility with existing Chainlink infrastructure:
+
+| Security Layer | Protection Level | Features | Attack Prevention |
+|----------------|------------------|----------|-------------------|
+| **Price Validation** | Real-time | 20% max deviation limits, staleness detection | Single oracle manipulation |
+| **Circuit Breaker** | System-wide | 50% volatility triggers, automatic pausing | Market manipulation, flash loans |
+| **Multi-Oracle Consensus** | Advanced | Weighted median, outlier detection | Coordinated oracle attacks |
+| **Time-Locked Governance** | Administrative | 24-hour delays, multi-signature requirements | Governance attacks, admin key compromise |
+| **Grace Periods** | Update Protection | Delays for large changes, re-validation | Sudden price manipulation |
+
+### 🛡️ **Advanced Security Features**
+
+**🔒 Core Security Components:**
+- **OracleSecurityManager.sol** - Price validation engine with deviation limits and consensus algorithms
+- **SecureAggregatorV3.sol** - Chainlink-compatible aggregator with manipulation protection and grace periods
+- **OracleGovernance.sol** - Time-locked governance with multi-signature requirements and emergency controls
+- **MaliciousOracleAttacker.sol** - Comprehensive testing framework for attack simulation
+
+**⚡ Real-Time Protection:**
+- **20% Maximum Price Deviation** - Prevents extreme single-oracle manipulation
+- **Circuit Breaker System** - Triggers on 50% volatility with automatic fallback to manual mode
+- **Multi-Oracle Validation** - Weighted median calculation with outlier detection
+- **Stale Data Rejection** - Automatic filtering of outdated oracle information
+- **Emergency Controls** - Instant system pausing and circuit breaker activation
+
+**🏛️ Governance Security:**
+- **24-Hour Time Locks** - Mandatory delays for all critical parameter changes
+- **Multi-Signature Requirements** - Minimum 2 approvals for security updates
+- **Emergency Bypass** - Instant execution for critical security responses
+- **Proposal Validation** - Automatic rejection of dangerous parameter updates
 
 ### Three Oracle Types for Maximum Flexibility
 
-Our sophisticated oracle system supports development, compatibility, and production needs:
+Building on our advanced security foundation, we support multiple oracle configurations:
 
 | Oracle Type | Use Case | Features | Best For |
 |-------------|----------|----------|----------|
+| **Secure Production** | **Live Systems** | **Full manipulation protection, circuit breakers, governance** | **Production deployment, high-value protocols** |
 | **Custom Advanced** | Development & Testing | Price simulation, market scenarios, volatility modeling | Comprehensive testing, edge case simulation |
 | **Chainlink Standard** | Compatibility & Audits | Simple price feeds, industry standard interface | Audits, partnerships, ecosystem compatibility |
 | **Hybrid** | Production Testing | Runtime switching, fallback mechanisms, health monitoring | Production validation, risk management |
@@ -409,20 +451,84 @@ await factory.batchUpdatePrices(
 );
 ```
 
-### Oracle Commands
+### Oracle Security Commands
 
 ```bash
-# Deploy hybrid oracle system
+# Deploy secure oracle system with full protection
+yarn deploy  # Includes secure oracle deployment
+
+# Test oracle security system
+npx hardhat run scripts/test-oracle-security.ts --network localhost
+
+# Simulate oracle attack scenarios
+npx hardhat run scripts/simulate-oracle-attacks.ts --network localhost
+
+# Run comprehensive oracle manipulation tests
+npx hardhat test test/OracleManipulation.test.ts --network localhost
+
+# Deploy hybrid oracle system (legacy)
 yarn deploy:oracles
 
-# Test oracle functionality
-yarn test:oracles
-
-# Test different oracle types
+# Test different oracle types (legacy)
 yarn test:oracles:hardhat
 ```
 
-**📖 For detailed oracle documentation, see [Oracle Integration Guide](./ORACLE_INTEGRATION_GUIDE.md)**
+### 🧪 **Oracle Security Testing**
+
+**Real-time Security Validation:**
+```bash
+🔒 Testing Oracle Security System...
+
+📊 Contract Addresses:
+  Security Manager: 0x1234...
+  Governance: 0x5678...
+  Rate Model: 0x9abc...
+
+🧪 Test 1: Security Parameters
+  Max Price Deviation: 20%
+  Circuit Breaker Threshold: 50%
+  Min Oracle Count: 2
+  Max Staleness: 3600 seconds
+
+🧪 Test 2: Oracle System Status
+  Legacy Oracles: false
+  Secure Oracles: true
+  Security Manager Active: true
+  Circuit Breaker: false
+  Status: Secure oracles active
+
+🧪 Test 3: Secure Price Retrieval
+  Valid: true
+  Price: $3000.00
+  Confidence: 95%
+  Reason: Secure price aggregation successful
+```
+
+**Attack Simulation Results:**
+```bash
+⚠️ Simulating Oracle Attack Scenarios...
+
+🚨 Scenario 1: Single Oracle Extreme Price Manipulation
+  Attempting to manipulate ETH/USD oracle by 100%...
+  Manipulation Result:
+    Valid: false
+    Reason: Price deviation exceeds global limit
+    ✅ Security system DETECTED manipulation!
+
+🚨 Scenario 2: Gradual Price Manipulation Attack
+  Step 1: Setting price to $3300.00
+    Valid: true, Confidence: 85%
+  Step 2: Setting price to $3600.00
+    Valid: false, Confidence: 0%
+    ✅ Security system detected manipulation at step 2
+
+🚨 Scenario 3: Manual Circuit Breaker Trigger
+  Circuit Breaker Active: true
+  System Status: Circuit breaker active
+  ✅ System successfully fell back to manual mode
+```
+
+**📖 For detailed oracle documentation, see [Oracle Security Guide](./ORACLE_SECURITY_GUIDE.md)**
 
 ## 🧪 Advanced Testing
 
@@ -511,6 +617,10 @@ yarn deploy --network sepolia          # Deploy to Sepolia
 - [ ] Privacy policy compliance  
 - [ ] Governance framework implemented
 - [ ] Emergency pause mechanisms
+- [ ] **Oracle security system deployed and tested**
+- [ ] **Oracle manipulation tests passed**
+- [ ] **Circuit breaker functionality verified**
+- [ ] **Time-locked governance configured**
 - [ ] Oracle integration for price feeds
 - [ ] Multi-sig wallet setup
 - [ ] Insurance fund established
@@ -518,11 +628,23 @@ yarn deploy --network sepolia          # Deploy to Sepolia
 ## 🔒 Security & Auditing
 
 ### Smart Contract Security
-- **Reentrancy Protection** - ReentrancyGuard on all fund transfers
-- **Access Control** - Role-based permissions with Ownable
+- **Reentrancy Protection** - ReentrancyGuard on all fund transfers with checks-effects-interactions pattern
+- **Access Control** - Role-based permissions with Ownable and multi-signature requirements
 - **Integer Overflow Protection** - SafeMath and Solidity 0.8+ 
-- **Input Validation** - Comprehensive parameter checking
-- **Emergency Controls** - Pause functionality for critical functions
+- **Input Validation** - Comprehensive parameter checking and bounds enforcement
+- **Emergency Controls** - Pause functionality for critical functions and circuit breakers
+
+### 🛡️ **Oracle Security (Industry-Leading)**
+- **Price Manipulation Protection** - 20% maximum deviation limits with real-time validation
+- **Circuit Breaker System** - Automatic triggering on 50% volatility with system-wide protection
+- **Multi-Oracle Consensus** - Weighted median calculation with outlier detection and confidence scoring
+- **Time-Locked Governance** - 24-hour mandatory delays for all critical oracle parameter changes
+- **Grace Period Protection** - Delays for large price changes with re-validation requirements
+- **Stale Data Rejection** - Automatic filtering of outdated oracle information (1-hour threshold)
+- **Emergency Controls** - Instant circuit breaker activation and system pausing capabilities
+- **Malicious Oracle Detection** - Behavioral analysis and automatic exclusion from consensus
+- **Governance Attack Prevention** - Multi-signature requirements and proposal validation
+- **Automatic Fallback** - Seamless transition to manual mode during oracle failures
 
 ### ZK Circuit Security  
 - **Formal Verification** - Mathematical proof of circuit correctness
